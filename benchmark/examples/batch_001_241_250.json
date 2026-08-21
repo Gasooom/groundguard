@@ -1,0 +1,160 @@
+[
+  {
+    "id": "synthetic_241",
+    "question": "What does NovaTech do?",
+    "context": "NovaTech develops network monitoring tools.",
+    "answer": "NovaTech develops network monitoring solutions.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech develops network monitoring tools."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Paraphrase."
+  },
+  {
+    "id": "synthetic_242",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech employs approximately 120 people.",
+    "answer": "NovaTech employs about 120 people.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech employs approximately 120 people."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Approximate numerical paraphrase."
+  },
+  {
+    "id": "synthetic_243",
+    "question": "When was BrightAI founded?",
+    "context": "BrightAI was founded in 2020.",
+    "answer": "BrightAI was established in 2020.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "BrightAI was founded in 2020."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Temporal paraphrase."
+  },
+  {
+    "id": "synthetic_244",
+    "question": "Does GreenLabs sell medical devices?",
+    "context": "GreenLabs develops agricultural monitoring software.",
+    "answer": "GreenLabs sells medical devices.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context does not discuss medical devices."
+  },
+  {
+    "id": "synthetic_245",
+    "question": "What is the capital of Kenya?",
+    "context": "Kenya's capital city is Nairobi.",
+    "answer": "Nairobi is the capital of Kenya.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Kenya's capital city is Nairobi."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct factual support."
+  },
+  {
+    "id": "synthetic_246",
+    "question": "When was Acme founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2018.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct temporal support."
+  },
+  {
+    "id": "synthetic_247",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech employs 120 people.",
+    "answer": "NovaTech has 120 employees.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech employs 120 people."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Numerical paraphrase."
+  },
+  {
+    "id": "synthetic_248",
+    "question": "What products does CloudCore sell?",
+    "context": "CloudCore sells backup software and cloud storage.",
+    "answer": "CloudCore sells backup software and cloud storage.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "CloudCore sells backup software and cloud storage."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Multi-claim support."
+  },
+  {
+    "id": "synthetic_249",
+    "question": "What products does GreenLabs sell?",
+    "context": "GreenLabs sells agricultural sensors and crop-monitoring software.",
+    "answer": "GreenLabs sells agricultural sensors.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "GreenLabs sells agricultural sensors and crop-monitoring software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Only part of the available product information is included."
+  },
+  {
+    "id": "synthetic_250",
+    "question": "Where does DataWorks operate?",
+    "context": "DataWorks operates in Rwanda, Kenya, and Uganda.",
+    "answer": "DataWorks operates in Rwanda and Tanzania.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "DataWorks operates in Rwanda, Kenya, and Uganda."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "One location is supported while another conflicts with the context."
+  }
+]

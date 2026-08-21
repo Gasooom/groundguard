@@ -1,0 +1,154 @@
+[
+  {
+    "id": "synthetic_221",
+    "question": "Where does DataWorks operate?",
+    "context": "DataWorks operates in Rwanda, Kenya, and Uganda.",
+    "answer": "DataWorks operates in Rwanda and Tanzania.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "DataWorks operates in Rwanda, Kenya, and Uganda."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "One location is supported while another conflicts with the context."
+  },
+  {
+    "id": "synthetic_222",
+    "question": "What did BrightAI launch?",
+    "context": "BrightAI launched a document-analysis platform in 2022.",
+    "answer": "BrightAI launched a document-analysis platform.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "BrightAI launched a document-analysis platform in 2022."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Supported claim omits the available date."
+  },
+  {
+    "id": "synthetic_223",
+    "question": "What is the capital of Kenya?",
+    "context": "Kenya's capital city is Nairobi.",
+    "answer": "Mombasa is the capital of Kenya.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Kenya's capital city is Nairobi."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct contradiction."
+  },
+  {
+    "id": "synthetic_224",
+    "question": "When was Acme founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2012.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Conflicting temporal claim."
+  },
+  {
+    "id": "synthetic_225",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech employs 120 people.",
+    "answer": "NovaTech has 250 employees.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "NovaTech employs 120 people."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Conflicting numerical claim."
+  },
+  {
+    "id": "synthetic_226",
+    "question": "What products does CloudCore sell?",
+    "context": "CloudCore sells backup software and cloud storage.",
+    "answer": "CloudCore sells accounting software.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "CloudCore sells backup software and cloud storage."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Relevant but contradictory product claim."
+  },
+  {
+    "id": "synthetic_227",
+    "question": "Who founded Acme?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "John Smith founded Acme Technologies.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context does not identify a founder."
+  },
+  {
+    "id": "synthetic_228",
+    "question": "Where is CloudCore headquartered?",
+    "context": "CloudCore sells backup software and cloud storage.",
+    "answer": "CloudCore is headquartered in Kigali.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Relevant question but missing evidence."
+  },
+  {
+    "id": "synthetic_229",
+    "question": "What is GreenLabs revenue?",
+    "context": "GreenLabs develops agricultural monitoring software.",
+    "answer": "GreenLabs generated $5 million in revenue.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Revenue is not stated in context."
+  },
+  {
+    "id": "synthetic_230",
+    "question": "When will DataWorks expand to Tanzania?",
+    "context": "DataWorks currently operates in Rwanda and Kenya.",
+    "answer": "DataWorks will expand to Tanzania next year.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Future expansion is not stated."
+  }
+]

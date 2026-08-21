@@ -1,0 +1,162 @@
+[
+  {
+    "id": "synthetic_101",
+    "question": "When was Acme founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2018.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct temporal support."
+  },
+  {
+    "id": "synthetic_102",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech employs 120 people.",
+    "answer": "NovaTech has 120 employees.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech employs 120 people."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Numerical paraphrase."
+  },
+  {
+    "id": "synthetic_103",
+    "question": "What products does CloudCore sell?",
+    "context": "CloudCore sells backup software and cloud storage.",
+    "answer": "CloudCore sells backup software and cloud storage.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "CloudCore sells backup software and cloud storage."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Multi-claim support."
+  },
+  {
+    "id": "synthetic_104",
+    "question": "What products does GreenLabs sell?",
+    "context": "GreenLabs sells agricultural sensors and crop-monitoring software.",
+    "answer": "GreenLabs sells agricultural sensors.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "GreenLabs sells agricultural sensors and crop-monitoring software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Only part of the available product information is included."
+  },
+  {
+    "id": "synthetic_105",
+    "question": "Where does DataWorks operate?",
+    "context": "DataWorks operates in Rwanda, Kenya, and Uganda.",
+    "answer": "DataWorks operates in Rwanda and Tanzania.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "DataWorks operates in Rwanda, Kenya, and Uganda."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "One location is supported while another conflicts with the context."
+  },
+  {
+    "id": "synthetic_106",
+    "question": "What did BrightAI launch?",
+    "context": "BrightAI launched a document-analysis platform in 2022.",
+    "answer": "BrightAI launched a document-analysis platform.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "BrightAI launched a document-analysis platform in 2022."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Supported claim omits the available date."
+  },
+  {
+    "id": "synthetic_107",
+    "question": "What is the capital of Kenya?",
+    "context": "Kenya's capital city is Nairobi.",
+    "answer": "Mombasa is the capital of Kenya.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Kenya's capital city is Nairobi."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct contradiction."
+  },
+  {
+    "id": "synthetic_108",
+    "question": "When was Acme founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2012.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Conflicting temporal claim."
+  },
+  {
+    "id": "synthetic_109",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech employs 120 people.",
+    "answer": "NovaTech has 250 employees.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "NovaTech employs 120 people."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Conflicting numerical claim."
+  },
+  {
+    "id": "synthetic_110",
+    "question": "What products does CloudCore sell?",
+    "context": "CloudCore sells backup software and cloud storage.",
+    "answer": "CloudCore sells accounting software.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "CloudCore sells backup software and cloud storage."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Relevant but contradictory product claim."
+  }
+]

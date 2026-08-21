@@ -1,0 +1,161 @@
+[
+  {
+    "id": "synthetic_121",
+    "question": "What is the capital of Kenya?",
+    "context": "Kenya's capital city is Nairobi.",
+    "answer": "Kenya's capital is Paris.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "IRRELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Kenya's capital city is Nairobi."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer is unrelated to the supplied task context."
+  },
+  {
+    "id": "synthetic_122",
+    "question": "When was Acme founded and what does it sell?",
+    "context": "Acme Technologies was founded in 2018 and sells cloud security software.",
+    "answer": "Acme was founded in 2018 and sells cloud security software.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018.",
+      "Acme Technologies sells cloud security software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Both claims are supported."
+  },
+  {
+    "id": "synthetic_123",
+    "question": "When was Acme founded and where is it headquartered?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme was founded in 2018 and is headquartered in Kigali.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "First claim supported; headquarters unsupported."
+  },
+  {
+    "id": "synthetic_124",
+    "question": "When was Acme founded and how many employees does it have?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme was founded in 2015 and has 500 employees.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The temporal claim contradicts the context and employee count is unsupported."
+  },
+  {
+    "id": "synthetic_125",
+    "question": "What does NovaTech do?",
+    "context": "NovaTech develops network monitoring tools.",
+    "answer": "NovaTech develops network monitoring solutions.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech develops network monitoring tools."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Paraphrase."
+  },
+  {
+    "id": "synthetic_126",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech employs approximately 120 people.",
+    "answer": "NovaTech employs about 120 people.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech employs approximately 120 people."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Approximate numerical paraphrase."
+  },
+  {
+    "id": "synthetic_127",
+    "question": "When was BrightAI founded?",
+    "context": "BrightAI was founded in 2020.",
+    "answer": "BrightAI was established in 2020.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "BrightAI was founded in 2020."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Temporal paraphrase."
+  },
+  {
+    "id": "synthetic_128",
+    "question": "Does GreenLabs sell medical devices?",
+    "context": "GreenLabs develops agricultural monitoring software.",
+    "answer": "GreenLabs sells medical devices.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context does not discuss medical devices."
+  },
+  {
+    "id": "synthetic_129",
+    "question": "What is the capital of Kenya?",
+    "context": "Kenya's capital city is Nairobi.",
+    "answer": "Nairobi is the capital of Kenya.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Kenya's capital city is Nairobi."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct factual support."
+  },
+  {
+    "id": "synthetic_130",
+    "question": "When was Acme founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2018.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Direct temporal support."
+  }
+]
