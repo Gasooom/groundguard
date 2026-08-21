@@ -1,0 +1,232 @@
+[
+  {
+    "id": "public_061",
+    "question": "How many continents are there on Earth?",
+    "context": "The United Nations geoscheme identifies Africa, the Americas, Antarctica, Asia, Europe, and Oceania as major continental regions. Geography education commonly describes Earth as having seven continents.",
+    "answer": "Earth has seven continents.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Geography education commonly describes Earth as having seven continents."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Continents",
+      "url": "https://education.nationalgeographic.org/resource/Continent/",
+      "publisher": "National Geographic Society",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Continents — definition and classification"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical claim is directly supported."
+  },
+  {
+    "id": "public_062",
+    "question": "What is the largest ocean on Earth?",
+    "context": "NOAA describes the Pacific Ocean as the largest and deepest ocean basin on Earth.",
+    "answer": "The Pacific Ocean is the largest ocean on Earth.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The Pacific Ocean is the largest and deepest ocean basin on Earth."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "How many oceans are there?",
+      "url": "https://oceanservice.noaa.gov/facts/howmanyoceans.html",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Ocean Service — Pacific Ocean description"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Directly supported factual claim."
+  },
+  {
+    "id": "public_063",
+    "question": "What is the chemical symbol for water?",
+    "context": "The U.S. Geological Survey describes water as H2O, meaning each water molecule contains two hydrogen atoms and one oxygen atom.",
+    "answer": "Water is represented by the chemical formula H2O.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Water is H2O, with two hydrogen atoms and one oxygen atom."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Water Science School",
+      "url": "https://www.usgs.gov/special-topics/water-science-school",
+      "publisher": "U.S. Geological Survey",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Water Science School — water composition"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer is a direct paraphrase of the source fact."
+  },
+  {
+    "id": "public_064",
+    "question": "What are the two main gases in Earth's atmosphere?",
+    "context": "The National Oceanic and Atmospheric Administration states that Earth's atmosphere is mostly nitrogen and oxygen, with nitrogen making up about 78 percent and oxygen about 21 percent.",
+    "answer": "Earth's atmosphere is mostly nitrogen and oxygen, with nitrogen at about 78 percent and oxygen at about 21 percent.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Nitrogen makes up about 78 percent of Earth's atmosphere.",
+      "Oxygen makes up about 21 percent of Earth's atmosphere."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "The Atmosphere: Getting a Handle on Carbon Dioxide",
+      "url": "https://www.noaa.gov/education/resource-collections/weather-atmosphere/atmosphere",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Atmosphere — composition"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Multi-claim numerical answer fully supported by the context."
+  },
+  {
+    "id": "public_065",
+    "question": "What is Earth's atmosphere mainly made of?",
+    "context": "Earth's atmosphere consists mainly of nitrogen and oxygen. Nitrogen accounts for about 78 percent of the atmosphere.",
+    "answer": "Earth's atmosphere consists mainly of nitrogen and oxygen, with nitrogen accounting for about 78 percent.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Earth's atmosphere consists mainly of nitrogen and oxygen.",
+      "Nitrogen accounts for about 78 percent of the atmosphere."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "The Atmosphere: Getting a Handle on Carbon Dioxide",
+      "url": "https://www.noaa.gov/education/resource-collections/weather-atmosphere/atmosphere",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Atmosphere — composition"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Use only if the benchmark construction explicitly treats the additional oxygen claim as outside the requested evidence scope; otherwise this should be SUPPORTED."
+  },
+  {
+    "id": "public_066",
+    "question": "How deep is the Mariana Trench?",
+    "context": "NOAA describes Challenger Deep in the Mariana Trench as the deepest known point in Earth's oceans, at approximately 10,935 meters below sea level.",
+    "answer": "The Mariana Trench is approximately 10,935 meters deep and is located in the Atlantic Ocean.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Challenger Deep in the Mariana Trench is approximately 10,935 meters below sea level."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "What is the deepest part of the ocean?",
+      "url": "https://oceanservice.noaa.gov/facts/deepest-part-of-ocean.html",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Ocean Service — Challenger Deep"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Depth is supported; the Atlantic Ocean location is unsupported by the supplied context."
+  },
+  {
+    "id": "public_067",
+    "question": "What is the largest ocean on Earth?",
+    "context": "NOAA identifies the Pacific Ocean as the largest ocean basin on Earth.",
+    "answer": "The Atlantic Ocean is the largest ocean on Earth.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "The Pacific Ocean is the largest ocean basin on Earth."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "How many oceans are there?",
+      "url": "https://oceanservice.noaa.gov/facts/howmanyoceans.html",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Ocean Service — Pacific Ocean"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer directly conflicts with the source."
+  },
+  {
+    "id": "public_068",
+    "question": "What percentage of Earth's atmosphere is oxygen?",
+    "context": "NOAA states that oxygen makes up about 21 percent of Earth's atmosphere.",
+    "answer": "Oxygen makes up about 31 percent of Earth's atmosphere.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Oxygen makes up about 21 percent of Earth's atmosphere."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "The Atmosphere: Getting a Handle on Carbon Dioxide",
+      "url": "https://www.noaa.gov/education/resource-collections/weather-atmosphere/atmosphere",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Atmosphere — composition"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical claim directly contradicts the source."
+  },
+  {
+    "id": "public_069",
+    "question": "What is water made of?",
+    "context": "The U.S. Geological Survey describes water as H2O, consisting of two hydrogen atoms and one oxygen atom.",
+    "answer": "Water consists of two hydrogen atoms and one carbon atom.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Water consists of two hydrogen atoms and one oxygen atom."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Water Science School",
+      "url": "https://www.usgs.gov/special-topics/water-science-school",
+      "publisher": "U.S. Geological Survey",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Water Science School — molecular composition"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer replaces oxygen with carbon and therefore contradicts the context."
+  },
+  {
+    "id": "public_070",
+    "question": "When was the Mariana Trench formed?",
+    "context": "NOAA describes the Mariana Trench as the deepest known part of the world's oceans and explains its location and depth, but the supplied passage does not give a formation date.",
+    "answer": "The Mariana Trench formed in 1950.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "What is the deepest part of the ocean?",
+      "url": "https://oceanservice.noaa.gov/facts/deepest-part-of-ocean.html",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Ocean Service — Mariana Trench and Challenger Deep"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context does not provide a formation date, so the claim is unsupported but not contradictory."
+  }
+]

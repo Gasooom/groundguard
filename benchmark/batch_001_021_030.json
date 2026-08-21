@@ -1,0 +1,158 @@
+[
+  {
+    "id": "synthetic_021",
+    "question": "When was Acme Technologies founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2018.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Basic fully supported factual claim."
+  },
+  {
+    "id": "synthetic_022",
+    "question": "What does NovaTech manufacture?",
+    "context": "NovaTech manufactures electric bicycles and battery chargers.",
+    "answer": "NovaTech manufactures electric bicycles.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech manufactures electric bicycles and battery chargers."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Answer is a directly supported subset of the context."
+  },
+  {
+    "id": "synthetic_023",
+    "question": "Where is GreenLabs headquartered?",
+    "context": "GreenLabs is headquartered in Kigali, Rwanda.",
+    "answer": "GreenLabs has its headquarters in Kigali, Rwanda.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "GreenLabs is headquartered in Kigali, Rwanda."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Paraphrase of a directly supported fact."
+  },
+  {
+    "id": "synthetic_024",
+    "question": "What products does CloudShield offer?",
+    "context": "CloudShield offers cloud security software and network monitoring tools.",
+    "answer": "CloudShield offers cloud security software and network monitoring tools.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "CloudShield offers cloud security software and network monitoring tools."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Multiple claims are fully supported by the context."
+  },
+  {
+    "id": "synthetic_025",
+    "question": "How many employees does DataCore have?",
+    "context": "DataCore has 120 employees and operates in three countries.",
+    "answer": "DataCore has 120 employees and operates in five countries.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "DataCore has 120 employees and operates in three countries."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Employee count is supported, while the country count conflicts with the context."
+  },
+  {
+    "id": "synthetic_026",
+    "question": "What does Acme Technologies sell?",
+    "context": "Acme Technologies sells cloud security software.",
+    "answer": "Acme Technologies sells cloud security software and endpoint protection.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies sells cloud security software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "One claim is supported and one additional claim is unsupported without contradicting the context."
+  },
+  {
+    "id": "synthetic_027",
+    "question": "When was Acme Technologies founded?",
+    "context": "Acme Technologies was founded in 2018.",
+    "answer": "Acme Technologies was founded in 2015.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer directly conflicts with the supported founding year."
+  },
+  {
+    "id": "synthetic_028",
+    "question": "Where is GreenLabs headquartered?",
+    "context": "GreenLabs is headquartered in Kigali, Rwanda.",
+    "answer": "GreenLabs has offices in Nairobi, Kenya.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer introduces an unsupported office location. The context does not state that GreenLabs lacks an office in Nairobi."
+  },
+  {
+    "id": "synthetic_029",
+    "question": "How many employees does DataCore have?",
+    "context": "DataCore has 50 employees.",
+    "answer": "DataCore has 500 employees.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "DataCore has 50 employees."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical claim directly conflicts with the context."
+  },
+  {
+    "id": "synthetic_030",
+    "question": "When did BrightAI launch its platform?",
+    "context": "BrightAI launched its platform in 2022.",
+    "answer": "BrightAI was founded in 2022.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context supports a launch date, not a founding date. The founding claim cannot be verified or contradicted from the supplied context."
+  }
+]

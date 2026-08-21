@@ -1,0 +1,16 @@
+{
+  "id": "benchmark_001",
+  "question": "When was the company founded?",
+  "context": "The company was founded in 2018 and develops cybersecurity software.",
+  "answer": "The company was founded in 2018.",
+  "grounding_label": "SUPPORTED",
+  "relevance_label": "RELEVANT",
+  "contradiction_label": "NOT_CONTRADICTORY",
+  "evidence": [
+    "The company was founded in 2018."
+  ],
+  "source": "synthetic_initial_example",
+  "annotator_id": "annotator_001",
+  "annotation_status": "LABELED",
+  "annotation_notes": ""
+}

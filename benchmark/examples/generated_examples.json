@@ -1,0 +1,34 @@
+[
+  {
+    "id": "synthetic_001",
+    "question": "When was the company founded?",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2018.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The company was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "synthetic_generator",
+    "annotation_status": "LABELED",
+    "annotation_notes": ""
+  },
+  {
+    "id": "synthetic_002",
+    "question": "When was the company founded?",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2015.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "The company was founded in 2018."
+    ],
+    "source": "synthetic",
+    "annotator_id": "synthetic_generator",
+    "annotation_status": "LABELED",
+    "annotation_notes": ""
+  }
+]

@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GroundGuard Benchmark Example",
+  "type": "object",
+  "required": [
+    "id",
+    "question",
+    "context",
+    "answer",
+    "grounding_label",
+    "relevance_label",
+    "contradiction_label",
+    "evidence",
+    "source",
+    "annotator_id",
+    "annotation_status",
+    "annotation_notes"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context": {
+      "type": "string",
+      "minLength": 1
+    },
+    "answer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grounding_label": {
+      "type": "string",
+      "enum": [
+        "SUPPORTED",
+        "PARTIALLY_SUPPORTED",
+        "UNSUPPORTED"
+      ]
+    },
+    "relevance_label": {
+      "type": "string",
+      "enum": [
+        "RELEVANT",
+        "IRRELEVANT"
+      ]
+    },
+    "contradiction_label": {
+      "type": "string",
+      "enum": [
+        "CONTRADICTORY",
+        "NOT_CONTRADICTORY"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "synthetic_initial_example",
+        "manual_annotation",
+        "synthetic",
+        "public_text"
+      ]
+    },
+    "source_metadata": {
+      "type": "object",
+      "required": [
+        "title",
+        "url",
+        "publisher",
+        "retrieved_at",
+        "evidence_reference"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retrieved_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "evidence_reference": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "annotator_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "annotation_status": {
+      "type": "string",
+      "enum": [
+        "LABELED",
+        "NEEDS_REVIEW"
+      ]
+    },
+    "annotation_notes": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "const": "public_text"
+          }
+        },
+        "required": [
+          "source"
+        ]
+      },
+      "then": {
+        "required": [
+          "source_metadata"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

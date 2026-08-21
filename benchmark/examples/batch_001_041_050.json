@@ -1,0 +1,160 @@
+[
+  {
+    "id": "synthetic_041",
+    "question": "What did HorizonAI launch and when?",
+    "context": "HorizonAI launched its medical imaging platform in 2020 and opened its Kigali office in 2023.",
+    "answer": "HorizonAI launched its medical imaging platform in 2020 and opened its Kigali office in 2023.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "HorizonAI launched its medical imaging platform in 2020 and opened its Kigali office in 2023."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Both claims and both dates are explicitly supported."
+  },
+  {
+    "id": "synthetic_042",
+    "question": "How many customers does CloudCore serve?",
+    "context": "CloudCore serves more than 2,000 business customers across Africa.",
+    "answer": "CloudCore serves more than 2,000 business customers across Africa.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "CloudCore serves more than 2,000 business customers across Africa."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical and geographic claims are directly supported."
+  },
+  {
+    "id": "synthetic_043",
+    "question": "What does NovaHealth provide?",
+    "context": "NovaHealth provides remote patient monitoring and appointment scheduling software.",
+    "answer": "NovaHealth provides software for monitoring patients remotely and scheduling appointments.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaHealth provides remote patient monitoring and appointment scheduling software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer is a faithful paraphrase of both supported services."
+  },
+  {
+    "id": "synthetic_044",
+    "question": "Where did SecureNet expand in 2024?",
+    "context": "SecureNet expanded into Uganda in 2024 after previously operating only in Rwanda.",
+    "answer": "SecureNet expanded into Uganda in 2024 after previously operating only in Rwanda.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "SecureNet expanded into Uganda in 2024 after previously operating only in Rwanda."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The location, year, and historical operating context are supported."
+  },
+  {
+    "id": "synthetic_045",
+    "question": "What products does DataWorks sell?",
+    "context": "DataWorks sells analytics dashboards and automated reporting software.",
+    "answer": "DataWorks sells analytics dashboards, automated reporting software, and cybersecurity tools.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "DataWorks sells analytics dashboards and automated reporting software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The first two products are supported; cybersecurity tools are unsupported but not contradicted."
+  },
+  {
+    "id": "synthetic_046",
+    "question": "How many employees did BrightAI have after its 2023 expansion?",
+    "context": "BrightAI had 80 employees in 2022 and expanded its operations in 2023.",
+    "answer": "BrightAI had 80 employees after its 2023 expansion.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "BrightAI had 80 employees in 2022 and expanded its operations in 2023."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context supports the 80-employee figure in 2022 but does not establish the employee count after the 2023 expansion."
+  },
+  {
+    "id": "synthetic_047",
+    "question": "What year did GreenLabs enter Kenya?",
+    "context": "GreenLabs entered Kenya in 2022 and Tanzania in 2024.",
+    "answer": "GreenLabs entered Kenya in 2024.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "GreenLabs entered Kenya in 2022 and Tanzania in 2024."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer gives the Tanzania year for the Kenya expansion and therefore conflicts with the context."
+  },
+  {
+    "id": "synthetic_048",
+    "question": "How much revenue did NovaTech generate?",
+    "context": "NovaTech reported annual revenue of $4 million in 2023.",
+    "answer": "NovaTech generated $40 million in revenue in 2023.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "NovaTech reported annual revenue of $4 million in 2023."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical value directly conflicts with the reported revenue."
+  },
+  {
+    "id": "synthetic_049",
+    "question": "When did CloudCore begin operations?",
+    "context": "CloudCore opened its first office in Kigali in 2021.",
+    "answer": "CloudCore began operations in Kigali in 2021.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Opening an office in 2021 does not establish that the company began operations in that year."
+  },
+  {
+    "id": "synthetic_050",
+    "question": "What does HorizonAI sell?",
+    "context": "HorizonAI sells medical imaging software and clinical workflow tools.",
+    "answer": "HorizonAI sells medical imaging software and hospital hardware.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "HorizonAI sells medical imaging software and clinical workflow tools."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Medical imaging software is supported, while hospital hardware is not established by the context."
+  }
+]

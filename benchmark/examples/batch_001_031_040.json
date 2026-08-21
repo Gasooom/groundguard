@@ -1,0 +1,160 @@
+[
+  {
+    "id": "synthetic_031",
+    "question": "What services does DataCore provide?",
+    "context": "DataCore provides cloud storage and data backup services.",
+    "answer": "DataCore provides cloud storage and data backup services.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "DataCore provides cloud storage and data backup services."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer directly matches the supplied context."
+  },
+  {
+    "id": "synthetic_032",
+    "question": "Where does GreenLabs operate?",
+    "context": "GreenLabs operates in Rwanda and Kenya.",
+    "answer": "GreenLabs operates in Rwanda and Kenya.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "GreenLabs operates in Rwanda and Kenya."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Both geographic claims are explicitly supported."
+  },
+  {
+    "id": "synthetic_033",
+    "question": "What did BrightAI launch?",
+    "context": "BrightAI launched an AI-powered document analysis platform in 2022.",
+    "answer": "BrightAI launched an AI-powered document analysis platform in 2022.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "BrightAI launched an AI-powered document analysis platform in 2022."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The product and launch year are both explicitly supported."
+  },
+  {
+    "id": "synthetic_034",
+    "question": "How many offices does NovaTech have?",
+    "context": "NovaTech operates five offices across East Africa.",
+    "answer": "NovaTech operates five offices across East Africa.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "NovaTech operates five offices across East Africa."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical and geographic claims are directly supported."
+  },
+  {
+    "id": "synthetic_035",
+    "question": "What products does CloudShield offer?",
+    "context": "CloudShield offers endpoint security software and network monitoring tools.",
+    "answer": "CloudShield offers endpoint security software and cloud backup services.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "CloudShield offers endpoint security software and network monitoring tools."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Endpoint security is supported, while cloud backup services are unsupported by the supplied context."
+  },
+  {
+    "id": "synthetic_036",
+    "question": "When did Acme Technologies launch its platform?",
+    "context": "Acme Technologies launched its platform in 2021 and expanded into Rwanda in 2023.",
+    "answer": "Acme Technologies launched its platform in 2021 and expanded into Rwanda in 2022.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Acme Technologies launched its platform in 2021 and expanded into Rwanda in 2023."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The launch year is supported, while the Rwanda expansion year contradicts the context."
+  },
+  {
+    "id": "synthetic_037",
+    "question": "What industry does GreenLabs operate in?",
+    "context": "GreenLabs develops agricultural monitoring software.",
+    "answer": "GreenLabs develops agricultural monitoring software for hospitals.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "GreenLabs develops agricultural monitoring software."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The hospital use case is not supported by the context, but the context does not explicitly state that GreenLabs does not serve hospitals."
+  },
+  {
+    "id": "synthetic_038",
+    "question": "How many employees does NovaTech have?",
+    "context": "NovaTech has 75 employees.",
+    "answer": "NovaTech has 175 employees.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "NovaTech has 75 employees."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The numerical claim directly conflicts with the stated employee count."
+  },
+  {
+    "id": "synthetic_039",
+    "question": "When was DataCore founded?",
+    "context": "DataCore launched its first product in 2019.",
+    "answer": "DataCore was founded in 2019.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The context gives a product launch year, not a company founding year."
+  },
+  {
+    "id": "synthetic_040",
+    "question": "What security products does SecureNet sell?",
+    "context": "SecureNet sells firewall software and identity management tools.",
+    "answer": "SecureNet sells antivirus software and identity management tools.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "SecureNet sells firewall software and identity management tools."
+    ],
+    "source": "synthetic",
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Identity management is supported, but the answer replaces firewall software with antivirus software, which conflicts with the supplied product list."
+  }
+]

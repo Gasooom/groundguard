@@ -1,0 +1,124 @@
+{
+  "benchmark": {
+    "name": "GroundGuard V1",
+    "version": "1.0.0",
+    "target_size": 250,
+    "status": "CONSTRUCTION"
+  },
+  "label_dimensions": {
+    "grounding": [
+      "SUPPORTED",
+      "PARTIALLY_SUPPORTED",
+      "UNSUPPORTED"
+    ],
+    "relevance": [
+      "RELEVANT",
+      "IRRELEVANT"
+    ],
+    "contradiction": [
+      "CONTRADICTORY",
+      "NOT_CONTRADICTORY"
+    ]
+  },
+  "construction_targets": {
+    "grounding": {
+      "SUPPORTED": 50,
+      "PARTIALLY_SUPPORTED": 35,
+      "UNSUPPORTED": 35
+    },
+    "coverage": {
+      "RELEVANT_BUT_UNSUPPORTED": 25,
+      "IRRELEVANT": 25,
+      "MULTI_CLAIM_OR_EDGE_CASE": 25,
+      "NUMERICAL_TEMPORAL_OR_PARAPHRASE": 20
+    }
+  },
+  "data_sources": {
+    "synthetic": {
+      "target": 125,
+      "purpose": "Controlled coverage of specific failure modes."
+    },
+    "public_text": {
+      "target": 125,
+      "purpose": "Realistic evaluation examples derived from public factual text."
+    }
+  },
+  "construction_rules": {
+    "targets_are_overlapping": true,
+    "grounding_and_relevance_are_independent": true,
+    "grounding_and_contradiction_are_independent": true,
+    "unsupported_does_not_imply_contradictory": true,
+    "partial_support_requires_multiple_substantive_claims": true,
+    "evidence_must_be_traceable_to_context": true,
+    "external_knowledge_must_not_be_used_for_labeling": true
+  },
+  "id_ranges": {
+    "pilot": {
+      "start": 1,
+      "end": 20,
+      "status": "COMPLETE"
+    },
+    "expansion_batch_001": {
+      "start": 21,
+      "end": 70,
+      "status": "PLANNED"
+    },
+    "expansion_batch_002": {
+      "start": 71,
+      "end": 120,
+      "status": "PLANNED"
+    },
+    "expansion_batch_003": {
+      "start": 121,
+      "end": 170,
+      "status": "PLANNED"
+    },
+    "expansion_batch_004": {
+      "start": 171,
+      "end": 220,
+      "status": "PLANNED"
+    },
+    "expansion_batch_005": {
+      "start": 221,
+      "end": 250,
+      "status": "PLANNED"
+    }
+  },
+  "pilot_observed_distribution": {
+    "total": 20,
+    "grounding": {
+      "SUPPORTED": 9,
+      "PARTIALLY_SUPPORTED": 2,
+      "UNSUPPORTED": 9
+    },
+    "relevance": {
+      "RELEVANT": 19,
+      "IRRELEVANT": 1
+    },
+    "contradiction": {
+      "CONTRADICTORY": 5,
+      "NOT_CONTRADICTORY": 15
+    }
+  },
+  "quality_gates": {
+    "schema_validation": true,
+    "unique_ids": true,
+    "annotation_status_validation": true,
+    "evidence_validation": true,
+    "coverage_validation": true,
+    "duplicate_detection": true,
+    "final_distribution_report": true
+  },
+  "completion_criteria": [
+    "250 benchmark records exist.",
+    "Every record conforms to the benchmark schema.",
+    "Every record has a unique identifier.",
+    "Every record has finalized annotation status.",
+    "Every supported claim has traceable evidence.",
+    "Contradictory examples contain context supporting the contradiction judgment.",
+    "Grounding, relevance, and contradiction are evaluated as separate dimensions.",
+    "Construction coverage targets are satisfied.",
+    "Synthetic and public-text source targets are satisfied.",
+    "All benchmark quality gates pass."
+  ]
+}

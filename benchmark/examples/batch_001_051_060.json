@@ -1,0 +1,235 @@
+[
+  {
+    "id": "public_051",
+    "question": "How many planets are in our solar system?",
+    "context": "NASA states that our solar system has eight planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune.",
+    "answer": "There are eight planets in our solar system.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Our solar system has eight planets."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "About the Planets",
+      "url": "https://science.nasa.gov/solar-system/planets/",
+      "publisher": "NASA Science",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "About the Planets — Introduction"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Directly supported numerical claim."
+  },
+  {
+    "id": "public_052",
+    "question": "Which planet is fourth from the Sun?",
+    "context": "NASA identifies Mars as the fourth planet from the Sun and describes it as a dusty, cold, desert world with a thin atmosphere.",
+    "answer": "Mars is the fourth planet from the Sun.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "Mars is the fourth planet from the Sun."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Mars: Facts",
+      "url": "https://science.nasa.gov/mars/facts/",
+      "publisher": "NASA Science",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Mars Facts — Introduction"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Directly supported factual claim."
+  },
+  {
+    "id": "public_053",
+    "question": "How long is a year on Mars?",
+    "context": "NASA states that a year on Mars lasts 669.6 sols, equivalent to 687 Earth days. A Martian rotation takes about 24.6 hours.",
+    "answer": "A year on Mars lasts 687 Earth days and a Martian rotation takes about 24.6 hours.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "A year on Mars lasts 669.6 sols, which is the same as 687 Earth days.",
+      "Mars completes one rotation every 24.6 hours."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Mars: Facts",
+      "url": "https://science.nasa.gov/mars/facts/",
+      "publisher": "NASA Science",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Mars Facts — Orbit and Rotation"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Multi-claim answer with both claims supported."
+  },
+  {
+    "id": "public_054",
+    "question": "When should health-care workers perform hand hygiene?",
+    "context": "WHO's Five Moments approach recommends hand hygiene before touching a patient, before clean or aseptic procedures, after body fluid exposure risk, after touching a patient, and after touching patient surroundings.",
+    "answer": "Health-care workers should perform hand hygiene at five key moments during patient care.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The approach defines five key moments when health-care workers should perform hand hygiene."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Key resources on hand hygiene",
+      "url": "https://www.who.int/campaigns/world-hand-hygiene-day/key-resources-on-hand-hygiene",
+      "publisher": "World Health Organization",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Key reminders — Five Moments for Hand Hygiene"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Supported summary of the five-moment framework."
+  },
+  {
+    "id": "public_055",
+    "question": "When did the WHO Constitution enter into force?",
+    "context": "The WHO Constitution was adopted on 22 July 1946 and entered into force on 7 April 1948, establishing WHO as the United Nations specialized agency for health.",
+    "answer": "The WHO Constitution entered into force on 7 April 1948 and established WHO as a UN specialized agency for health.",
+    "grounding_label": "SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The WHO Constitution was adopted on 22 July 1946 and entered into force on 7 April 1948.",
+      "It established the World Health Organization as the United Nations specialized agency for health."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "WHO Constitution",
+      "url": "https://www.who.int/about/governance/constitution",
+      "publisher": "World Health Organization",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "WHO Constitution — Opening section"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Temporal and organizational claims are both supported."
+  },
+  {
+    "id": "public_056",
+    "question": "How many member states does the United Nations currently have?",
+    "context": "The United Nations states that its membership has grown from the original 51 Member States in 1945 to the current 193 Member States.",
+    "answer": "The United Nations currently has 193 Member States and was founded in 1945.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The UN currently has 193 Member States.",
+      "The United Nations is an international organization founded in 1945."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "About Us",
+      "url": "https://www.un.org/en/about-us",
+      "publisher": "United Nations",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "About Us — Member States and founding information"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Both claims are supported by the source. Retained as a partial-support construction example only if the benchmark policy later distinguishes direct question scope from additional supported claims."
+  },
+  {
+    "id": "public_057",
+    "question": "How many main bodies does the United Nations have?",
+    "context": "The UN identifies the General Assembly, Security Council, Economic and Social Council, Trusteeship Council, International Court of Justice, and UN Secretariat as its main bodies.",
+    "answer": "The United Nations has six main bodies and seven regional offices.",
+    "grounding_label": "PARTIALLY_SUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The General Assembly, Security Council, Economic and Social Council, Trusteeship Council, International Court of Justice, and UN Secretariat are the main bodies of the UN."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "Main Bodies",
+      "url": "https://www.un.org/en/about-us/main-bodies",
+      "publisher": "United Nations",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "Main Bodies — Main bodies list"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "Six main bodies are supported; the claim about seven regional offices is not supported by the supplied context."
+  },
+  {
+    "id": "public_058",
+    "question": "How many planets are in our solar system?",
+    "context": "NASA states that our solar system has eight planets and five officially recognized dwarf planets.",
+    "answer": "Our solar system has nine planets.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "Our solar system has eight planets."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "About the Planets",
+      "url": "https://science.nasa.gov/solar-system/planets/",
+      "publisher": "NASA Science",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "About the Planets — Introduction"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The answer directly conflicts with the stated count of eight planets."
+  },
+  {
+    "id": "public_059",
+    "question": "When was WHO founded?",
+    "context": "WHO states that its Constitution came into force on 7 April 1948 and that WHO was founded in 1948.",
+    "answer": "WHO was founded in 1950.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "CONTRADICTORY",
+    "evidence": [
+      "WHO was founded in 1948."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "About WHO",
+      "url": "https://www.who.int/about/",
+      "publisher": "World Health Organization",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "About WHO — Who we are"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The founding year directly conflicts with the source."
+  },
+  {
+    "id": "public_060",
+    "question": "What is the purpose of the United Nations?",
+    "context": "The United Nations describes itself as an international organization founded in 1945 where nations can gather, discuss common problems, and find shared solutions.",
+    "answer": "The United Nations is headquartered in Nairobi and was founded in 1945.",
+    "grounding_label": "UNSUPPORTED",
+    "relevance_label": "RELEVANT",
+    "contradiction_label": "NOT_CONTRADICTORY",
+    "evidence": [
+      "The United Nations is an international organization founded in 1945."
+    ],
+    "source": "public_text",
+    "source_metadata": {
+      "title": "About Us",
+      "url": "https://www.un.org/en/about-us",
+      "publisher": "United Nations",
+      "retrieved_at": "2026-08-21",
+      "evidence_reference": "About Us — Introduction"
+    },
+    "annotator_id": "gasim",
+    "annotation_status": "LABELED",
+    "annotation_notes": "The founding year is supported, but the Nairobi headquarters claim is not established by the supplied context."
+  }
+]

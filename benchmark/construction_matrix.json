@@ -1,0 +1,177 @@
+{
+  "benchmark": "GroundGuard V1",
+  "version": "1.0.0",
+  "purpose": "Controlled construction plan for benchmark records 021-250.",
+  "record_range": {
+    "start": 21,
+    "end": 250,
+    "count": 230
+  },
+  "source_targets": {
+    "synthetic": 115,
+    "public_text": 115
+  },
+  "grounding_targets": {
+    "SUPPORTED": 41,
+    "PARTIALLY_SUPPORTED": 33,
+    "UNSUPPORTED": 156
+  },
+  "coverage_targets": {
+    "RELEVANT_BUT_UNSUPPORTED": 24,
+    "IRRELEVANT": 24,
+    "MULTI_CLAIM_OR_EDGE_CASE": 24,
+    "NUMERICAL_TEMPORAL_OR_PARAPHRASE": 20
+  },
+  "construction_batches": [
+    {
+      "batch_id": "batch_001",
+      "record_start": 21,
+      "record_end": 70,
+      "count": 50,
+      "source_distribution": {
+        "synthetic": 25,
+        "public_text": 25
+      },
+      "grounding_distribution": {
+        "SUPPORTED": 18,
+        "PARTIALLY_SUPPORTED": 7,
+        "UNSUPPORTED": 25
+      },
+      "coverage": [
+        "basic_support",
+        "basic_contradiction",
+        "relevant_unsupported",
+        "paraphrase",
+        "simple_multi_claim"
+      ],
+      "status": "PLANNED"
+    },
+    {
+      "batch_id": "batch_002",
+      "record_start": 71,
+      "record_end": 120,
+      "count": 50,
+      "source_distribution": {
+        "synthetic": 25,
+        "public_text": 25
+      },
+      "grounding_distribution": {
+        "SUPPORTED": 10,
+        "PARTIALLY_SUPPORTED": 13,
+        "UNSUPPORTED": 27
+      },
+      "coverage": [
+        "partial_support",
+        "numerical_claims",
+        "temporal_claims",
+        "irrelevant_answers"
+      ],
+      "status": "PLANNED"
+    },
+    {
+      "batch_id": "batch_003",
+      "record_start": 121,
+      "record_end": 170,
+      "count": 50,
+      "source_distribution": {
+        "synthetic": 25,
+        "public_text": 25
+      },
+      "grounding_distribution": {
+        "SUPPORTED": 6,
+        "PARTIALLY_SUPPORTED": 8,
+        "UNSUPPORTED": 36
+      },
+      "coverage": [
+        "multi_claim",
+        "unsupported_non_contradictory",
+        "contradiction",
+        "edge_cases"
+      ],
+      "status": "PLANNED"
+    },
+    {
+      "batch_id": "batch_004",
+      "record_start": 171,
+      "record_end": 220,
+      "count": 50,
+      "source_distribution": {
+        "synthetic": 25,
+        "public_text": 25
+      },
+      "grounding_distribution": {
+        "SUPPORTED": 4,
+        "PARTIALLY_SUPPORTED": 3,
+        "UNSUPPORTED": 43
+      },
+      "coverage": [
+        "complex_multi_claim",
+        "numerical_reasoning",
+        "temporal_reasoning",
+        "paraphrase",
+        "irrelevance"
+      ],
+      "status": "PLANNED"
+    },
+    {
+      "batch_id": "batch_005",
+      "record_start": 221,
+      "record_end": 250,
+      "count": 30,
+      "source_distribution": {
+        "synthetic": 15,
+        "public_text": 15
+      },
+      "grounding_distribution": {
+        "SUPPORTED": 3,
+        "PARTIALLY_SUPPORTED": 2,
+        "UNSUPPORTED": 25
+      },
+      "coverage": [
+        "edge_cases",
+        "contradiction",
+        "mixed_claims",
+        "final_distribution_balancing"
+      ],
+      "status": "PLANNED"
+    }
+  ],
+  "annotation_requirements": {
+    "required_labels": [
+      "grounding_label",
+      "relevance_label",
+      "contradiction_label"
+    ],
+    "required_metadata": [
+      "id",
+      "question",
+      "context",
+      "answer",
+      "evidence",
+      "source",
+      "annotator_id",
+      "annotation_status"
+    ],
+    "labeled_records_require_evidence": true
+  },
+  "quality_constraints": {
+    "unique_ids": true,
+    "sequential_ids": true,
+    "schema_valid": true,
+    "no_empty_required_fields": true,
+    "supported_claims_require_evidence": true,
+    "contradictory_claims_require_evidence": true,
+    "unsupported_does_not_automatically_mean_contradictory": true,
+    "grounding_is_independent_of_relevance": true,
+    "relevance_is_independent_of_contradiction": true,
+    "coverage_categories_may_overlap": true
+  },
+  "generation_policy": {
+    "generate_in_batches": true,
+    "validate_after_each_batch": true,
+    "do_not_overwrite_human_annotations": true,
+    "do_not_finalize_uncertain_examples": true,
+    "review_edge_cases_before_scaling": true
+  },
+  "status": "PLANNED"
+}
