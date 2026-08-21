@@ -13,25 +13,67 @@ DecisionLabel = Literal[
     "UNRELIABLE",
 ]
 
+SystemDecisionLabel = Literal[
+    "ACCEPT",
+    "FLAG",
+    "REJECT",
+]
+
 
 @dataclass(frozen=True)
 class DecisionResult:
     """
     Final deterministic reliability decision.
 
-    The decision layer consumes the already-evaluated
-    Grounding, Relevance, and Contradiction results and
-    produces one system-level reliability decision.
+    Internal reliability:
+        RELIABLE / UNRELIABLE
+
+    Public system decision:
+        ACCEPT / FLAG / REJECT
     """
 
     label: DecisionLabel
     reliable: bool
+
+    system_decision: SystemDecisionLabel
 
     grounding_score: float
     relevance_score: float
     contradiction_score: float
 
     reason: str
+
+
+def _build_system_decision(
+    grounding: GroundingResult,
+    relevance: RelevanceResult,
+    contradiction: ContradictionResult,
+) -> SystemDecisionLabel:
+    """
+    Map component results to GroundGuard's public decision.
+
+    Priority:
+
+        contradiction      -> REJECT
+        unsupported        -> REJECT
+        irrelevant         -> REJECT
+        partially supported -> FLAG
+        otherwise          -> ACCEPT
+    """
+
+    if contradiction.label == "CONTRADICTORY":
+        return "REJECT"
+
+    if grounding.label == "UNSUPPORTED":
+        return "REJECT"
+
+    if relevance.label == "IRRELEVANT":
+        return "REJECT"
+
+    if grounding.label == "PARTIALLY_SUPPORTED":
+        return "FLAG"
+
+    return "ACCEPT"
 
 
 def _build_reason(
@@ -41,46 +83,40 @@ def _build_reason(
 ) -> str:
     """
     Produce a deterministic human-readable explanation.
-
-    Priority:
-
-        1. contradiction
-        2. grounding
-        3. relevance
-        4. reliable
     """
 
     if contradiction.label == "CONTRADICTORY":
         return (
-            "Unreliable because the contradiction component "
+            "REJECT because the contradiction component "
             "detected a contradiction with the supplied evidence."
         )
 
     if grounding.label == "UNSUPPORTED":
         return (
-            "Unreliable because the grounding component "
+            "REJECT because the grounding component "
             "determined that the answer is not supported "
             "by the supplied evidence."
         )
 
-    if grounding.label == "PARTIALLY_SUPPORTED":
-        return (
-            "Unreliable because the grounding component "
-            "determined that the answer is only partially "
-            "supported by the supplied evidence."
-        )
-
     if relevance.label == "IRRELEVANT":
         return (
-            "Unreliable because the relevance component "
+            "REJECT because the relevance component "
             "determined that the answer is not relevant "
             "to the question."
         )
 
+    if grounding.label == "PARTIALLY_SUPPORTED":
+        return (
+            "FLAG because the grounding component "
+            "determined that the answer is only partially "
+            "supported by the supplied evidence."
+        )
+
     return (
-        "Reliable because the grounding, relevance, and "
+        "ACCEPT because the grounding, relevance, and "
         "contradiction components indicate that the answer "
-        "is sufficiently grounded, relevant, and non-contradictory."
+        "is sufficiently grounded, relevant, and "
+        "non-contradictory."
     )
 
 
@@ -91,52 +127,44 @@ def evaluate_decision(
     contradiction: ContradictionResult,
 ) -> DecisionResult:
     """
-    Combine GroundGuard's three evaluation signals into a
-    final deterministic reliability decision.
+    Combine GroundGuard's evaluation signals into the final
+    deterministic system decision.
 
-    Decision policy:
+    Policy:
 
         CONTRADICTORY
-            -> UNRELIABLE
+            -> REJECT
 
-        UNSUPPORTED grounding
-            -> UNRELIABLE
-
-        PARTIALLY_SUPPORTED grounding
-            -> UNRELIABLE
+        UNSUPPORTED
+            -> REJECT
 
         IRRELEVANT
-            -> UNRELIABLE
+            -> REJECT
 
-        otherwise
-            -> RELIABLE
+        PARTIALLY_SUPPORTED
+            -> FLAG
 
-    No weighted scoring or threshold tuning is performed here.
-    Those concerns belong to later Sprint 6 stages.
+        SUPPORTED + RELEVANT + NOT_CONTRADICTORY
+            -> ACCEPT
     """
 
-    if contradiction.label == "CONTRADICTORY":
-        label: DecisionLabel = "UNRELIABLE"
-        reliable = False
+    system_decision = _build_system_decision(
+        grounding,
+        relevance,
+        contradiction,
+    )
 
-    elif grounding.label in {
-        "UNSUPPORTED",
-        "PARTIALLY_SUPPORTED",
-    }:
-        label = "UNRELIABLE"
-        reliable = False
-
-    elif relevance.label == "IRRELEVANT":
-        label = "UNRELIABLE"
-        reliable = False
-
-    else:
-        label = "RELIABLE"
+    if system_decision == "ACCEPT":
+        label: DecisionLabel = "RELIABLE"
         reliable = True
+    else:
+        label = "UNRELIABLE"
+        reliable = False
 
     return DecisionResult(
         label=label,
         reliable=reliable,
+        system_decision=system_decision,
         grounding_score=round(
             grounding.score,
             4,
