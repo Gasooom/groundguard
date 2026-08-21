@@ -1,0 +1,20 @@
+[
+  {
+    "id": "con_001",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2018.",
+    "label": "NOT_CONTRADICTORY"
+  },
+  {
+    "id": "con_002",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2015.",
+    "label": "CONTRADICTORY"
+  },
+  {
+    "id": "con_003",
+    "context": "The company was founded in 2018.",
+    "answer": "The company has 500 employees.",
+    "label": "NOT_CONTRADICTORY"
+  }
+]

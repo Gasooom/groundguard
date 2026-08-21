@@ -1,0 +1,26 @@
+[
+  {
+    "id": "int_001",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2018.",
+    "grounding": "SUPPORTED",
+    "relevance": "RELEVANT",
+    "contradiction": "NOT_CONTRADICTORY"
+  },
+  {
+    "id": "int_002",
+    "context": "The company was founded in 2018.",
+    "answer": "The company has 500 employees.",
+    "grounding": "UNSUPPORTED",
+    "relevance": "RELEVANT",
+    "contradiction": "NOT_CONTRADICTORY"
+  },
+  {
+    "id": "int_003",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2015.",
+    "grounding": "UNSUPPORTED",
+    "relevance": "RELEVANT",
+    "contradiction": "CONTRADICTORY"
+  }
+]

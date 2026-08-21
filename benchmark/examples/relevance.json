@@ -1,0 +1,16 @@
+[
+  {
+    "id": "rel_001",
+    "question": "When was the company founded?",
+    "context": "The company was founded in 2018.",
+    "answer": "The company was founded in 2018.",
+    "label": "RELEVANT"
+  },
+  {
+    "id": "rel_002",
+    "question": "When was the company founded?",
+    "context": "The company was founded in 2018.",
+    "answer": "The company develops cybersecurity software.",
+    "label": "IRRELEVANT"
+  }
+]
