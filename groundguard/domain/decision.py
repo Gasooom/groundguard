@@ -6,6 +6,7 @@ from typing import Literal
 from groundguard.domain.contradiction import ContradictionResult
 from groundguard.domain.grounding import GroundingResult
 from groundguard.domain.relevance import RelevanceResult
+from groundguard.domain.safety import SafetyResult
 from groundguard.evaluation.decision_metrics import reliability_score
 from groundguard.evaluation.thresholds import DEFAULT_THRESHOLD_POLICY
 
@@ -53,10 +54,38 @@ def _build_reason(
     grounding: GroundingResult,
     relevance: RelevanceResult,
     contradiction: ContradictionResult,
+    safety: SafetyResult,
     *,
     reliability: float,
     threshold: float,
 ) -> str:
+    if not safety.safe:
+        if (
+            safety.pii_detected
+            and safety.prompt_injection_detected
+        ):
+            return (
+                "REJECT because the safety component detected "
+                "PII and prompt injection."
+            )
+
+        if safety.pii_detected:
+            return (
+                "REJECT because the safety component detected "
+                "PII in the evaluated content."
+            )
+
+        if safety.prompt_injection_detected:
+            return (
+                "REJECT because the safety component detected "
+                "prompt injection."
+            )
+
+        return (
+            "REJECT because the safety component determined "
+            "that the evaluated content is unsafe."
+        )
+
     if contradiction.label == "CONTRADICTORY":
         return (
             "REJECT because the contradiction component "
@@ -92,9 +121,9 @@ def _build_reason(
         )
 
     return (
-        "ACCEPT because the grounding, relevance, and "
-        "contradiction components are satisfactory and "
-        f"the reliability score ({reliability:.4f}) meets "
+        "ACCEPT because the grounding, relevance, "
+        "contradiction, and safety components are satisfactory "
+        f"and the reliability score ({reliability:.4f}) meets "
         f"the configured threshold ({threshold:.4f})."
     )
 
@@ -104,12 +133,22 @@ def evaluate_decision(
     grounding: GroundingResult,
     relevance: RelevanceResult,
     contradiction: ContradictionResult,
+    safety: SafetyResult | None = None,
     threshold: float | None = None,
 ) -> DecisionResult:
     """
     Combine GroundGuard evaluation signals into one decision.
 
-    Hard safety rules have priority:
+    Safety is optional for backward compatibility with existing
+    decision and benchmark callers.
+
+    When safety is omitted, the decision layer treats the input
+    as having no detected safety threats.
+
+    Hard safety rules have highest priority:
+
+        unsafe
+            -> REJECT
 
         CONTRADICTORY
             -> REJECT
@@ -123,9 +162,8 @@ def evaluate_decision(
         PARTIALLY_SUPPORTED
             -> FLAG
 
-    For otherwise acceptable component labels, the Sprint 6
-    reliability score is evaluated against the configured
-    threshold.
+    Otherwise the reliability score is evaluated against
+    the configured threshold:
 
         score >= threshold
             -> ACCEPT
@@ -133,6 +171,15 @@ def evaluate_decision(
         score < threshold
             -> FLAG
     """
+
+    if safety is None:
+        safety = SafetyResult(
+            safe=True,
+            pii_detected=False,
+            prompt_injection_detected=False,
+            pii_categories=[],
+            evidence=[],
+        )
 
     configured_threshold = (
         DEFAULT_THRESHOLD_POLICY.candidate_threshold
@@ -145,9 +192,20 @@ def evaluate_decision(
             "threshold must be between 0.0 and 1.0"
         )
 
-    grounding_score = round(grounding.score, 4)
-    relevance_score = round(relevance.score, 4)
-    contradiction_score = round(contradiction.score, 4)
+    grounding_score = round(
+        grounding.score,
+        4,
+    )
+
+    relevance_score = round(
+        relevance.score,
+        4,
+    )
+
+    contradiction_score = round(
+        contradiction.score,
+        4,
+    )
 
     score = reliability_score(
         grounding_score=grounding_score,
@@ -155,8 +213,11 @@ def evaluate_decision(
         contradiction_score=contradiction_score,
     )
 
-    if contradiction.label == "CONTRADICTORY":
+    if not safety.safe:
         system_decision: SystemDecisionLabel = "REJECT"
+
+    elif contradiction.label == "CONTRADICTORY":
+        system_decision = "REJECT"
 
     elif grounding.label == "UNSUPPORTED":
         system_decision = "REJECT"
@@ -188,11 +249,15 @@ def evaluate_decision(
         relevance_score=relevance_score,
         contradiction_score=contradiction_score,
         reliability_score=score,
-        threshold=round(configured_threshold, 4),
+        threshold=round(
+            configured_threshold,
+            4,
+        ),
         reason=_build_reason(
             grounding,
             relevance,
             contradiction,
+            safety,
             reliability=score,
             threshold=configured_threshold,
         ),
