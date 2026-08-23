@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 
 from groundguard.application.evaluator import evaluate
+from groundguard.api.dashboard import dashboard
 from groundguard.api.schemas import (
     EvaluateRequest,
     EvaluateResponse,
@@ -11,7 +13,10 @@ from groundguard.api.schemas import (
 
 app = FastAPI(
     title="GroundGuard",
-    description="LLM reliability evaluation and hallucination detection system",
+    description=(
+        "LLM reliability evaluation and "
+        "hallucination detection system"
+    ),
     version="0.1.0",
 )
 
@@ -19,6 +24,14 @@ app = FastAPI(
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get(
+    "/dashboard",
+    response_class=HTMLResponse,
+)
+def dashboard_page() -> HTMLResponse:
+    return dashboard()
 
 
 @app.post(
@@ -49,7 +62,9 @@ def evaluate_answer(
         contradiction_label=result.contradiction.label,
         pii_detected=result.pii.detected,
         pii_categories=list(result.pii.categories),
-        prompt_injection_detected=result.prompt_injection.detected,
+        prompt_injection_detected=(
+            result.prompt_injection.detected
+        ),
         safety_safe=result.safety.safe,
         safety_evidence=result.safety.evidence,
         reason=result.decision.reason,
