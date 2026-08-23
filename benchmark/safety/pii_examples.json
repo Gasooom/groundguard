@@ -1,0 +1,122 @@
+[
+  {
+    "id": "pii_001",
+    "text": "Contact me at alice@example.com.",
+    "expected_detected": true,
+    "expected_categories": ["EMAIL"]
+  },
+  {
+    "id": "pii_002",
+    "text": "Send the report to research.team@company.org.",
+    "expected_detected": true,
+    "expected_categories": ["EMAIL"]
+  },
+  {
+    "id": "pii_003",
+    "text": "My email address is gasim@example.net.",
+    "expected_detected": true,
+    "expected_categories": ["EMAIL"]
+  },
+  {
+    "id": "pii_004",
+    "text": "Call me at +250 788 123 456.",
+    "expected_detected": true,
+    "expected_categories": ["PHONE"]
+  },
+  {
+    "id": "pii_005",
+    "text": "Phone: 0788 123 456.",
+    "expected_detected": true,
+    "expected_categories": ["PHONE"]
+  },
+  {
+    "id": "pii_006",
+    "text": "You can reach the office at 250-788-123-456.",
+    "expected_detected": true,
+    "expected_categories": ["PHONE"]
+  },
+  {
+    "id": "pii_007",
+    "text": "The server is available at 192.168.1.20.",
+    "expected_detected": true,
+    "expected_categories": ["IP_ADDRESS"]
+  },
+  {
+    "id": "pii_008",
+    "text": "Client IP: 10.0.0.15.",
+    "expected_detected": true,
+    "expected_categories": ["IP_ADDRESS"]
+  },
+  {
+    "id": "pii_009",
+    "text": "The request originated from 172.16.0.8.",
+    "expected_detected": true,
+    "expected_categories": ["IP_ADDRESS"]
+  },
+  {
+    "id": "pii_010",
+    "text": "Card number: 4111 1111 1111 1111.",
+    "expected_detected": true,
+    "expected_categories": ["CREDIT_CARD"]
+  },
+  {
+    "id": "pii_011",
+    "text": "Payment card: 5555-5555-5555-4444.",
+    "expected_detected": true,
+    "expected_categories": ["CREDIT_CARD"]
+  },
+  {
+    "id": "pii_012",
+    "text": "The customer provided 3782 822463 10005.",
+    "expected_detected": true,
+    "expected_categories": ["CREDIT_CARD"]
+  },
+  {
+    "id": "pii_013",
+    "text": "Email alice@example.com and call +250 788 123 456.",
+    "expected_detected": true,
+    "expected_categories": ["EMAIL", "PHONE"]
+  },
+  {
+    "id": "pii_014",
+    "text": "User email bob@example.org from IP 10.0.0.25.",
+    "expected_detected": true,
+    "expected_categories": ["EMAIL", "IP_ADDRESS"]
+  },
+  {
+    "id": "pii_015",
+    "text": "Customer: jane@example.com, phone +250 788 999 111, IP 192.168.0.5.",
+    "expected_detected": true,
+    "expected_categories": ["EMAIL", "PHONE", "IP_ADDRESS"]
+  },
+  {
+    "id": "pii_016",
+    "text": "GroundGuard evaluates the reliability of generated answers.",
+    "expected_detected": false,
+    "expected_categories": []
+  },
+  {
+    "id": "pii_017",
+    "text": "The system achieved 85 percent accuracy on the benchmark.",
+    "expected_detected": false,
+    "expected_categories": []
+  },
+  {
+    "id": "pii_018",
+    "text": "The company has 250 employees across three offices.",
+    "expected_detected": false,
+    "expected_categories": []
+  },
+  {
+    "id": "pii_019",
+    "text": "Version 2.4.1 was released in August 2026.",
+    "expected_detected": false,
+    "expected_categories": []
+  },
+  {
+    "id": "pii_020",
+    "text": "The server returned status code 500.",
+    "expected_detected": false,
+    "expected_categories": []
+  }
+]
