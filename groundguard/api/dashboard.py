@@ -172,6 +172,35 @@ DASHBOARD_HTML = """
             padding: 12px;
             border-radius: 8px;
         }
+
+        .stats-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .stats-header h2 {
+            margin: 0;
+        }
+
+        .refresh-button {
+            margin-top: 0;
+            padding: 9px 16px;
+        }
+
+        .stat-accept {
+            color: #15803d;
+        }
+
+        .stat-flag {
+            color: #b45309;
+        }
+
+        .stat-reject {
+            color: #b91c1c;
+        }
     </style>
 </head>
 
@@ -182,6 +211,133 @@ DASHBOARD_HTML = """
     </header>
 
     <main>
+
+        <!-- Evaluation Statistics -->
+        <section class="panel">
+            <div class="stats-header">
+                <h2>Evaluation Statistics</h2>
+
+                <button
+                    id="refresh-stats"
+                    class="refresh-button"
+                    type="button"
+                >
+                    Refresh
+                </button>
+            </div>
+
+            <div class="grid">
+                <div class="metric">
+                    <div class="metric-title">
+                        Total Evaluations
+                    </div>
+                    <div
+                        id="stats-total"
+                        class="metric-value"
+                    >
+                        0
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        ACCEPT
+                    </div>
+                    <div
+                        id="stats-accept"
+                        class="metric-value stat-accept"
+                    >
+                        0
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        FLAG
+                    </div>
+                    <div
+                        id="stats-flag"
+                        class="metric-value stat-flag"
+                    >
+                        0
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        REJECT
+                    </div>
+                    <div
+                        id="stats-reject"
+                        class="metric-value stat-reject"
+                    >
+                        0
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        ACCEPT Rate
+                    </div>
+                    <div
+                        id="stats-accept-rate"
+                        class="metric-value"
+                    >
+                        0.0%
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        FLAG Rate
+                    </div>
+                    <div
+                        id="stats-flag-rate"
+                        class="metric-value"
+                    >
+                        0.0%
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        REJECT Rate
+                    </div>
+                    <div
+                        id="stats-reject-rate"
+                        class="metric-value"
+                    >
+                        0.0%
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        Average Reliability
+                    </div>
+                    <div
+                        id="stats-average-reliability"
+                        class="metric-value"
+                    >
+                        0.0000
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">
+                        Safety Violations
+                    </div>
+                    <div
+                        id="stats-safety-violations"
+                        class="metric-value stat-reject"
+                    >
+                        0
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evaluation Form -->
         <section class="panel">
             <h2>Evaluate an Answer</h2>
 
@@ -227,6 +383,7 @@ DASHBOARD_HTML = """
             <div id="error" class="error hidden"></div>
         </section>
 
+        <!-- Evaluation Result -->
         <section id="results" class="panel hidden">
             <div class="decision">
                 <div>
@@ -328,9 +485,16 @@ DASHBOARD_HTML = """
             "error"
         );
 
+        const refreshStatsButton =
+            document.getElementById(
+                "refresh-stats"
+            );
+
+
         function setText(id, value) {
             document.getElementById(id).textContent = value;
         }
+
 
         function decisionClass(decision) {
             if (decision === "ACCEPT") {
@@ -344,47 +508,16 @@ DASHBOARD_HTML = """
             return "reject";
         }
 
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
 
-            errorBox.classList.add("hidden");
-            results.classList.add("hidden");
-            button.disabled = true;
-            button.textContent = "Evaluating...";
+        function formatRate(value) {
+            return `${(value * 100).toFixed(1)}%`;
+        }
 
-            const payload = {
-                question: document.getElementById(
-                    "question"
-                ).value,
 
-                context: document.getElementById(
-                    "context"
-                ).value,
-
-                answer: document.getElementById(
-                    "answer"
-                ).value,
-            };
-
-            const threshold = document.getElementById(
-                "threshold"
-            ).value;
-
-            if (threshold !== "") {
-                payload.threshold = Number(threshold);
-            }
-
+        async function loadStats() {
             try {
                 const response = await fetch(
-                    "/evaluate",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body: JSON.stringify(payload),
-                    }
+                    "/evaluations/stats"
                 );
 
                 const data = await response.json();
@@ -392,87 +525,232 @@ DASHBOARD_HTML = """
                 if (!response.ok) {
                     throw new Error(
                         data.detail ||
-                        "Evaluation request failed."
+                        "Failed to load statistics."
                     );
                 }
 
                 setText(
-                    "decision",
-                    data.system_decision
+                    "stats-total",
+                    data.total
                 );
 
-                const decisionElement =
-                    document.getElementById("decision");
+                setText(
+                    "stats-accept",
+                    data.accept
+                );
 
-                decisionElement.className =
-                    "decision-label " +
-                    decisionClass(
+                setText(
+                    "stats-flag",
+                    data.flag
+                );
+
+                setText(
+                    "stats-reject",
+                    data.reject
+                );
+
+                setText(
+                    "stats-accept-rate",
+                    formatRate(
+                        data.accept_rate
+                    )
+                );
+
+                setText(
+                    "stats-flag-rate",
+                    formatRate(
+                        data.flag_rate
+                    )
+                );
+
+                setText(
+                    "stats-reject-rate",
+                    formatRate(
+                        data.reject_rate
+                    )
+                );
+
+                setText(
+                    "stats-average-reliability",
+                    data.average_reliability.toFixed(4)
+                );
+
+                setText(
+                    "stats-safety-violations",
+                    data.safety_violations
+                );
+            } catch (error) {
+                console.error(
+                    "Failed to load statistics:",
+                    error
+                );
+            }
+        }
+
+
+        refreshStatsButton.addEventListener(
+            "click",
+            loadStats
+        );
+
+
+        form.addEventListener(
+            "submit",
+            async (event) => {
+                event.preventDefault();
+
+                errorBox.classList.add("hidden");
+                results.classList.add("hidden");
+
+                button.disabled = true;
+                button.textContent = "Evaluating...";
+
+                const payload = {
+                    question: document.getElementById(
+                        "question"
+                    ).value,
+
+                    context: document.getElementById(
+                        "context"
+                    ).value,
+
+                    answer: document.getElementById(
+                        "answer"
+                    ).value,
+                };
+
+                const threshold =
+                    document.getElementById(
+                        "threshold"
+                    ).value;
+
+                if (threshold !== "") {
+                    payload.threshold =
+                        Number(threshold);
+                }
+
+                try {
+                    const response =
+                        await fetch(
+                            "/evaluate",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body:
+                                    JSON.stringify(
+                                        payload
+                                    ),
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.detail ||
+                            "Evaluation request failed."
+                        );
+                    }
+
+                    setText(
+                        "decision",
                         data.system_decision
                     );
 
-                setText(
-                    "reliability",
-                    data.reliability_score.toFixed(4)
-                );
+                    const decisionElement =
+                        document.getElementById(
+                            "decision"
+                        );
 
-                setText(
-                    "grounding",
-                    `${data.grounding_label} (${data.grounding_score.toFixed(4)})`
-                );
+                    decisionElement.className =
+                        "decision-label " +
+                        decisionClass(
+                            data.system_decision
+                        );
 
-                setText(
-                    "relevance",
-                    `${data.relevance_label} (${data.relevance_score.toFixed(4)})`
-                );
+                    setText(
+                        "reliability",
+                        data.reliability_score
+                            .toFixed(4)
+                    );
 
-                setText(
-                    "contradiction",
-                    `${data.contradiction_label} (${data.contradiction_score.toFixed(4)})`
-                );
+                    setText(
+                        "grounding",
+                        `${data.grounding_label} (${data.grounding_score.toFixed(4)})`
+                    );
 
-                setText(
-                    "threshold-result",
-                    data.threshold.toFixed(4)
-                );
+                    setText(
+                        "relevance",
+                        `${data.relevance_label} (${data.relevance_score.toFixed(4)})`
+                    );
 
-                setText(
-                    "pii",
-                    data.pii_detected
-                        ? "DETECTED"
-                        : "CLEAR"
-                );
+                    setText(
+                        "contradiction",
+                        `${data.contradiction_label} (${data.contradiction_score.toFixed(4)})`
+                    );
 
-                setText(
-                    "prompt-injection",
-                    data.prompt_injection_detected
-                        ? "DETECTED"
-                        : "CLEAR"
-                );
+                    setText(
+                        "threshold-result",
+                        data.threshold.toFixed(4)
+                    );
 
-                setText(
-                    "safety",
-                    data.safety_safe
-                        ? "SAFE"
-                        : "UNSAFE"
-                );
+                    setText(
+                        "pii",
+                        data.pii_detected
+                            ? "DETECTED"
+                            : "CLEAR"
+                    );
 
-                setText(
-                    "reason",
-                    data.reason
-                );
+                    setText(
+                        "prompt-injection",
+                        data.prompt_injection_detected
+                            ? "DETECTED"
+                            : "CLEAR"
+                    );
 
-                results.classList.remove("hidden");
-            } catch (error) {
-                errorBox.textContent =
-                    error.message ||
-                    "Evaluation request failed.";
+                    setText(
+                        "safety",
+                        data.safety_safe
+                            ? "SAFE"
+                            : "UNSAFE"
+                    );
 
-                errorBox.classList.remove("hidden");
-            } finally {
-                button.disabled = false;
-                button.textContent = "Evaluate";
+                    setText(
+                        "reason",
+                        data.reason
+                    );
+
+                    results.classList.remove(
+                        "hidden"
+                    );
+
+                    // Refresh statistics immediately
+                    // after creating a new evaluation.
+                    await loadStats();
+
+                } catch (error) {
+                    errorBox.textContent =
+                        error.message ||
+                        "Evaluation request failed.";
+
+                    errorBox.classList.remove(
+                        "hidden"
+                    );
+
+                } finally {
+                    button.disabled = false;
+                    button.textContent = "Evaluate";
+                }
             }
-        });
+        );
+
+
+        // Load statistics when dashboard opens.
+        loadStats();
     </script>
 </body>
 </html>
