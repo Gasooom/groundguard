@@ -12,6 +12,7 @@ from groundguard.application.evaluator import evaluate
 from groundguard.evaluation.evaluation_record import (
     EvaluationRecord,
 )
+from groundguard.storage import EvaluationStore
 
 
 app = FastAPI(
@@ -24,7 +25,7 @@ app = FastAPI(
 )
 
 
-_evaluation_history: list[EvaluationRecord] = []
+_store = EvaluationStore()
 
 
 @app.get("/health")
@@ -43,23 +44,20 @@ def dashboard_page() -> HTMLResponse:
 @app.get("/evaluations")
 def get_evaluations() -> list[dict]:
     """
-    Return evaluations recorded during the current process.
+    Return persisted evaluations.
     """
 
-    return [
-        record.to_dict()
-        for record in _evaluation_history
-    ]
+    return _store.get_all()
 
 
 @app.get("/evaluations/stats")
 def get_evaluation_stats() -> dict[str, float | int]:
     """
-    Return aggregate statistics for evaluations recorded
-    during the current process.
+    Return aggregate statistics for persisted evaluations.
     """
 
-    total = len(_evaluation_history)
+    records = _store.get_all()
+    total = len(records)
 
     if total == 0:
         return {
@@ -75,31 +73,31 @@ def get_evaluation_stats() -> dict[str, float | int]:
         }
 
     accept = sum(
-        record.system_decision == "ACCEPT"
-        for record in _evaluation_history
+        record["system_decision"] == "ACCEPT"
+        for record in records
     )
 
     flag = sum(
-        record.system_decision == "FLAG"
-        for record in _evaluation_history
+        record["system_decision"] == "FLAG"
+        for record in records
     )
 
     reject = sum(
-        record.system_decision == "REJECT"
-        for record in _evaluation_history
+        record["system_decision"] == "REJECT"
+        for record in records
     )
 
     average_reliability = (
         sum(
-            record.reliability_score
-            for record in _evaluation_history
+            record["reliability_score"]
+            for record in records
         )
         / total
     )
 
     safety_violations = sum(
-        not record.safety_safe
-        for record in _evaluation_history
+        not record["safety_safe"]
+        for record in records
     )
 
     return {
@@ -148,7 +146,7 @@ def evaluate_answer(
         result=result,
     )
 
-    _evaluation_history.append(record)
+    _store.save(record)
 
     return EvaluateResponse(
         label=result.decision.label,
