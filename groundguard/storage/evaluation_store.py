@@ -6,6 +6,7 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+
 from groundguard.evaluation.evaluation_record import (
     EvaluationRecord,
 )
@@ -72,25 +73,51 @@ class EvaluationStore:
 
         return evaluation_id
 
-    def get_all(self) -> list[dict[str, Any]]:
+    def get_all(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int = 0,
+        system_decision: str | None = None,
+    ) -> list[dict[str, Any]]:
+        query = """
+            SELECT id, created_at, data
+            FROM evaluations
+        """
+
+        parameters: list[Any] = []
+
+        if system_decision is not None:
+            query += """
+                WHERE json_extract(
+                    data,
+                    '$.system_decision'
+                ) = ?
+            """
+            parameters.append(system_decision)
+
+        query += """
+            ORDER BY created_at DESC
+        """
+
+        if limit is not None:
+            query += " LIMIT ?"
+            parameters.append(limit)
+
+        if offset:
+            query += " OFFSET ?"
+            parameters.append(offset)
+
         with self._connect() as connection:
             rows = connection.execute(
-                """
-                SELECT id, created_at, data
-                FROM evaluations
-                ORDER BY created_at DESC
-                """
+                query,
+                parameters,
             ).fetchall()
 
-        records = []
-
-        for row in rows:
-            data = json.loads(row["data"])
-            data["id"] = row["id"]
-            data["created_at"] = row["created_at"]
-            records.append(data)
-
-        return records
+        return [
+            self._row_to_dict(row)
+            for row in rows
+        ]
 
     def get_by_id(
         self,
@@ -109,19 +136,33 @@ class EvaluationStore:
         if row is None:
             return None
 
-        data = json.loads(row["data"])
-        data["id"] = row["id"]
-        data["created_at"] = row["created_at"]
+        return self._row_to_dict(row)
 
-        return data
+    def count(
+        self,
+        *,
+        system_decision: str | None = None,
+    ) -> int:
+        query = """
+            SELECT COUNT(*) AS count
+            FROM evaluations
+        """
 
-    def count(self) -> int:
+        parameters: list[Any] = []
+
+        if system_decision is not None:
+            query += """
+                WHERE json_extract(
+                    data,
+                    '$.system_decision'
+                ) = ?
+            """
+            parameters.append(system_decision)
+
         with self._connect() as connection:
             row = connection.execute(
-                """
-                SELECT COUNT(*) AS count
-                FROM evaluations
-                """
+                query,
+                parameters,
             ).fetchone()
 
         return int(row["count"])
@@ -131,3 +172,12 @@ class EvaluationStore:
             connection.execute(
                 "DELETE FROM evaluations"
             )
+
+    @staticmethod
+    def _row_to_dict(
+        row: sqlite3.Row,
+    ) -> dict[str, Any]:
+        data = json.loads(row["data"])
+        data["id"] = row["id"]
+        data["created_at"] = row["created_at"]
+        return data

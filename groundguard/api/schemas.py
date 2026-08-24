@@ -15,6 +15,8 @@ class EvaluateRequest(BaseModel):
 
 
 class EvaluateResponse(BaseModel):
+    evaluation_id: str
+
     label: str
     reliable: bool
     system_decision: str

@@ -125,3 +125,72 @@ def test_records_persist_across_store_instances(
 
     assert result is not None
     assert result["id"] == evaluation_id
+    
+def test_get_all_supports_limit_and_offset(
+    tmp_path: Path,
+):
+    store = EvaluationStore(
+        tmp_path / "groundguard.db"
+    )
+
+    first_id = store.save(make_record())
+    second_id = store.save(make_record())
+    third_id = store.save(make_record())
+
+    records = store.get_all(
+        limit=2,
+        offset=1,
+    )
+
+    assert len(records) == 2
+
+    returned_ids = {
+        record["id"]
+        for record in records
+    }
+
+    assert first_id not in returned_ids
+    assert second_id in returned_ids
+    assert third_id in returned_ids
+
+
+def test_get_all_filters_by_system_decision(
+    tmp_path: Path,
+):
+    store = EvaluationStore(
+        tmp_path / "groundguard.db"
+    )
+
+    store.save(make_record())
+
+    records = store.get_all(
+        system_decision="ACCEPT"
+    )
+
+    assert len(records) == 1
+    assert records[0]["system_decision"] == "ACCEPT"
+
+    rejected = store.get_all(
+        system_decision="REJECT"
+    )
+
+    assert rejected == []
+
+
+def test_count_filters_by_system_decision(
+    tmp_path: Path,
+):
+    store = EvaluationStore(
+        tmp_path / "groundguard.db"
+    )
+
+    store.save(make_record())
+    store.save(make_record())
+
+    assert store.count(
+        system_decision="ACCEPT"
+    ) == 2
+
+    assert store.count(
+        system_decision="REJECT"
+    ) == 0    

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 
 from groundguard.api.dashboard import dashboard
@@ -42,12 +42,30 @@ def dashboard_page() -> HTMLResponse:
 
 
 @app.get("/evaluations")
-def get_evaluations() -> list[dict]:
+def get_evaluations(
+    limit: int = Query(
+        default=20,
+        ge=1,
+        le=100,
+    ),
+    offset: int = Query(
+        default=0,
+        ge=0,
+    ),
+    system_decision: str | None = Query(
+        default=None,
+    ),
+) -> list[dict]:
     """
-    Return persisted evaluations.
+    Return persisted evaluations with pagination
+    and optional decision filtering.
     """
 
-    return _store.get_all()
+    return _store.get_all(
+        limit=limit,
+        offset=offset,
+        system_decision=system_decision,
+    )
 
 
 @app.get("/evaluations/stats")
@@ -56,8 +74,7 @@ def get_evaluation_stats() -> dict[str, float | int]:
     Return aggregate statistics for persisted evaluations.
     """
 
-    records = _store.get_all()
-    total = len(records)
+    total = _store.count()
 
     if total == 0:
         return {
@@ -72,20 +89,19 @@ def get_evaluation_stats() -> dict[str, float | int]:
             "safety_violations": 0,
         }
 
-    accept = sum(
-        record["system_decision"] == "ACCEPT"
-        for record in records
+    accept = _store.count(
+        system_decision="ACCEPT"
     )
 
-    flag = sum(
-        record["system_decision"] == "FLAG"
-        for record in records
+    flag = _store.count(
+        system_decision="FLAG"
     )
 
-    reject = sum(
-        record["system_decision"] == "REJECT"
-        for record in records
+    reject = _store.count(
+        system_decision="REJECT"
     )
+
+    records = _store.get_all()
 
     average_reliability = (
         sum(
@@ -125,6 +141,27 @@ def get_evaluation_stats() -> dict[str, float | int]:
     }
 
 
+@app.get("/evaluations/{evaluation_id}")
+def get_evaluation(
+    evaluation_id: str,
+) -> dict:
+    """
+    Return one persisted evaluation by ID.
+    """
+
+    record = _store.get_by_id(
+        evaluation_id
+    )
+
+    if record is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Evaluation not found",
+        )
+
+    return record
+
+
 @app.post(
     "/evaluate",
     response_model=EvaluateResponse,
@@ -146,9 +183,10 @@ def evaluate_answer(
         result=result,
     )
 
-    _store.save(record)
+    evaluation_id = _store.save(record)
 
     return EvaluateResponse(
+        evaluation_id=evaluation_id,
         label=result.decision.label,
         reliable=result.decision.reliable,
         system_decision=result.decision.system_decision,
@@ -161,11 +199,15 @@ def evaluate_answer(
         relevance_label=result.relevance.label,
         contradiction_label=result.contradiction.label,
         pii_detected=result.pii.detected,
-        pii_categories=list(result.pii.categories),
+        pii_categories=list(
+            result.pii.categories
+        ),
         prompt_injection_detected=(
             result.prompt_injection.detected
         ),
         safety_safe=result.safety.safe,
-        safety_evidence=result.safety.evidence,
+        safety_evidence=list(
+            result.safety.evidence
+        ),
         reason=result.decision.reason,
     )

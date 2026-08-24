@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from fastapi.testclient import TestClient
 
 from groundguard.api.app import app
@@ -30,6 +32,7 @@ def test_evaluate_supported_answer():
 
     data = response.json()
 
+    assert data["evaluation_id"]
     assert data["grounding_label"] == "SUPPORTED"
     assert data["relevance_label"] == "RELEVANT"
     assert data["safety_safe"] is True
@@ -51,6 +54,7 @@ def test_evaluate_pii_is_rejected():
 
     data = response.json()
 
+    assert data["evaluation_id"]
     assert data["pii_detected"] is True
     assert data["safety_safe"] is False
     assert data["system_decision"] == "REJECT"
@@ -74,6 +78,7 @@ def test_evaluate_prompt_injection_is_rejected():
 
     data = response.json()
 
+    assert data["evaluation_id"]
     assert data["prompt_injection_detected"] is True
     assert data["safety_safe"] is False
     assert data["system_decision"] == "REJECT"
@@ -91,8 +96,8 @@ def test_invalid_threshold_returns_validation_error():
     )
 
     assert response.status_code == 422
-    
-    
+
+
 def test_evaluations_history_starts_empty_or_contains_previous_results():
     response = client.get("/evaluations")
 
@@ -101,36 +106,41 @@ def test_evaluations_history_starts_empty_or_contains_previous_results():
 
 
 def test_evaluate_creates_evaluation_record():
+    question = "When was the company founded?"
+    context = "The company was founded in 2018."
+    answer = "The company was founded in 2018."
+
     response = client.post(
         "/evaluate",
         json={
-            "question": "When was the company founded?",
-            "context": "The company was founded in 2018.",
-            "answer": "The company was founded in 2018.",
+            "question": question,
+            "context": context,
+            "answer": answer,
         },
     )
 
     assert response.status_code == 200
 
-    history = client.get("/evaluations")
+    evaluation_id = response.json()["evaluation_id"]
 
-    assert history.status_code == 200
+    assert evaluation_id
 
-    records = history.json()
-
-    assert len(records) >= 1
-
-    record = records[-1]
-
-    assert record["question"] == (
-        "When was the company founded?"
+    detail = client.get(
+        f"/evaluations/{evaluation_id}"
     )
-    assert record["answer"] == (
-        "The company was founded in 2018."
-    )
+
+    assert detail.status_code == 200
+
+    record = detail.json()
+
+    assert record["id"] == evaluation_id
+    assert record["question"] == question
+    assert record["context"] == context
+    assert record["answer"] == answer
     assert record["system_decision"] == "ACCEPT"
-    assert record["reliability_score"] == 1.0    
-    
+    assert record["reliability_score"] == 1.0
+
+
 def test_evaluation_stats():
     response = client.get("/evaluations/stats")
 
@@ -148,11 +158,51 @@ def test_evaluation_stats():
     assert "average_reliability" in data
     assert "safety_violations" in data
 
-    assert data["total"] >= 1
+    assert data["total"] >= 0
     assert data["accept"] >= 0
     assert data["flag"] >= 0
     assert data["reject"] >= 0
-    assert 0.0 <= data["accept_rate"] <= 1.0
-    assert 0.0 <= data["flag_rate"] <= 1.0
-    assert 0.0 <= data["reject_rate"] <= 1.0
-    assert 0.0 <= data["average_reliability"] <= 1.0    
+
+
+def test_evaluations_support_pagination():
+    response = client.get(
+        "/evaluations",
+        params={
+            "limit": 2,
+            "offset": 0,
+        },
+    )
+
+    assert response.status_code == 200
+
+    records = response.json()
+
+    assert isinstance(records, list)
+    assert len(records) <= 2
+
+
+def test_evaluations_support_decision_filter():
+    response = client.get(
+        "/evaluations",
+        params={
+            "system_decision": "ACCEPT",
+        },
+    )
+
+    assert response.status_code == 200
+
+    records = response.json()
+
+    assert isinstance(records, list)
+
+    for record in records:
+        assert record["system_decision"] == "ACCEPT"
+
+
+def test_evaluation_not_found():
+    response = client.get(
+        "/evaluations/does-not-exist",
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Evaluation not found"

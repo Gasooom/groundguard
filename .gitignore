@@ -9,4 +9,5 @@ htmlcov/
 .vscode/
 dist/
 build/
-*.egg-info/groundguard.db
+*.egg-info/
+groundguard.dbgroundguard.db
