@@ -10,4 +10,4 @@ htmlcov/
 dist/
 build/
 *.egg-info/
-groundguard.dbgroundguard.db
+groundguard.db

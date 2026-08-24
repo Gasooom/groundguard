@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException, Query
+import os
+
+from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 
 from groundguard.api.dashboard import dashboard
@@ -15,6 +17,12 @@ from groundguard.evaluation.evaluation_record import (
 from groundguard.storage import EvaluationStore
 
 
+DATABASE_PATH = os.getenv(
+    "GROUNDGUARD_DATABASE_PATH",
+    "groundguard.db",
+)
+
+
 app = FastAPI(
     title="GroundGuard",
     description=(
@@ -25,7 +33,7 @@ app = FastAPI(
 )
 
 
-_store = EvaluationStore()
+_store = EvaluationStore(DATABASE_PATH)
 
 
 @app.get("/health")
@@ -44,9 +52,9 @@ def dashboard_page() -> HTMLResponse:
 @app.get("/evaluations")
 def get_evaluations(
     limit: int = Query(
-        default=20,
+        default=100,
         ge=1,
-        le=100,
+        le=1000,
     ),
     offset: int = Query(
         default=0,
@@ -74,7 +82,9 @@ def get_evaluation_stats() -> dict[str, float | int]:
     Return aggregate statistics for persisted evaluations.
     """
 
-    total = _store.count()
+    records = _store.get_all()
+
+    total = len(records)
 
     if total == 0:
         return {
@@ -89,19 +99,20 @@ def get_evaluation_stats() -> dict[str, float | int]:
             "safety_violations": 0,
         }
 
-    accept = _store.count(
-        system_decision="ACCEPT"
+    accept = sum(
+        record["system_decision"] == "ACCEPT"
+        for record in records
     )
 
-    flag = _store.count(
-        system_decision="FLAG"
+    flag = sum(
+        record["system_decision"] == "FLAG"
+        for record in records
     )
 
-    reject = _store.count(
-        system_decision="REJECT"
+    reject = sum(
+        record["system_decision"] == "REJECT"
+        for record in records
     )
-
-    records = _store.get_all()
 
     average_reliability = (
         sum(
@@ -149,11 +160,11 @@ def get_evaluation(
     Return one persisted evaluation by ID.
     """
 
-    record = _store.get_by_id(
-        evaluation_id
-    )
+    record = _store.get_by_id(evaluation_id)
 
     if record is None:
+        from fastapi import HTTPException
+
         raise HTTPException(
             status_code=404,
             detail="Evaluation not found",
@@ -199,15 +210,11 @@ def evaluate_answer(
         relevance_label=result.relevance.label,
         contradiction_label=result.contradiction.label,
         pii_detected=result.pii.detected,
-        pii_categories=list(
-            result.pii.categories
-        ),
+        pii_categories=list(result.pii.categories),
         prompt_injection_detected=(
             result.prompt_injection.detected
         ),
         safety_safe=result.safety.safe,
-        safety_evidence=list(
-            result.safety.evidence
-        ),
+        safety_evidence=result.safety.evidence,
         reason=result.decision.reason,
     )

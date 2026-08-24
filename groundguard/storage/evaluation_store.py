@@ -6,7 +6,6 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-
 from groundguard.evaluation.evaluation_record import (
     EvaluationRecord,
 )
@@ -20,7 +19,20 @@ class EvaluationStore:
         database_path: str | Path = "groundguard.db",
     ) -> None:
         self.database_path = str(database_path)
+
+        self._ensure_parent_directory()
         self._initialize()
+
+    def _ensure_parent_directory(self) -> None:
+        """Create the database parent directory when needed."""
+
+        path = Path(self.database_path)
+
+        if path.parent != Path("."):
+            path.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(
@@ -98,15 +110,15 @@ class EvaluationStore:
 
         query += """
             ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
         """
 
-        if limit is not None:
-            query += " LIMIT ?"
-            parameters.append(limit)
-
-        if offset:
-            query += " OFFSET ?"
-            parameters.append(offset)
+        parameters.extend(
+            [
+                -1 if limit is None else limit,
+                offset,
+            ]
+        )
 
         with self._connect() as connection:
             rows = connection.execute(
@@ -114,10 +126,15 @@ class EvaluationStore:
                 parameters,
             ).fetchall()
 
-        return [
-            self._row_to_dict(row)
-            for row in rows
-        ]
+        records = []
+
+        for row in rows:
+            data = json.loads(row["data"])
+            data["id"] = row["id"]
+            data["created_at"] = row["created_at"]
+            records.append(data)
+
+        return records
 
     def get_by_id(
         self,
@@ -136,7 +153,11 @@ class EvaluationStore:
         if row is None:
             return None
 
-        return self._row_to_dict(row)
+        data = json.loads(row["data"])
+        data["id"] = row["id"]
+        data["created_at"] = row["created_at"]
+
+        return data
 
     def count(
         self,
@@ -172,12 +193,3 @@ class EvaluationStore:
             connection.execute(
                 "DELETE FROM evaluations"
             )
-
-    @staticmethod
-    def _row_to_dict(
-        row: sqlite3.Row,
-    ) -> dict[str, Any]:
-        data = json.loads(row["data"])
-        data["id"] = row["id"]
-        data["created_at"] = row["created_at"]
-        return data

@@ -4,6 +4,9 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV GROUNDGUARD_DATABASE_PATH=/app/data/groundguard.db
+
+RUN mkdir -p /app/data
 
 COPY pyproject.toml README.md ./
 
