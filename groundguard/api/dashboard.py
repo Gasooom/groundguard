@@ -366,6 +366,7 @@ DASHBOARD_HTML = """
                 <label for="threshold">
                     Threshold (optional)
                 </label>
+
                 <input
                     id="threshold"
                     type="number"
@@ -390,7 +391,11 @@ DASHBOARD_HTML = """
                     <div class="metric-title">
                         System Decision
                     </div>
-                    <div id="decision" class="decision-label">
+
+                    <div
+                        id="decision"
+                        class="decision-label"
+                    >
                         -
                     </div>
                 </div>
@@ -399,44 +404,79 @@ DASHBOARD_HTML = """
                     <div class="metric-title">
                         Reliability Score
                     </div>
-                    <div id="reliability" class="score">
+
+                    <div
+                        id="reliability"
+                        class="score"
+                    >
                         -
                     </div>
                 </div>
             </div>
 
             <div class="grid">
+
                 <div class="metric">
-                    <div class="metric-title">Grounding</div>
-                    <div id="grounding" class="metric-value">
+                    <div class="metric-title">
+                        Grounding
+                    </div>
+
+                    <div
+                        id="grounding"
+                        class="metric-value"
+                    >
                         -
                     </div>
                 </div>
 
                 <div class="metric">
-                    <div class="metric-title">Relevance</div>
-                    <div id="relevance" class="metric-value">
+                    <div class="metric-title">
+                        Relevance
+                    </div>
+
+                    <div
+                        id="relevance"
+                        class="metric-value"
+                    >
                         -
                     </div>
                 </div>
 
                 <div class="metric">
-                    <div class="metric-title">Contradiction</div>
-                    <div id="contradiction" class="metric-value">
+                    <div class="metric-title">
+                        Contradiction
+                    </div>
+
+                    <div
+                        id="contradiction"
+                        class="metric-value"
+                    >
                         -
                     </div>
                 </div>
 
                 <div class="metric">
-                    <div class="metric-title">Threshold</div>
-                    <div id="threshold-result" class="metric-value">
+                    <div class="metric-title">
+                        Threshold
+                    </div>
+
+                    <div
+                        id="threshold-result"
+                        class="metric-value"
+                    >
                         -
                     </div>
                 </div>
 
                 <div class="metric">
-                    <div class="metric-title">PII</div>
-                    <div id="pii" class="metric-value">
+                    <div class="metric-title">
+                        PII
+                    </div>
+
+                    <div
+                        id="pii"
+                        class="metric-value"
+                    >
                         -
                     </div>
                 </div>
@@ -445,6 +485,7 @@ DASHBOARD_HTML = """
                     <div class="metric-title">
                         Prompt Injection
                     </div>
+
                     <div
                         id="prompt-injection"
                         class="metric-value"
@@ -454,16 +495,31 @@ DASHBOARD_HTML = """
                 </div>
 
                 <div class="metric">
-                    <div class="metric-title">Safety</div>
-                    <div id="safety" class="metric-value">
+                    <div class="metric-title">
+                        Safety
+                    </div>
+
+                    <div
+                        id="safety"
+                        class="metric-value"
+                    >
                         -
                     </div>
                 </div>
+
             </div>
 
             <div style="margin-top: 20px;">
-                <div class="metric-title">Reason</div>
-                <div id="reason" class="reason">-</div>
+                <div class="metric-title">
+                    Reason
+                </div>
+
+                <div
+                    id="reason"
+                    class="reason"
+                >
+                    -
+                </div>
             </div>
         </section>
     </main>
@@ -492,7 +548,12 @@ DASHBOARD_HTML = """
 
 
         function setText(id, value) {
-            document.getElementById(id).textContent = value;
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+                element.textContent = value;
+            }
         }
 
 
@@ -515,12 +576,20 @@ DASHBOARD_HTML = """
 
 
         async function loadStats() {
+            refreshStatsButton.disabled = true;
+            refreshStatsButton.textContent =
+                "Refreshing...";
+
             try {
                 const response = await fetch(
-                    "/evaluations/stats"
+                    "/evaluations/stats",
+                    {
+                        cache: "no-store"
+                    }
                 );
 
-                const data = await response.json();
+                const data =
+                    await response.json();
 
                 if (!response.ok) {
                     throw new Error(
@@ -572,25 +641,69 @@ DASHBOARD_HTML = """
 
                 setText(
                     "stats-average-reliability",
-                    data.average_reliability.toFixed(4)
+                    data.average_reliability
+                        .toFixed(4)
                 );
 
                 setText(
                     "stats-safety-violations",
                     data.safety_violations
                 );
+
             } catch (error) {
                 console.error(
                     "Failed to load statistics:",
                     error
                 );
+
+            } finally {
+                refreshStatsButton.disabled = false;
+
+                refreshStatsButton.textContent =
+                    "Refresh";
             }
         }
 
 
         refreshStatsButton.addEventListener(
             "click",
-            loadStats
+            async () => {
+
+                // Clear previous evaluation input.
+                document.getElementById(
+                    "question"
+                ).value = "";
+
+                document.getElementById(
+                    "context"
+                ).value = "";
+
+                document.getElementById(
+                    "answer"
+                ).value = "";
+
+                document.getElementById(
+                    "threshold"
+                ).value = "";
+
+
+                // Hide previous evaluation result.
+                results.classList.add(
+                    "hidden"
+                );
+
+
+                // Clear previous error.
+                errorBox.classList.add(
+                    "hidden"
+                );
+
+                errorBox.textContent = "";
+
+
+                // Reload current statistics.
+                await loadStats();
+            }
         );
 
 
@@ -599,35 +712,49 @@ DASHBOARD_HTML = """
             async (event) => {
                 event.preventDefault();
 
-                errorBox.classList.add("hidden");
-                results.classList.add("hidden");
+                errorBox.classList.add(
+                    "hidden"
+                );
+
+                results.classList.add(
+                    "hidden"
+                );
 
                 button.disabled = true;
-                button.textContent = "Evaluating...";
+
+                button.textContent =
+                    "Evaluating...";
+
 
                 const payload = {
-                    question: document.getElementById(
-                        "question"
-                    ).value,
+                    question:
+                        document.getElementById(
+                            "question"
+                        ).value,
 
-                    context: document.getElementById(
-                        "context"
-                    ).value,
+                    context:
+                        document.getElementById(
+                            "context"
+                        ).value,
 
-                    answer: document.getElementById(
-                        "answer"
-                    ).value,
+                    answer:
+                        document.getElementById(
+                            "answer"
+                        ).value,
                 };
+
 
                 const threshold =
                     document.getElementById(
                         "threshold"
                     ).value;
 
+
                 if (threshold !== "") {
                     payload.threshold =
                         Number(threshold);
                 }
+
 
                 try {
                     const response =
@@ -635,10 +762,12 @@ DASHBOARD_HTML = """
                             "/evaluate",
                             {
                                 method: "POST",
+
                                 headers: {
                                     "Content-Type":
                                         "application/json"
                                 },
+
                                 body:
                                     JSON.stringify(
                                         payload
@@ -646,8 +775,10 @@ DASHBOARD_HTML = """
                             }
                         );
 
+
                     const data =
                         await response.json();
+
 
                     if (!response.ok) {
                         throw new Error(
@@ -656,15 +787,18 @@ DASHBOARD_HTML = """
                         );
                     }
 
+
                     setText(
                         "decision",
                         data.system_decision
                     );
 
+
                     const decisionElement =
                         document.getElementById(
                             "decision"
                         );
+
 
                     decisionElement.className =
                         "decision-label " +
@@ -672,31 +806,37 @@ DASHBOARD_HTML = """
                             data.system_decision
                         );
 
+
                     setText(
                         "reliability",
                         data.reliability_score
                             .toFixed(4)
                     );
 
+
                     setText(
                         "grounding",
                         `${data.grounding_label} (${data.grounding_score.toFixed(4)})`
                     );
+
 
                     setText(
                         "relevance",
                         `${data.relevance_label} (${data.relevance_score.toFixed(4)})`
                     );
 
+
                     setText(
                         "contradiction",
                         `${data.contradiction_label} (${data.contradiction_score.toFixed(4)})`
                     );
 
+
                     setText(
                         "threshold-result",
                         data.threshold.toFixed(4)
                     );
+
 
                     setText(
                         "pii",
@@ -705,12 +845,14 @@ DASHBOARD_HTML = """
                             : "CLEAR"
                     );
 
+
                     setText(
                         "prompt-injection",
                         data.prompt_injection_detected
                             ? "DETECTED"
                             : "CLEAR"
                     );
+
 
                     setText(
                         "safety",
@@ -719,20 +861,24 @@ DASHBOARD_HTML = """
                             : "UNSAFE"
                     );
 
+
                     setText(
                         "reason",
                         data.reason
                     );
 
+
                     results.classList.remove(
                         "hidden"
                     );
 
-                    // Refresh statistics immediately
-                    // after creating a new evaluation.
+
+                    // Update dashboard statistics
+                    // after every new evaluation.
                     await loadStats();
 
                 } catch (error) {
+
                     errorBox.textContent =
                         error.message ||
                         "Evaluation request failed.";
@@ -742,8 +888,11 @@ DASHBOARD_HTML = """
                     );
 
                 } finally {
+
                     button.disabled = false;
-                    button.textContent = "Evaluate";
+
+                    button.textContent =
+                        "Evaluate";
                 }
             }
         );

@@ -1,6 +1,8 @@
-**GroundGuard — Production-oriented LLM reliability evaluation and hallucination detection system**
+**GroundGuard Production-oriented LLM reliability evaluation and hallucination detection system**
 
 GroundGuard is an evaluation layer for LLM applications that evaluates generated answers against supplied source context and produces an auditable ACCEPT / FLAG / REJECT decision. The goal is not to claim universal factual truth, but to measure how reliable an answer is given the evidence and evaluation criteria available to the system. Current release: v0.1.0 — Shipped.
+
+
 
 **Problem**
 
@@ -144,9 +146,9 @@ The current 250-record benchmark produced the following baseline results:
 
 Grounding: 64.40% accuracy — 161/250 correct  
 Relevance: 97.20% accuracy — 243/250 correct  
-Contradiction: 91.60% accuracy — 229/250 correct
+Contradiction: 99.20% accuracy — 248/250 correct
 
-Grounding is currently the primary evaluation bottleneck, while relevance and contradiction perform substantially better.
+Grounding is currently the primary evaluation bottleneck. Relevance and contradiction perform substantially better, with the current contradiction benchmark reaching 99.20% accuracy after question-aware and structured comparison fixes.
 
 These results are reported as baseline results on the current construction dataset and are not claims of universal factual accuracy.
 
@@ -197,6 +199,11 @@ Testing is a major part of the project. The automated suite covers API behavior,
 Current release validation:
 
 226 tests passed.
+
+Current contradiction benchmark validation:
+
+248/250 correct — 99.20% accuracy
+2 false negatives — 0.80% error rate
 
 Run the complete test suite with:
 
@@ -322,6 +329,20 @@ Statistics / Observability
 REST API + Dashboard
 ↓
 Docker Deployment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 **Status: SHIPPED**
 

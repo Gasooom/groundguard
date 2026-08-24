@@ -14,7 +14,9 @@ from groundguard.domain.grounding import (
     GroundingResult,
     evaluate_grounding,
 )
-from groundguard.domain.pii import detect_pii
+from groundguard.domain.pii import (
+    detect_pii,
+)
 from groundguard.domain.prompt_injection import (
     PromptInjectionResult,
     detect_prompt_injection,
@@ -64,7 +66,9 @@ def _adapt_prompt_injection(
 
     return PromptInjectionDetection(
         detected=result.detected,
-        evidence=list(result.evidence),
+        evidence=list(
+            result.evidence
+        ),
     )
 
 
@@ -94,6 +98,10 @@ def evaluate(
                               v
                            decision
 
+    Contradiction evaluation receives the question so that
+    question-aware evaluation can distinguish additive facts
+    from genuine conflicts.
+
     This function only orchestrates existing domain components.
     It does not implement new detection or decision rules.
     """
@@ -112,6 +120,7 @@ def evaluate(
     contradiction = evaluate_contradiction(
         answer,
         context,
+        question=question,
     )
 
     pii = detect_pii(

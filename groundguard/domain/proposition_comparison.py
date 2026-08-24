@@ -13,10 +13,6 @@ ComparisonResult = Literal[
 ]
 
 
-# ---------------------------------------------------------------------------
-# Normalization
-# ---------------------------------------------------------------------------
-
 _SYNONYMS = {
     "bicycles": "bikes",
     "bicycle": "bikes",
@@ -39,21 +35,23 @@ def _normalize_text(text: str) -> str:
     )
 
 
-def _normalize_subject(subject: str) -> str:
+def _normalize_subject(
+    subject: str,
+) -> str:
     return _normalize_text(subject)
 
 
-def _normalize_predicate(predicate: str) -> str:
+def _normalize_predicate(
+    predicate: str,
+) -> str:
     return _normalize_text(predicate)
 
 
-def _normalize_object(value: str) -> str:
+def _normalize_object(
+    value: str,
+) -> str:
     return _normalize_text(value)
 
-
-# ---------------------------------------------------------------------------
-# Numeric normalization
-# ---------------------------------------------------------------------------
 
 _NUMBER_WORDS = {
     "zero": "0",
@@ -80,7 +78,9 @@ _NUMBER_WORDS = {
 }
 
 
-def _normalize_numeric_value(value: str) -> str:
+def _normalize_numeric_value(
+    value: str,
+) -> str:
     normalized = _normalize_text(value)
 
     if normalized in _NUMBER_WORDS:
@@ -89,11 +89,9 @@ def _normalize_numeric_value(value: str) -> str:
     return normalized
 
 
-# ---------------------------------------------------------------------------
-# Token / object comparison
-# ---------------------------------------------------------------------------
-
-def _token_set(text: str) -> set[str]:
+def _token_set(
+    text: str,
+) -> set[str]:
     return set(
         _normalize_text(text).split()
     )
@@ -109,8 +107,13 @@ def _objects_are_equivalent(
     if left_normalized == right_normalized:
         return True
 
-    left_tokens = _token_set(left_normalized)
-    right_tokens = _token_set(right_normalized)
+    left_tokens = _token_set(
+        left_normalized
+    )
+
+    right_tokens = _token_set(
+        right_normalized
+    )
 
     if not left_tokens or not right_tokens:
         return False
@@ -121,10 +124,6 @@ def _objects_are_equivalent(
         or right_tokens.issubset(left_tokens)
     )
 
-
-# ---------------------------------------------------------------------------
-# Attribute comparison
-# ---------------------------------------------------------------------------
 
 def _attributes_conflict(
     left: Proposition,
@@ -148,10 +147,12 @@ def _attributes_conflict(
             "year",
             "count",
             "number",
+            "percentage",
         }:
             left_value = _normalize_numeric_value(
                 left_value
             )
+
             right_value = _normalize_numeric_value(
                 right_value
             )
@@ -190,10 +191,12 @@ def _attributes_are_equivalent(
             "year",
             "count",
             "number",
+            "percentage",
         }:
             left_value = _normalize_numeric_value(
                 left_value
             )
+
             right_value = _normalize_numeric_value(
                 right_value
             )
@@ -204,19 +207,19 @@ def _attributes_are_equivalent(
     return True
 
 
-# ---------------------------------------------------------------------------
-# Predicate-specific comparison
-# ---------------------------------------------------------------------------
-
 _SINGLE_VALUE_PREDICATES = {
     "founded",
     "headquartered_in",
     "capital_city",
     "has_employees",
     "has_offices",
+    "has_planets",
     "revenue",
     "launched",
     "composition",
+    "entered_into",
+    "percentage_of",
+    "largest",
 }
 
 
@@ -239,8 +242,12 @@ def _numeric_objects_conflict(
     right: Proposition,
 ) -> bool:
     return (
-        _normalize_numeric_value(left.object)
-        != _normalize_numeric_value(right.object)
+        _normalize_numeric_value(
+            left.object
+        )
+        != _normalize_numeric_value(
+            right.object
+        )
     )
 
 
@@ -258,29 +265,51 @@ def _set_value_conflict(
     left: Proposition,
     right: Proposition,
 ) -> bool:
-    left_value = _normalize_object(left.object)
-    right_value = _normalize_object(right.object)
+    """Compare individual members of a set-valued factual field.
 
-    return left_value != right_value
+    The extractor represents list claims as separate propositions.
+    Therefore two different members of the same set-valued predicate
+    are conflicting at proposition level when compared directly.
+
+    Example:
+        DataWorks operates in Tanzania.
+        DataWorks operates in Kenya.
+
+    This does not mean that a company cannot operate in both places;
+    it means the two propositions themselves describe different
+    values for the same extracted factual slot.
+    """
+
+    return not _objects_are_equivalent(
+        left.object,
+        right.object,
+    )
 
 
 def _revenue_conflict(
     left: Proposition,
     right: Proposition,
 ) -> bool:
-    left_value = _normalize_object(left.object)
-    right_value = _normalize_object(right.object)
+    left_value = _normalize_object(
+        left.object
+    )
+
+    right_value = _normalize_object(
+        right.object
+    )
 
     if left_value == right_value:
         return False
 
     left_match = re.fullmatch(
-        r"([\d,.]+)\s+(million|billion|thousand)",
+        r"([\d,.]+)\s+"
+        r"(million|billion|thousand)",
         left_value,
     )
 
     right_match = re.fullmatch(
-        r"([\d,.]+)\s+(million|billion|thousand)",
+        r"([\d,.]+)\s+"
+        r"(million|billion|thousand)",
         right_value,
     )
 
@@ -288,15 +317,18 @@ def _revenue_conflict(
         return True
 
     left_amount = float(
-        left_match.group(1).replace(",", "")
+        left_match.group(1).replace(
+            ",",
+            "",
+        )
     )
 
     right_amount = float(
-        right_match.group(1).replace(",", "")
+        right_match.group(1).replace(
+            ",",
+            "",
+        )
     )
-
-    left_unit = left_match.group(2)
-    right_unit = right_match.group(2)
 
     multipliers = {
         "thousand": 1_000,
@@ -304,8 +336,13 @@ def _revenue_conflict(
         "billion": 1_000_000_000,
     }
 
-    left_amount *= multipliers[left_unit]
-    right_amount *= multipliers[right_unit]
+    left_amount *= multipliers[
+        left_match.group(2)
+    ]
+
+    right_amount *= multipliers[
+        right_match.group(2)
+    ]
 
     return left_amount != right_amount
 
@@ -314,15 +351,81 @@ def _composition_conflict(
     left: Proposition,
     right: Proposition,
 ) -> bool:
-    left_tokens = _token_set(left.object)
-    right_tokens = _token_set(right.object)
+    left_tokens = _token_set(
+        left.object
+    )
+
+    right_tokens = _token_set(
+        right.object
+    )
 
     if left_tokens == right_tokens:
         return False
 
-    # Composition claims describe a complete factual composition.
-    # If the normalized compositions differ, treat them as conflicting.
     return True
+
+
+def _split_multi_value_object(
+    value: str,
+) -> set[str]:
+    normalized = _normalize_object(
+        value
+    )
+
+    normalized = re.sub(
+        r"\s+and\s+",
+        ",",
+        normalized,
+    )
+
+    values = {
+        item.strip()
+        for item in normalized.split(",")
+        if item.strip()
+    }
+
+    return values
+
+
+def _multi_value_conflict(
+    left: Proposition,
+    right: Proposition,
+) -> bool:
+    """
+    Multi-value predicates are additive.
+
+    Different products/services do not automatically
+    establish contradiction.
+
+    Example:
+
+        CloudCore sells accounting software.
+        CloudCore sells backup software.
+
+    Both can be true.
+    """
+
+    left_values = _split_multi_value_object(
+        left.object
+    )
+
+    right_values = _split_multi_value_object(
+        right.object
+    )
+
+    if not left_values or not right_values:
+        return False
+
+    if left_values == right_values:
+        return False
+
+    if (
+        left_values.issubset(right_values)
+        or right_values.issubset(left_values)
+    ):
+        return False
+
+    return False
 
 
 def _predicate_values_conflict(
@@ -337,6 +440,7 @@ def _predicate_values_conflict(
     if normalized_predicate in {
         "has_employees",
         "has_offices",
+        "has_planets",
     }:
         return _numeric_objects_conflict(
             left,
@@ -360,6 +464,9 @@ def _predicate_values_conflict(
         "headquartered_in",
         "capital_city",
         "launched",
+        "entered_into",
+        "largest",
+        "percentage_of",
     }:
         return _single_value_conflict(
             left,
@@ -372,23 +479,14 @@ def _predicate_values_conflict(
             right,
         )
 
-    # Multi-valued predicates are additive.
-    #
-    # Example:
-    #   "NovaTech manufactures electric bikes."
-    #   "NovaTech manufactures electric bicycles and battery chargers."
-    #
-    # These are not contradictions because the second claim can contain
-    # additional information.
     if normalized_predicate in _MULTI_VALUE_PREDICATES:
-        return False
+        return _multi_value_conflict(
+            left,
+            right,
+        )
 
     return False
 
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
 
 def compare_propositions(
     left: Proposition,
@@ -398,14 +496,17 @@ def compare_propositions(
     Compare two structured propositions.
 
     SAME:
-        Both propositions express the same fact.
+        Same subject, predicate, object and compatible attributes.
 
     CONFLICTING:
-        Both propositions describe the same factual dimension but
-        assert incompatible values.
+        Same factual dimension with incompatible values.
 
     UNRELATED:
-        The propositions do not establish a direct contradiction.
+        No direct contradiction can be established.
+
+    The comparator deliberately follows:
+
+        unsupported != contradictory
     """
 
     left_subject = _normalize_subject(
@@ -430,14 +531,12 @@ def compare_propositions(
     if left_predicate != right_predicate:
         return "UNRELATED"
 
-    # Attributes represent additional dimensions of the same fact.
     if _attributes_conflict(
         left,
         right,
     ):
         return "CONFLICTING"
 
-    # Exact / semantic object agreement.
     if _objects_are_equivalent(
         left.object,
         right.object,
@@ -448,7 +547,6 @@ def compare_propositions(
         ):
             return "SAME"
 
-    # Predicate-specific contradiction rules.
     if _predicate_values_conflict(
         left_predicate,
         left,
