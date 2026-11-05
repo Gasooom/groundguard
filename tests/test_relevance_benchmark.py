@@ -61,4 +61,7 @@ def test_relevance_benchmark():
     print("\nPredicted labels:")
     print(Counter(predictions))
 
-    assert correct >= 0
+    # Regression floor: the reproduced v0.1.0 baseline
+    # (benchmark/results/v0.1.0-baseline.context.json).
+    # Previously `correct >= 0`, which could not fail.
+    assert correct >= 243

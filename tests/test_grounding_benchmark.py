@@ -58,3 +58,7 @@ def test_grounding_baseline_on_benchmark():
     print(f"Correct: {correct}/{evaluated}")
 
     assert evaluated == 250
+
+    # Regression floor: the reproduced v0.1.0 baseline
+    # (benchmark/results/v0.1.0-baseline.context.json).
+    assert correct >= 161

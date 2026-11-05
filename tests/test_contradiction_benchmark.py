@@ -106,4 +106,30 @@ def test_contradiction_benchmark():
         Counter(predictions)
     )
 
-    assert correct >= 0
+    # ORACLE input: contradiction receives the annotator-selected
+    # `evidence`, not the `context` the API receives. This is the source of
+    # the README's 248/250 figure and is an upper bound, not a production
+    # estimate. See test_contradiction_benchmark_production_context below.
+    # Previously `correct >= 0`, which could not fail.
+    assert correct >= 248
+
+
+def test_contradiction_benchmark_production_context():
+    """Production path: contradiction receives the record context."""
+
+    records = load_benchmark_records()
+
+    assert len(records) == 250
+
+    correct = sum(
+        evaluate_contradiction(
+            record["answer"],
+            record["context"],
+            question=record["question"],
+        ).label
+        == record["contradiction_label"]
+        for record in records
+    )
+
+    # Regression floor: benchmark/results/v0.1.0-baseline.context.json
+    assert correct >= 245

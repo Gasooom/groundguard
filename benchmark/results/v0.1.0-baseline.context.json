@@ -1,0 +1,4286 @@
+{
+  "manifest": {
+    "config": {
+      "engine": "v1",
+      "input_mode": "context",
+      "threshold": null
+    },
+    "config_hash": "2c86221bafe2e9a720b38967f019ca639785c55445c8a5b1c6f2c9983b153cb5",
+    "created_at": "2026-11-05T08:26:48+00:00",
+    "dataset": {
+      "files": [
+        "benchmark/examples/human_labeled_001_020.json",
+        "benchmark/batch_001_021_030.json",
+        "benchmark/examples/batch_001_031_040.json",
+        "benchmark/examples/batch_001_041_050.json",
+        "benchmark/examples/batch_001_051_060.json",
+        "benchmark/examples/batch_001_061_070.json",
+        "benchmark/examples/batch_001_071_080.json",
+        "benchmark/examples/batch_001_081_090.json",
+        "benchmark/examples/batch_001_091_100.json",
+        "benchmark/examples/batch_001_101_110.json",
+        "benchmark/examples/batch_001_111_120.json",
+        "benchmark/examples/batch_001_121_130.json",
+        "benchmark/examples/batch_001_131_140.json",
+        "benchmark/examples/batch_001_141_150.json",
+        "benchmark/examples/batch_001_151_160.json",
+        "benchmark/examples/batch_001_161_170.json",
+        "benchmark/examples/batch_001_171_180.json",
+        "benchmark/examples/batch_001_181_190.json",
+        "benchmark/examples/batch_001_191_200.json",
+        "benchmark/examples/batch_001_201_210.json",
+        "benchmark/examples/batch_001_211_220.json",
+        "benchmark/examples/batch_001_221_230.json",
+        "benchmark/examples/batch_001_231_240.json",
+        "benchmark/examples/batch_001_241_250.json"
+      ],
+      "id": "gg-legacy-v1",
+      "records": 250,
+      "sha256": "b455b7d46d54bbfb6af3949ce84e5fa551dedfccc3ebcebf77db9c7e1ec47e79",
+      "version": "1.0.0"
+    },
+    "engine": "v1",
+    "git": {
+      "commit": "bf5899419620b1b3df784f017211f8d1bddc33f1",
+      "dirty": false
+    },
+    "groundguard_version": "0.1.0",
+    "python": "3.13.18"
+  },
+  "metrics": {
+    "all": {
+      "context_groups": 68,
+      "contradiction": {
+        "accuracy": {
+          "denominator": 250,
+          "group_bootstrap_95": [
+            0.949495,
+            0.995381
+          ],
+          "numerator": 245,
+          "value": 0.98,
+          "wilson_95": [
+            0.954044,
+            0.991428
+          ]
+        },
+        "confusion_matrix": {
+          "CONTRADICTORY": {
+            "CONTRADICTORY": 56,
+            "NOT_CONTRADICTORY": 5
+          },
+          "NOT_CONTRADICTORY": {
+            "CONTRADICTORY": 0,
+            "NOT_CONTRADICTORY": 189
+          }
+        },
+        "macro_f1": 0.972105,
+        "per_label": {
+          "CONTRADICTORY": {
+            "f1": 0.957265,
+            "precision": {
+              "denominator": 56,
+              "numerator": 56,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 61,
+              "numerator": 56,
+              "value": 0.918033
+            },
+            "support": 61
+          },
+          "NOT_CONTRADICTORY": {
+            "f1": 0.986945,
+            "precision": {
+              "denominator": 194,
+              "numerator": 189,
+              "value": 0.974227
+            },
+            "recall": {
+              "denominator": 189,
+              "numerator": 189,
+              "value": 1.0
+            },
+            "support": 189
+          }
+        }
+      },
+      "decision": {
+        "acceptability": "legacy@1: good iff grounding_label == SUPPORTED and relevance_label == RELEVANT and contradiction_label == NOT_CONTRADICTORY",
+        "distribution": {
+          "ACCEPT": 40,
+          "FLAG": 83,
+          "REJECT": 127
+        },
+        "false_accept": {
+          "denominator": 168,
+          "group_bootstrap_95": [
+            0.0,
+            0.15
+          ],
+          "numerator": 8,
+          "value": 0.047619,
+          "wilson_95": [
+            0.024324,
+            0.09114
+          ]
+        },
+        "false_accepts": 8,
+        "false_reject": {
+          "denominator": 82,
+          "group_bootstrap_95": [
+            0.378947,
+            0.823529
+          ],
+          "numerator": 50,
+          "value": 0.609756,
+          "wilson_95": [
+            0.501536,
+            0.708153
+          ]
+        },
+        "false_rejects": 50,
+        "true_accepts": 32,
+        "true_rejects": 160
+      },
+      "grounding": {
+        "accuracy": {
+          "denominator": 250,
+          "group_bootstrap_95": [
+            0.482051,
+            0.766234
+          ],
+          "numerator": 161,
+          "value": 0.644,
+          "wilson_95": [
+            0.582878,
+            0.700764
+          ]
+        },
+        "confusion_matrix": {
+          "PARTIALLY_SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 12,
+            "SUPPORTED": 24,
+            "UNSUPPORTED": 2
+          },
+          "SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 19,
+            "SUPPORTED": 59,
+            "UNSUPPORTED": 4
+          },
+          "UNSUPPORTED": {
+            "PARTIALLY_SUPPORTED": 29,
+            "SUPPORTED": 11,
+            "UNSUPPORTED": 90
+          }
+        },
+        "macro_f1": 0.570604,
+        "per_label": {
+          "PARTIALLY_SUPPORTED": {
+            "f1": 0.244898,
+            "precision": {
+              "denominator": 60,
+              "numerator": 12,
+              "value": 0.2
+            },
+            "recall": {
+              "denominator": 38,
+              "numerator": 12,
+              "value": 0.315789
+            },
+            "support": 38
+          },
+          "SUPPORTED": {
+            "f1": 0.670455,
+            "precision": {
+              "denominator": 94,
+              "numerator": 59,
+              "value": 0.62766
+            },
+            "recall": {
+              "denominator": 82,
+              "numerator": 59,
+              "value": 0.719512
+            },
+            "support": 82
+          },
+          "UNSUPPORTED": {
+            "f1": 0.79646,
+            "precision": {
+              "denominator": 96,
+              "numerator": 90,
+              "value": 0.9375
+            },
+            "recall": {
+              "denominator": 130,
+              "numerator": 90,
+              "value": 0.692308
+            },
+            "support": 130
+          }
+        }
+      },
+      "records": 250,
+      "relevance": {
+        "accuracy": {
+          "denominator": 250,
+          "group_bootstrap_95": [
+            0.919283,
+            1.0
+          ],
+          "numerator": 243,
+          "value": 0.972,
+          "wilson_95": [
+            0.943342,
+            0.986372
+          ]
+        },
+        "confusion_matrix": {
+          "IRRELEVANT": {
+            "IRRELEVANT": 37,
+            "RELEVANT": 6
+          },
+          "RELEVANT": {
+            "IRRELEVANT": 1,
+            "RELEVANT": 206
+          }
+        },
+        "macro_f1": 0.948437,
+        "per_label": {
+          "IRRELEVANT": {
+            "f1": 0.91358,
+            "precision": {
+              "denominator": 38,
+              "numerator": 37,
+              "value": 0.973684
+            },
+            "recall": {
+              "denominator": 43,
+              "numerator": 37,
+              "value": 0.860465
+            },
+            "support": 43
+          },
+          "RELEVANT": {
+            "f1": 0.983294,
+            "precision": {
+              "denominator": 212,
+              "numerator": 206,
+              "value": 0.971698
+            },
+            "recall": {
+              "denominator": 207,
+              "numerator": 206,
+              "value": 0.995169
+            },
+            "support": 207
+          }
+        }
+      },
+      "reliability_score_threshold_sweep": [
+        {
+          "false_accept_rate": 0.2679,
+          "false_accepts": 45,
+          "false_reject_rate": 0.0488,
+          "false_rejects": 4,
+          "threshold": 0.5
+        },
+        {
+          "false_accept_rate": 0.244,
+          "false_accepts": 41,
+          "false_reject_rate": 0.2561,
+          "false_rejects": 21,
+          "threshold": 0.55
+        },
+        {
+          "false_accept_rate": 0.2083,
+          "false_accepts": 35,
+          "false_reject_rate": 0.2805,
+          "false_rejects": 23,
+          "threshold": 0.6
+        },
+        {
+          "false_accept_rate": 0.1488,
+          "false_accepts": 25,
+          "false_reject_rate": 0.2927,
+          "false_rejects": 24,
+          "threshold": 0.65
+        },
+        {
+          "false_accept_rate": 0.0714,
+          "false_accepts": 12,
+          "false_reject_rate": 0.6098,
+          "false_rejects": 50,
+          "threshold": 0.7
+        },
+        {
+          "false_accept_rate": 0.0595,
+          "false_accepts": 10,
+          "false_reject_rate": 0.6098,
+          "false_rejects": 50,
+          "threshold": 0.75
+        },
+        {
+          "false_accept_rate": 0.0357,
+          "false_accepts": 6,
+          "false_reject_rate": 0.7195,
+          "false_rejects": 59,
+          "threshold": 0.8
+        },
+        {
+          "false_accept_rate": 0.0357,
+          "false_accepts": 6,
+          "false_reject_rate": 0.8171,
+          "false_rejects": 67,
+          "threshold": 0.85
+        },
+        {
+          "false_accept_rate": 0.0357,
+          "false_accepts": 6,
+          "false_reject_rate": 0.8415,
+          "false_rejects": 69,
+          "threshold": 0.9
+        }
+      ]
+    },
+    "dedup": {
+      "context_groups": 68,
+      "contradiction": {
+        "accuracy": {
+          "denominator": 99,
+          "group_bootstrap_95": [
+            0.896552,
+            0.989011
+          ],
+          "numerator": 94,
+          "value": 0.949495,
+          "wilson_95": [
+            0.887173,
+            0.978237
+          ]
+        },
+        "confusion_matrix": {
+          "CONTRADICTORY": {
+            "CONTRADICTORY": 20,
+            "NOT_CONTRADICTORY": 5
+          },
+          "NOT_CONTRADICTORY": {
+            "CONTRADICTORY": 0,
+            "NOT_CONTRADICTORY": 74
+          }
+        },
+        "macro_f1": 0.928105,
+        "per_label": {
+          "CONTRADICTORY": {
+            "f1": 0.888889,
+            "precision": {
+              "denominator": 20,
+              "numerator": 20,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 25,
+              "numerator": 20,
+              "value": 0.8
+            },
+            "support": 25
+          },
+          "NOT_CONTRADICTORY": {
+            "f1": 0.96732,
+            "precision": {
+              "denominator": 79,
+              "numerator": 74,
+              "value": 0.936709
+            },
+            "recall": {
+              "denominator": 74,
+              "numerator": 74,
+              "value": 1.0
+            },
+            "support": 74
+          }
+        }
+      },
+      "decision": {
+        "acceptability": "legacy@1: good iff grounding_label == SUPPORTED and relevance_label == RELEVANT and contradiction_label == NOT_CONTRADICTORY",
+        "distribution": {
+          "ACCEPT": 19,
+          "FLAG": 39,
+          "REJECT": 41
+        },
+        "false_accept": {
+          "denominator": 61,
+          "group_bootstrap_95": [
+            0.0,
+            0.116667
+          ],
+          "numerator": 3,
+          "value": 0.04918,
+          "wilson_95": [
+            0.016866,
+            0.134911
+          ]
+        },
+        "false_accepts": 3,
+        "false_reject": {
+          "denominator": 38,
+          "group_bootstrap_95": [
+            0.424242,
+            0.72973
+          ],
+          "numerator": 22,
+          "value": 0.578947,
+          "wilson_95": [
+            0.421923,
+            0.721475
+          ]
+        },
+        "false_rejects": 22,
+        "true_accepts": 16,
+        "true_rejects": 58
+      },
+      "grounding": {
+        "accuracy": {
+          "denominator": 99,
+          "group_bootstrap_95": [
+            0.481013,
+            0.692308
+          ],
+          "numerator": 59,
+          "value": 0.59596,
+          "wilson_95": [
+            0.497469,
+            0.687281
+          ]
+        },
+        "confusion_matrix": {
+          "PARTIALLY_SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 7,
+            "SUPPORTED": 7,
+            "UNSUPPORTED": 2
+          },
+          "SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 7,
+            "SUPPORTED": 27,
+            "UNSUPPORTED": 4
+          },
+          "UNSUPPORTED": {
+            "PARTIALLY_SUPPORTED": 14,
+            "SUPPORTED": 6,
+            "UNSUPPORTED": 25
+          }
+        },
+        "macro_f1": 0.556128,
+        "per_label": {
+          "PARTIALLY_SUPPORTED": {
+            "f1": 0.318182,
+            "precision": {
+              "denominator": 28,
+              "numerator": 7,
+              "value": 0.25
+            },
+            "recall": {
+              "denominator": 16,
+              "numerator": 7,
+              "value": 0.4375
+            },
+            "support": 16
+          },
+          "SUPPORTED": {
+            "f1": 0.692308,
+            "precision": {
+              "denominator": 40,
+              "numerator": 27,
+              "value": 0.675
+            },
+            "recall": {
+              "denominator": 38,
+              "numerator": 27,
+              "value": 0.710526
+            },
+            "support": 38
+          },
+          "UNSUPPORTED": {
+            "f1": 0.657895,
+            "precision": {
+              "denominator": 31,
+              "numerator": 25,
+              "value": 0.806452
+            },
+            "recall": {
+              "denominator": 45,
+              "numerator": 25,
+              "value": 0.555556
+            },
+            "support": 45
+          }
+        }
+      },
+      "records": 99,
+      "relevance": {
+        "accuracy": {
+          "denominator": 99,
+          "group_bootstrap_95": [
+            0.947917,
+            1.0
+          ],
+          "numerator": 97,
+          "value": 0.979798,
+          "wilson_95": [
+            0.92931,
+            0.994442
+          ]
+        },
+        "confusion_matrix": {
+          "IRRELEVANT": {
+            "IRRELEVANT": 7,
+            "RELEVANT": 1
+          },
+          "RELEVANT": {
+            "IRRELEVANT": 1,
+            "RELEVANT": 90
+          }
+        },
+        "macro_f1": 0.932005,
+        "per_label": {
+          "IRRELEVANT": {
+            "f1": 0.875,
+            "precision": {
+              "denominator": 8,
+              "numerator": 7,
+              "value": 0.875
+            },
+            "recall": {
+              "denominator": 8,
+              "numerator": 7,
+              "value": 0.875
+            },
+            "support": 8
+          },
+          "RELEVANT": {
+            "f1": 0.989011,
+            "precision": {
+              "denominator": 91,
+              "numerator": 90,
+              "value": 0.989011
+            },
+            "recall": {
+              "denominator": 91,
+              "numerator": 90,
+              "value": 0.989011
+            },
+            "support": 91
+          }
+        }
+      },
+      "reliability_score_threshold_sweep": [
+        {
+          "false_accept_rate": 0.3934,
+          "false_accepts": 24,
+          "false_reject_rate": 0.1053,
+          "false_rejects": 4,
+          "threshold": 0.5
+        },
+        {
+          "false_accept_rate": 0.3279,
+          "false_accepts": 20,
+          "false_reject_rate": 0.2632,
+          "false_rejects": 10,
+          "threshold": 0.55
+        },
+        {
+          "false_accept_rate": 0.3115,
+          "false_accepts": 19,
+          "false_reject_rate": 0.3158,
+          "false_rejects": 12,
+          "threshold": 0.6
+        },
+        {
+          "false_accept_rate": 0.2295,
+          "false_accepts": 14,
+          "false_reject_rate": 0.3421,
+          "false_rejects": 13,
+          "threshold": 0.65
+        },
+        {
+          "false_accept_rate": 0.1148,
+          "false_accepts": 7,
+          "false_reject_rate": 0.5789,
+          "false_rejects": 22,
+          "threshold": 0.7
+        },
+        {
+          "false_accept_rate": 0.082,
+          "false_accepts": 5,
+          "false_reject_rate": 0.5789,
+          "false_rejects": 22,
+          "threshold": 0.75
+        },
+        {
+          "false_accept_rate": 0.0164,
+          "false_accepts": 1,
+          "false_reject_rate": 0.6842,
+          "false_rejects": 26,
+          "threshold": 0.8
+        },
+        {
+          "false_accept_rate": 0.0164,
+          "false_accepts": 1,
+          "false_reject_rate": 0.7632,
+          "false_rejects": 29,
+          "threshold": 0.85
+        },
+        {
+          "false_accept_rate": 0.0164,
+          "false_accepts": 1,
+          "false_reject_rate": 0.8158,
+          "false_rejects": 31,
+          "threshold": 0.9
+        }
+      ]
+    },
+    "source=manual_annotation": {
+      "context_groups": 12,
+      "contradiction": {
+        "accuracy": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            1.0,
+            1.0
+          ],
+          "numerator": 20,
+          "value": 1.0,
+          "wilson_95": [
+            0.838875,
+            1.0
+          ]
+        },
+        "confusion_matrix": {
+          "CONTRADICTORY": {
+            "CONTRADICTORY": 5,
+            "NOT_CONTRADICTORY": 0
+          },
+          "NOT_CONTRADICTORY": {
+            "CONTRADICTORY": 0,
+            "NOT_CONTRADICTORY": 15
+          }
+        },
+        "macro_f1": 1.0,
+        "per_label": {
+          "CONTRADICTORY": {
+            "f1": 1.0,
+            "precision": {
+              "denominator": 5,
+              "numerator": 5,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 5,
+              "numerator": 5,
+              "value": 1.0
+            },
+            "support": 5
+          },
+          "NOT_CONTRADICTORY": {
+            "f1": 1.0,
+            "precision": {
+              "denominator": 15,
+              "numerator": 15,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 15,
+              "numerator": 15,
+              "value": 1.0
+            },
+            "support": 15
+          }
+        }
+      },
+      "decision": {
+        "acceptability": "legacy@1: good iff grounding_label == SUPPORTED and relevance_label == RELEVANT and contradiction_label == NOT_CONTRADICTORY",
+        "distribution": {
+          "ACCEPT": 5,
+          "FLAG": 4,
+          "REJECT": 11
+        },
+        "false_accept": {
+          "denominator": 11,
+          "group_bootstrap_95": [
+            0.0,
+            0.3
+          ],
+          "numerator": 1,
+          "value": 0.090909,
+          "wilson_95": [
+            0.016232,
+            0.377358
+          ]
+        },
+        "false_accepts": 1,
+        "false_reject": {
+          "denominator": 9,
+          "group_bootstrap_95": [
+            0.25,
+            0.875
+          ],
+          "numerator": 5,
+          "value": 0.555556,
+          "wilson_95": [
+            0.266651,
+            0.811221
+          ]
+        },
+        "false_rejects": 5,
+        "true_accepts": 4,
+        "true_rejects": 10
+      },
+      "grounding": {
+        "accuracy": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.368421,
+            0.791667
+          ],
+          "numerator": 12,
+          "value": 0.6,
+          "wilson_95": [
+            0.386582,
+            0.781193
+          ]
+        },
+        "confusion_matrix": {
+          "PARTIALLY_SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 0,
+            "SUPPORTED": 1,
+            "UNSUPPORTED": 1
+          },
+          "SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 0,
+            "SUPPORTED": 7,
+            "UNSUPPORTED": 2
+          },
+          "UNSUPPORTED": {
+            "PARTIALLY_SUPPORTED": 2,
+            "SUPPORTED": 2,
+            "UNSUPPORTED": 5
+          }
+        },
+        "macro_f1": 0.441692,
+        "per_label": {
+          "PARTIALLY_SUPPORTED": {
+            "f1": 0.0,
+            "precision": {
+              "denominator": 2,
+              "numerator": 0,
+              "value": 0.0
+            },
+            "recall": {
+              "denominator": 2,
+              "numerator": 0,
+              "value": 0.0
+            },
+            "support": 2
+          },
+          "SUPPORTED": {
+            "f1": 0.736842,
+            "precision": {
+              "denominator": 10,
+              "numerator": 7,
+              "value": 0.7
+            },
+            "recall": {
+              "denominator": 9,
+              "numerator": 7,
+              "value": 0.777778
+            },
+            "support": 9
+          },
+          "UNSUPPORTED": {
+            "f1": 0.588235,
+            "precision": {
+              "denominator": 8,
+              "numerator": 5,
+              "value": 0.625
+            },
+            "recall": {
+              "denominator": 9,
+              "numerator": 5,
+              "value": 0.555556
+            },
+            "support": 9
+          }
+        }
+      },
+      "records": 20,
+      "relevance": {
+        "accuracy": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.823529,
+            1.0
+          ],
+          "numerator": 19,
+          "value": 0.95,
+          "wilson_95": [
+            0.763869,
+            0.991119
+          ]
+        },
+        "confusion_matrix": {
+          "IRRELEVANT": {
+            "IRRELEVANT": 1,
+            "RELEVANT": 0
+          },
+          "RELEVANT": {
+            "IRRELEVANT": 1,
+            "RELEVANT": 18
+          }
+        },
+        "macro_f1": 0.81982,
+        "per_label": {
+          "IRRELEVANT": {
+            "f1": 0.666667,
+            "precision": {
+              "denominator": 2,
+              "numerator": 1,
+              "value": 0.5
+            },
+            "recall": {
+              "denominator": 1,
+              "numerator": 1,
+              "value": 1.0
+            },
+            "support": 1
+          },
+          "RELEVANT": {
+            "f1": 0.972973,
+            "precision": {
+              "denominator": 18,
+              "numerator": 18,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 19,
+              "numerator": 18,
+              "value": 0.947368
+            },
+            "support": 19
+          }
+        }
+      },
+      "reliability_score_threshold_sweep": [
+        {
+          "false_accept_rate": 0.1818,
+          "false_accepts": 2,
+          "false_reject_rate": 0.2222,
+          "false_rejects": 2,
+          "threshold": 0.5
+        },
+        {
+          "false_accept_rate": 0.1818,
+          "false_accepts": 2,
+          "false_reject_rate": 0.4444,
+          "false_rejects": 4,
+          "threshold": 0.55
+        },
+        {
+          "false_accept_rate": 0.1818,
+          "false_accepts": 2,
+          "false_reject_rate": 0.4444,
+          "false_rejects": 4,
+          "threshold": 0.6
+        },
+        {
+          "false_accept_rate": 0.1818,
+          "false_accepts": 2,
+          "false_reject_rate": 0.4444,
+          "false_rejects": 4,
+          "threshold": 0.65
+        },
+        {
+          "false_accept_rate": 0.0909,
+          "false_accepts": 1,
+          "false_reject_rate": 0.5556,
+          "false_rejects": 5,
+          "threshold": 0.7
+        },
+        {
+          "false_accept_rate": 0.0909,
+          "false_accepts": 1,
+          "false_reject_rate": 0.5556,
+          "false_rejects": 5,
+          "threshold": 0.75
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 0.8889,
+          "false_rejects": 8,
+          "threshold": 0.8
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 1.0,
+          "false_rejects": 9,
+          "threshold": 0.85
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 1.0,
+          "false_rejects": 9,
+          "threshold": 0.9
+        }
+      ]
+    },
+    "source=public_text": {
+      "context_groups": 20,
+      "contradiction": {
+        "accuracy": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.7,
+            1.0
+          ],
+          "numerator": 17,
+          "value": 0.85,
+          "wilson_95": [
+            0.639581,
+            0.947631
+          ]
+        },
+        "confusion_matrix": {
+          "CONTRADICTORY": {
+            "CONTRADICTORY": 2,
+            "NOT_CONTRADICTORY": 3
+          },
+          "NOT_CONTRADICTORY": {
+            "CONTRADICTORY": 0,
+            "NOT_CONTRADICTORY": 15
+          }
+        },
+        "macro_f1": 0.74026,
+        "per_label": {
+          "CONTRADICTORY": {
+            "f1": 0.571429,
+            "precision": {
+              "denominator": 2,
+              "numerator": 2,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 5,
+              "numerator": 2,
+              "value": 0.4
+            },
+            "support": 5
+          },
+          "NOT_CONTRADICTORY": {
+            "f1": 0.909091,
+            "precision": {
+              "denominator": 18,
+              "numerator": 15,
+              "value": 0.833333
+            },
+            "recall": {
+              "denominator": 15,
+              "numerator": 15,
+              "value": 1.0
+            },
+            "support": 15
+          }
+        }
+      },
+      "decision": {
+        "acceptability": "legacy@1: good iff grounding_label == SUPPORTED and relevance_label == RELEVANT and contradiction_label == NOT_CONTRADICTORY",
+        "distribution": {
+          "ACCEPT": 3,
+          "FLAG": 11,
+          "REJECT": 6
+        },
+        "false_accept": {
+          "denominator": 11,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.258833
+          ]
+        },
+        "false_accepts": 0,
+        "false_reject": {
+          "denominator": 9,
+          "group_bootstrap_95": [
+            0.333333,
+            1.0
+          ],
+          "numerator": 6,
+          "value": 0.666667,
+          "wilson_95": [
+            0.354202,
+            0.879416
+          ]
+        },
+        "false_rejects": 6,
+        "true_accepts": 3,
+        "true_rejects": 11
+      },
+      "grounding": {
+        "accuracy": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.3,
+            0.7
+          ],
+          "numerator": 10,
+          "value": 0.5,
+          "wilson_95": [
+            0.299298,
+            0.700702
+          ]
+        },
+        "confusion_matrix": {
+          "PARTIALLY_SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 3,
+            "SUPPORTED": 0,
+            "UNSUPPORTED": 1
+          },
+          "SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 3,
+            "SUPPORTED": 4,
+            "UNSUPPORTED": 2
+          },
+          "UNSUPPORTED": {
+            "PARTIALLY_SUPPORTED": 3,
+            "SUPPORTED": 1,
+            "UNSUPPORTED": 3
+          }
+        },
+        "macro_f1": 0.498168,
+        "per_label": {
+          "PARTIALLY_SUPPORTED": {
+            "f1": 0.461538,
+            "precision": {
+              "denominator": 9,
+              "numerator": 3,
+              "value": 0.333333
+            },
+            "recall": {
+              "denominator": 4,
+              "numerator": 3,
+              "value": 0.75
+            },
+            "support": 4
+          },
+          "SUPPORTED": {
+            "f1": 0.571429,
+            "precision": {
+              "denominator": 5,
+              "numerator": 4,
+              "value": 0.8
+            },
+            "recall": {
+              "denominator": 9,
+              "numerator": 4,
+              "value": 0.444444
+            },
+            "support": 9
+          },
+          "UNSUPPORTED": {
+            "f1": 0.461538,
+            "precision": {
+              "denominator": 6,
+              "numerator": 3,
+              "value": 0.5
+            },
+            "recall": {
+              "denominator": 7,
+              "numerator": 3,
+              "value": 0.428571
+            },
+            "support": 7
+          }
+        }
+      },
+      "records": 20,
+      "relevance": {
+        "accuracy": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            1.0,
+            1.0
+          ],
+          "numerator": 20,
+          "value": 1.0,
+          "wilson_95": [
+            0.838875,
+            1.0
+          ]
+        },
+        "confusion_matrix": {
+          "IRRELEVANT": {
+            "IRRELEVANT": 0,
+            "RELEVANT": 0
+          },
+          "RELEVANT": {
+            "IRRELEVANT": 0,
+            "RELEVANT": 20
+          }
+        },
+        "macro_f1": 1.0,
+        "per_label": {
+          "IRRELEVANT": {
+            "f1": null,
+            "precision": {
+              "denominator": 0,
+              "numerator": 0,
+              "value": null
+            },
+            "recall": {
+              "denominator": 0,
+              "numerator": 0,
+              "value": null
+            },
+            "support": 0
+          },
+          "RELEVANT": {
+            "f1": 1.0,
+            "precision": {
+              "denominator": 20,
+              "numerator": 20,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 20,
+              "numerator": 20,
+              "value": 1.0
+            },
+            "support": 20
+          }
+        }
+      },
+      "reliability_score_threshold_sweep": [
+        {
+          "false_accept_rate": 0.6364,
+          "false_accepts": 7,
+          "false_reject_rate": 0.2222,
+          "false_rejects": 2,
+          "threshold": 0.5
+        },
+        {
+          "false_accept_rate": 0.4545,
+          "false_accepts": 5,
+          "false_reject_rate": 0.3333,
+          "false_rejects": 3,
+          "threshold": 0.55
+        },
+        {
+          "false_accept_rate": 0.4545,
+          "false_accepts": 5,
+          "false_reject_rate": 0.4444,
+          "false_rejects": 4,
+          "threshold": 0.6
+        },
+        {
+          "false_accept_rate": 0.1818,
+          "false_accepts": 2,
+          "false_reject_rate": 0.5556,
+          "false_rejects": 5,
+          "threshold": 0.65
+        },
+        {
+          "false_accept_rate": 0.0909,
+          "false_accepts": 1,
+          "false_reject_rate": 0.6667,
+          "false_rejects": 6,
+          "threshold": 0.7
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 0.6667,
+          "false_rejects": 6,
+          "threshold": 0.75
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 0.6667,
+          "false_rejects": 6,
+          "threshold": 0.8
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 0.7778,
+          "false_rejects": 7,
+          "threshold": 0.85
+        },
+        {
+          "false_accept_rate": 0.0,
+          "false_accepts": 0,
+          "false_reject_rate": 1.0,
+          "false_rejects": 9,
+          "threshold": 0.9
+        }
+      ]
+    },
+    "source=synthetic": {
+      "context_groups": 39,
+      "contradiction": {
+        "accuracy": {
+          "denominator": 210,
+          "group_bootstrap_95": [
+            0.968586,
+            1.0
+          ],
+          "numerator": 208,
+          "value": 0.990476,
+          "wilson_95": [
+            0.965946,
+            0.997384
+          ]
+        },
+        "confusion_matrix": {
+          "CONTRADICTORY": {
+            "CONTRADICTORY": 49,
+            "NOT_CONTRADICTORY": 2
+          },
+          "NOT_CONTRADICTORY": {
+            "CONTRADICTORY": 0,
+            "NOT_CONTRADICTORY": 159
+          }
+        },
+        "macro_f1": 0.986875,
+        "per_label": {
+          "CONTRADICTORY": {
+            "f1": 0.98,
+            "precision": {
+              "denominator": 49,
+              "numerator": 49,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 51,
+              "numerator": 49,
+              "value": 0.960784
+            },
+            "support": 51
+          },
+          "NOT_CONTRADICTORY": {
+            "f1": 0.99375,
+            "precision": {
+              "denominator": 161,
+              "numerator": 159,
+              "value": 0.987578
+            },
+            "recall": {
+              "denominator": 159,
+              "numerator": 159,
+              "value": 1.0
+            },
+            "support": 159
+          }
+        }
+      },
+      "decision": {
+        "acceptability": "legacy@1: good iff grounding_label == SUPPORTED and relevance_label == RELEVANT and contradiction_label == NOT_CONTRADICTORY",
+        "distribution": {
+          "ACCEPT": 32,
+          "FLAG": 68,
+          "REJECT": 110
+        },
+        "false_accept": {
+          "denominator": 146,
+          "group_bootstrap_95": [
+            0.0,
+            0.165517
+          ],
+          "numerator": 7,
+          "value": 0.047945,
+          "wilson_95": [
+            0.023416,
+            0.095653
+          ]
+        },
+        "false_accepts": 7,
+        "false_reject": {
+          "denominator": 64,
+          "group_bootstrap_95": [
+            0.314286,
+            0.884615
+          ],
+          "numerator": 39,
+          "value": 0.609375,
+          "wilson_95": [
+            0.486919,
+            0.719444
+          ]
+        },
+        "false_rejects": 39,
+        "true_accepts": 25,
+        "true_rejects": 139
+      },
+      "grounding": {
+        "accuracy": {
+          "denominator": 210,
+          "group_bootstrap_95": [
+            0.486486,
+            0.810345
+          ],
+          "numerator": 139,
+          "value": 0.661905,
+          "wilson_95": [
+            0.595525,
+            0.722467
+          ]
+        },
+        "confusion_matrix": {
+          "PARTIALLY_SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 9,
+            "SUPPORTED": 23,
+            "UNSUPPORTED": 0
+          },
+          "SUPPORTED": {
+            "PARTIALLY_SUPPORTED": 16,
+            "SUPPORTED": 48,
+            "UNSUPPORTED": 0
+          },
+          "UNSUPPORTED": {
+            "PARTIALLY_SUPPORTED": 24,
+            "SUPPORTED": 8,
+            "UNSUPPORTED": 82
+          }
+        },
+        "macro_f1": 0.576762,
+        "per_label": {
+          "PARTIALLY_SUPPORTED": {
+            "f1": 0.222222,
+            "precision": {
+              "denominator": 49,
+              "numerator": 9,
+              "value": 0.183673
+            },
+            "recall": {
+              "denominator": 32,
+              "numerator": 9,
+              "value": 0.28125
+            },
+            "support": 32
+          },
+          "SUPPORTED": {
+            "f1": 0.671329,
+            "precision": {
+              "denominator": 79,
+              "numerator": 48,
+              "value": 0.607595
+            },
+            "recall": {
+              "denominator": 64,
+              "numerator": 48,
+              "value": 0.75
+            },
+            "support": 64
+          },
+          "UNSUPPORTED": {
+            "f1": 0.836735,
+            "precision": {
+              "denominator": 82,
+              "numerator": 82,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 114,
+              "numerator": 82,
+              "value": 0.719298
+            },
+            "support": 114
+          }
+        }
+      },
+      "records": 210,
+      "relevance": {
+        "accuracy": {
+          "denominator": 210,
+          "group_bootstrap_95": [
+            0.913462,
+            1.0
+          ],
+          "numerator": 204,
+          "value": 0.971429,
+          "wilson_95": [
+            0.939079,
+            0.986841
+          ]
+        },
+        "confusion_matrix": {
+          "IRRELEVANT": {
+            "IRRELEVANT": 36,
+            "RELEVANT": 6
+          },
+          "RELEVANT": {
+            "IRRELEVANT": 0,
+            "RELEVANT": 168
+          }
+        },
+        "macro_f1": 0.952767,
+        "per_label": {
+          "IRRELEVANT": {
+            "f1": 0.923077,
+            "precision": {
+              "denominator": 36,
+              "numerator": 36,
+              "value": 1.0
+            },
+            "recall": {
+              "denominator": 42,
+              "numerator": 36,
+              "value": 0.857143
+            },
+            "support": 42
+          },
+          "RELEVANT": {
+            "f1": 0.982456,
+            "precision": {
+              "denominator": 174,
+              "numerator": 168,
+              "value": 0.965517
+            },
+            "recall": {
+              "denominator": 168,
+              "numerator": 168,
+              "value": 1.0
+            },
+            "support": 168
+          }
+        }
+      },
+      "reliability_score_threshold_sweep": [
+        {
+          "false_accept_rate": 0.2466,
+          "false_accepts": 36,
+          "false_reject_rate": 0.0,
+          "false_rejects": 0,
+          "threshold": 0.5
+        },
+        {
+          "false_accept_rate": 0.2329,
+          "false_accepts": 34,
+          "false_reject_rate": 0.2188,
+          "false_rejects": 14,
+          "threshold": 0.55
+        },
+        {
+          "false_accept_rate": 0.1918,
+          "false_accepts": 28,
+          "false_reject_rate": 0.2344,
+          "false_rejects": 15,
+          "threshold": 0.6
+        },
+        {
+          "false_accept_rate": 0.1438,
+          "false_accepts": 21,
+          "false_reject_rate": 0.2344,
+          "false_rejects": 15,
+          "threshold": 0.65
+        },
+        {
+          "false_accept_rate": 0.0685,
+          "false_accepts": 10,
+          "false_reject_rate": 0.6094,
+          "false_rejects": 39,
+          "threshold": 0.7
+        },
+        {
+          "false_accept_rate": 0.0616,
+          "false_accepts": 9,
+          "false_reject_rate": 0.6094,
+          "false_rejects": 39,
+          "threshold": 0.75
+        },
+        {
+          "false_accept_rate": 0.0411,
+          "false_accepts": 6,
+          "false_reject_rate": 0.7031,
+          "false_rejects": 45,
+          "threshold": 0.8
+        },
+        {
+          "false_accept_rate": 0.0411,
+          "false_accepts": 6,
+          "false_reject_rate": 0.7969,
+          "false_rejects": 51,
+          "threshold": 0.85
+        },
+        {
+          "false_accept_rate": 0.0411,
+          "false_accepts": 6,
+          "false_reject_rate": 0.7969,
+          "false_rejects": 51,
+          "threshold": 0.9
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "human_001",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_002",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_003",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_004",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_005",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_006",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "human_007",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_008",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "human_009",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "human_010",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.8,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "human_011",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.9091,
+      "id": "human_012",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "human_013",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "human_014",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "human_015",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8571,
+      "id": "human_016",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2857,
+      "id": "human_017",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2857,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "human_018",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "human_019",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "human_020",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_021",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_022",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5714,
+      "id": "synthetic_023",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.5714,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_024",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8889,
+      "id": "synthetic_025",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_026",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_027",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.3333,
+      "id": "synthetic_028",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.3333,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_029",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_030",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_031",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_032",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_033",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_034",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_035",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.9167,
+      "id": "synthetic_036",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.7143,
+      "id": "synthetic_037",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.7143,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_038",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_039",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.875,
+      "id": "synthetic_040",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_041",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_042",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_043",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_044",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_045",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_046",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.8571,
+      "reliability_score": 0.75,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_047",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.7143,
+      "id": "synthetic_048",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_049",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_050",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.75,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.625,
+      "id": "public_051",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.625,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8571,
+      "id": "public_052",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8571,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5625,
+      "id": "public_053",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5625,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "public_054",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8421,
+      "id": "public_055",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8421,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6923,
+      "id": "public_056",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.8333,
+      "reliability_score": 0.6923,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.3636,
+      "id": "public_057",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.8,
+      "reliability_score": 0.3636,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "public_058",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "public_059",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6364,
+      "id": "public_060",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6364,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "public_061",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8571,
+      "id": "public_062",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8571,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "public_063",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.9286,
+      "id": "public_064",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "public_065",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.8,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6429,
+      "id": "public_066",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6429,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.7143,
+      "id": "public_067",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.7143,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "public_068",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.8,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "public_069",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "public_070",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_071",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_072",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_073",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_074",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_075",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_076",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_077",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_078",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_079",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_080",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_081",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_082",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2,
+      "id": "synthetic_083",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.1667,
+      "id": "synthetic_084",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.1667,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_085",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_086",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_087",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_088",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_089",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_090",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_091",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_092",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_093",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5556,
+      "id": "synthetic_094",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.5556,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_095",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_096",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_097",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_098",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "synthetic_099",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_100",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_101",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_102",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_103",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_104",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_105",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_106",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_107",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_108",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_109",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_110",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_111",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2,
+      "id": "synthetic_112",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.1667,
+      "id": "synthetic_113",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.1667,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_114",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_115",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_116",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_117",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_118",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_119",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_120",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_121",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_122",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5556,
+      "id": "synthetic_123",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.5556,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_124",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_125",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_126",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_127",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "synthetic_128",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_129",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_130",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_131",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_132",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_133",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_134",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_135",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_136",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_137",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_138",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_139",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_140",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2,
+      "id": "synthetic_141",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.1667,
+      "id": "synthetic_142",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.1667,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_143",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_144",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_145",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_146",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_147",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_148",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_149",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_150",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_151",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5556,
+      "id": "synthetic_152",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.5556,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_153",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_154",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_155",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_156",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "synthetic_157",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_158",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_159",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_160",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_161",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_162",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_163",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_164",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_165",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_166",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_167",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_168",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_169",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2,
+      "id": "synthetic_170",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.1667,
+      "id": "synthetic_171",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.1667,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_172",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_173",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_174",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_175",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_176",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_177",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_178",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_179",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_180",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5556,
+      "id": "synthetic_181",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.5556,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_182",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_183",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_184",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_185",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "synthetic_186",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_187",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_188",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_189",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_190",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_191",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_192",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_193",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_194",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_195",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_196",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_197",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_198",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2,
+      "id": "synthetic_199",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.1667,
+      "id": "synthetic_200",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.1667,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_201",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_202",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_203",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_204",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_205",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_206",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_207",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_208",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_209",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5556,
+      "id": "synthetic_210",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.5556,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_211",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_212",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_213",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_214",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "synthetic_215",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_216",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_217",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_218",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_219",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_220",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_221",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_222",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_223",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_224",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_225",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.75,
+      "id": "synthetic_226",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6,
+      "id": "synthetic_227",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.2,
+      "id": "synthetic_228",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.2,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.1667,
+      "id": "synthetic_229",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.1667,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_230",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_231",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_232",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_233",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_234",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.3333,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_235",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_236",
+      "relevance_label": "IRRELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_237",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_238",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.75,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5556,
+      "id": "synthetic_239",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.75,
+      "reliability_score": 0.5556,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.0,
+      "id": "synthetic_240",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_241",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.8,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_242",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8,
+      "id": "synthetic_243",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.5,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "UNSUPPORTED",
+      "grounding_score": 0.25,
+      "id": "synthetic_244",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.25,
+      "system_decision": "REJECT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.6667,
+      "id": "synthetic_245",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_246",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 1.0,
+      "system_decision": "ACCEPT"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "PARTIALLY_SUPPORTED",
+      "grounding_score": 0.5,
+      "id": "synthetic_247",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.5,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_248",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "NOT_CONTRADICTORY",
+      "contradiction_score": 0.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 1.0,
+      "id": "synthetic_249",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 0.6667,
+      "reliability_score": 0.6667,
+      "system_decision": "FLAG"
+    },
+    {
+      "contradiction_label": "CONTRADICTORY",
+      "contradiction_score": 1.0,
+      "grounding_label": "SUPPORTED",
+      "grounding_score": 0.8333,
+      "id": "synthetic_250",
+      "relevance_label": "RELEVANT",
+      "relevance_score": 1.0,
+      "reliability_score": 0.0,
+      "system_decision": "REJECT"
+    }
+  ],
+  "predictions_hash": "5822322628d07bff2f21bd25585b6e9752ac886587a280677215b7140f90fc1c",
+  "schema_version": 1
+}
