@@ -118,7 +118,7 @@ def test_evaluate_v2_end_to_end_reports_claims_verdicts_and_manifest():
     assert (report.decision.decision, report.decision.rule) == ("FLAG", "grounding.not_enough_info")
     assert report.manifest["engine"] == "v2"
     assert report.manifest["policy"]["id"] == "default"
-    assert report.manifest["verifier_chain"] == ["guards@1", "structured_facts@1", "lexical@1-content-1"]
+    assert report.manifest["verifier_chain"] == ["guards@2", "structured_facts@1", "lexical@1-content-1"]
     assert len(report.manifest["config_hash"]) == 64
 
 

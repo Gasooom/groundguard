@@ -142,6 +142,17 @@ def _raw_tokens(text: str) -> list[str]:
     return [token for token in text.split() if token.strip(",.;:!?\"'()")]
 
 
+def subject_prefix(text: str) -> str:
+    """Words before the first verb-like word after the first token, e.g.
+    "Drug Q is sold in 40 countries" -> "Drug Q". Empty if no verb is found."""
+
+    raw = _raw_tokens(text)
+    for index, token in enumerate(raw):
+        if index > 0 and _verb_like(token):
+            return " ".join(raw[:index])
+    return ""
+
+
 def _verb_like(token: str) -> bool:
     """Crude verb test: auxiliaries, or a lower-case word ending in -ed / -s."""
 

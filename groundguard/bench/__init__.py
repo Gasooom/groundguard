@@ -57,6 +57,7 @@ def run_benchmark(
             "engine_version": ENGINE_VERSION,
             "input_mode": input_mode,
             "pipeline": pipeline_config.to_dict(),
+            "verifier_chain": list(pipeline_config.chain().ids),
             "policy": {"id": policy.id, "version": policy.version, "hash": policy.hash},
         }
     else:

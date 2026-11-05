@@ -40,7 +40,7 @@ from groundguard.verifiers.lexical import LexicalMode, LexicalVerifier
 from groundguard.verifiers.structured_facts import StructuredFactsVerifier
 
 
-ENGINE_VERSION = "2.0.0-m3"
+ENGINE_VERSION = "2.0.0-m4a"
 
 
 @dataclass(frozen=True)

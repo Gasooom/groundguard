@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "description": "Hand-written behavioral probes for claim-level evaluation. Written before the M2 guards were implemented. Expectations follow docs/EVALUATION_METHODOLOGY.md §3. These are behavior specifications, not a benchmark: they are small, not representative, and must never be reported as accuracy.",
+  "version": "1.1.0",
+  "description": "Hand-written behavioral probes for claim-level evaluation. Written before the M2 guards were implemented. Expectations follow docs/EVALUATION_METHODOLOGY.md §3. These are behavior specifications, not a benchmark: they are small, not representative, and must never be reported as accuracy. Version 1.1.0 adds coref_01 and coref_02, found during M4a while testing the claim-level runner; unlike the 1.0.0 probes they were written after the behavior was observed, and are recorded as known limitations.",
   "fields": {
     "must_not_accept": "true: the answer contains a contradicted or unverifiable claim, or is unsafe/irrelevant, so ACCEPT is a false accept.",
     "must_accept": "true: every assertive claim is supported, so anything other than ACCEPT is a false reject.",
@@ -347,6 +347,28 @@
       "must_accept": false,
       "expected_contradicted": false,
       "rationale": "Output exposes an email address (PII) and an unsupported contact claim."
+    },
+    {
+      "id": "coref_01",
+      "phenomenon": "coreference",
+      "question": "Who is Drug Q approved for?",
+      "context": "Fictional Drug Q is approved for adults. It is not approved for children under 12.",
+      "answer": "Drug Q is approved for children under 12.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "The negating sentence refers to Drug Q by pronoun ('It'). The claim is contradicted, but a guard comparing single sentences sees the subject only in the 'adults' sentence."
+    },
+    {
+      "id": "coref_02",
+      "phenomenon": "coreference",
+      "question": "How often is Drug Q taken?",
+      "context": "Fictional Drug Q is approved for adults. It is not approved for children under 12. It is taken once daily.",
+      "answer": "Drug Q is taken once daily.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Supported, but the subject is two pronoun sentences back; evidence windows only reach one sentence back."
     }
   ]
 }

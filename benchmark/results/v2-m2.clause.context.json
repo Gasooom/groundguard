@@ -2,7 +2,7 @@
   "manifest": {
     "config": {
       "engine": "v2",
-      "engine_version": "2.0.0-m3",
+      "engine_version": "2.0.0-m4a",
       "input_mode": "context",
       "pipeline": {
         "granularity": "clause",
@@ -17,10 +17,15 @@
         "hash": "a09e7b5d8f7a842c94e920b08425464d2c5a59d6463e006ff23da847aa7f2bfe",
         "id": "provisional-m2",
         "version": "1.0.0"
-      }
+      },
+      "verifier_chain": [
+        "guards@2",
+        "structured_facts@1",
+        "lexical@1-content-1"
+      ]
     },
-    "config_hash": "9cf21f0b48ea3df2c5c4be1bde5be43dad7a7a5a502116c4f9e7be757933f652",
-    "created_at": "2026-11-05T10:16:55+00:00",
+    "config_hash": "3ffb818088b7acddcde46e575493ed1429c30ca0ffb1dde6d5f50c41ca9ea379",
+    "created_at": "2026-11-05T11:35:09+00:00",
     "dataset": {
       "files": [
         "benchmark/examples/human_labeled_001_020.json",
@@ -55,7 +60,7 @@
     },
     "engine": "v2",
     "git": {
-      "commit": "72f1cbb8a2719f672216eaa709230cf5443f8912",
+      "commit": "d0b57f1bdf09068c917e1abcf709327e883b7693",
       "dirty": true
     },
     "groundguard_version": "0.1.0",

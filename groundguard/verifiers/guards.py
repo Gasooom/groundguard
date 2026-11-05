@@ -41,6 +41,7 @@ from groundguard.core.text import (
     stem,
     words,
 )
+from groundguard.claims.segmenter import subject_prefix
 from groundguard.core.types import Claim, ClaimVerdict, EvidenceSpan, VerdictLabel
 
 
@@ -283,16 +284,24 @@ def _qualifier_mismatch(claim: str, anchor: str) -> _Finding | None:
 class GuardVerifier:
     min_topic_dice: float = 0.5
     name: str = "guards"
-    version: str = "1"
+    # 2: an anchor must share predicate words with the claim, not only its subject.
+    version: str = "2"
 
     def anchor(self, claim: Claim, candidates: Sequence[EvidenceSpan]) -> tuple[EvidenceSpan, float] | None:
         claim_topic = _topic_tokens(claim.text)
         claim_negated = is_negated(claim.text)
+        # Words about the predicate, not the subject. Two sentences that share
+        # only their subject ("Drug Q is sold in 40 countries" / "Drug Q is not
+        # approved for children") state different facts and are not compared.
+        predicate_topic = claim_topic - _topic_tokens(subject_prefix(claim.text))
         best: tuple[float, bool, EvidenceSpan] | None = None
         for candidate in candidates:
             if re.search(r"[.!?]\s", candidate.text):
                 continue  # guards compare against single sentences only
-            score = _dice(claim_topic, _topic_tokens(candidate.text))
+            candidate_topic = _topic_tokens(candidate.text)
+            if predicate_topic and not predicate_topic & candidate_topic:
+                continue
+            score = _dice(claim_topic, candidate_topic)
             same_polarity = is_negated(candidate.text) == claim_negated
             key = (score, same_polarity)
             if best is None or key > (best[0], best[1]):

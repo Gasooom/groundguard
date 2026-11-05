@@ -31,6 +31,8 @@ KNOWN_LIMITATIONS = {
     "num_04_control": "v1 relevance (reused unchanged) rejects 'how long' answers without a matched keyword",
     "list_04_control": "v1 relevance treats every 'when' question as requiring a year",
     "ctrl_02": "v1 relevance treats every 'when' question as requiring a year",
+    "coref_01": "pronoun subject: guards anchor to the sentence naming the entity (qualifier) instead of the negated pronoun sentence",
+    "coref_02": "pronoun chain longer than the two-sentence evidence window",
 }
 
 

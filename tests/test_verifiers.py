@@ -45,7 +45,7 @@ def test_guards_fire_with_a_recorded_signal(claim_text, evidence_text, label, ch
     assert check in verdict.signals["fired"]
     assert check in verdict.signals
     assert verdict.evidence[0].text == evidence_text
-    assert verdict.verifier == "guards@1"
+    assert verdict.verifier == "guards@2"
 
 
 @pytest.mark.parametrize(
@@ -145,10 +145,10 @@ def test_structured_facts_detects_single_valued_conflicts_only():
 
 def test_chain_uses_first_non_abstaining_verifier():
     chain = VerifierChain((GuardVerifier(), StructuredFactsVerifier(), LexicalVerifier()))
-    assert chain.ids == ("guards@1", "structured_facts@1", "lexical@1-content-1")
+    assert chain.ids == ("guards@2", "structured_facts@1", "lexical@1-content-1")
 
     contradicted = chain.verify(claim("Acme is not in Berlin"), evidence("Acme is in Berlin"))
-    assert contradicted.verifier == "guards@1"
+    assert contradicted.verifier == "guards@2"
 
     supported = chain.verify(claim("Acme is in Berlin"), evidence("Acme is in Berlin"))
     assert (supported.label, supported.verifier) == ("SUPPORTED", "lexical@1-content-1")
@@ -157,3 +157,16 @@ def test_chain_uses_first_non_abstaining_verifier():
 def test_chain_requires_a_verifier():
     with pytest.raises(ValueError):
         VerifierChain(())
+
+
+def test_guards_do_not_compare_sentences_that_share_only_the_subject():
+    # guards@1 reported a false contradiction here: both sentences are about
+    # Drug Q, but they state different facts (sales vs approval).
+    candidates = evidence("Drug Q is not approved for children under 12")
+    assert GUARD.verify(claim("Drug Q is sold in 40 countries"), candidates) is None
+
+
+def test_guards_still_compare_when_the_predicate_is_shared():
+    candidates = evidence("Drug Q is not approved for children under 12")
+    verdict = GUARD.verify(claim("Drug Q is approved for children under 12"), candidates)
+    assert verdict is not None and verdict.label == "CONTRADICTED"
