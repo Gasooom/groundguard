@@ -11,24 +11,52 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from groundguard.bench.datasets import load_dataset
 from groundguard.bench.errors import RunFileError
 from groundguard.bench.manifest import RUN_FILE_SCHEMA_VERSION, build_manifest
 from groundguard.bench.report import build_metrics, predictions_hash
-from groundguard.bench.runner import INPUT_MODES, InputMode, run_v1
+from groundguard.bench.runner import INPUT_MODES, InputMode, run_v1, run_v2
+from groundguard.pipeline import ENGINE_VERSION, PipelineConfig
 
 
-def run_benchmark(dataset_id: str, *, input_mode: InputMode) -> dict[str, Any]:
-    """Run the v1 engine over a dataset and return a self-describing run."""
+def run_benchmark(
+    dataset_id: str,
+    *,
+    input_mode: InputMode,
+    engine: Literal["v1", "v2"] = "v1",
+    pipeline_config: PipelineConfig | None = None,
+) -> dict[str, Any]:
+    """Run an engine over a dataset and return a self-describing run.
+
+    v2 only supports the ``context`` input mode: it evaluates against the
+    sources the caller supplies, which is the production path.
+    """
 
     if input_mode not in INPUT_MODES:
         raise ValueError(f"unknown input_mode {input_mode!r}")
 
     dataset = load_dataset(dataset_id)
-    predictions = run_v1(dataset.records, input_mode)
-    config = {"engine": "v1", "input_mode": input_mode, "threshold": None}
+    config: dict[str, Any]
+    if engine == "v1":
+        if pipeline_config is not None:
+            raise ValueError("pipeline_config only applies to engine v2")
+        predictions = run_v1(dataset.records, input_mode)
+        config = {"engine": "v1", "input_mode": input_mode, "threshold": None}
+    elif engine == "v2":
+        if input_mode != "context":
+            raise ValueError("engine v2 only supports input_mode 'context'")
+        pipeline_config = pipeline_config or PipelineConfig()
+        predictions = run_v2(dataset.records, pipeline_config)
+        config = {
+            "engine": "v2",
+            "engine_version": ENGINE_VERSION,
+            "input_mode": input_mode,
+            "pipeline": pipeline_config.to_dict(),
+        }
+    else:
+        raise ValueError(f"unknown engine {engine!r}")
 
     return {
         "schema_version": RUN_FILE_SCHEMA_VERSION,

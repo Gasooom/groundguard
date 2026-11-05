@@ -16,6 +16,9 @@ from groundguard.bench.compare import compare_runs, format_comparison, parse_tol
 from groundguard.bench.datasets import DATASETS
 from groundguard.bench.errors import BenchmarkError
 from groundguard.bench.runner import INPUT_MODES
+from groundguard.core.errors import GroundGuardError
+from groundguard.core.types import GRANULARITIES
+from groundguard.pipeline import PipelineConfig
 
 
 def _summary(run: dict[str, object]) -> str:
@@ -37,7 +40,26 @@ def _summary(run: dict[str, object]) -> str:
 
 
 def _bench_run(args: argparse.Namespace) -> int:
-    run = run_benchmark(args.dataset, input_mode=args.input_mode)
+    pipeline_config = None
+    if args.engine == "v2":
+        pipeline_config = PipelineConfig(
+            granularity=args.granularity,
+            guards=not args.no_guards,
+            structured_facts=not args.no_structured_facts,
+            lexical_mode=args.lexical_mode,
+            lexical_threshold=args.lexical_threshold,
+        )
+    elif any(
+        (args.granularity != "conjunct", args.no_guards, args.no_structured_facts,
+         args.lexical_mode != "content", args.lexical_threshold != 1.0)
+    ):
+        raise ValueError("pipeline options only apply to --engine v2")
+    run = run_benchmark(
+        args.dataset,
+        input_mode=args.input_mode,
+        engine=args.engine,
+        pipeline_config=pipeline_config,
+    )
     if args.out:
         write_run(run, Path(args.out))
         print(f"wrote {args.out}")
@@ -72,6 +94,12 @@ def build_parser() -> argparse.ArgumentParser:
     run = bench_commands.add_parser("run", help="run a benchmark")
     run.add_argument("--dataset", required=True, choices=sorted(DATASETS))
     run.add_argument("--input-mode", required=True, choices=INPUT_MODES)
+    run.add_argument("--engine", choices=("v1", "v2"), default="v1")
+    run.add_argument("--granularity", choices=GRANULARITIES, default="conjunct", help="v2 only")
+    run.add_argument("--lexical-mode", choices=("content", "v1"), default="content", help="v2 only")
+    run.add_argument("--lexical-threshold", type=float, default=1.0, help="v2 only")
+    run.add_argument("--no-guards", action="store_true", help="v2 only: disable the guard verifier")
+    run.add_argument("--no-structured-facts", action="store_true", help="v2 only")
     run.add_argument("--out", help="write the run file to this path")
     run.set_defaults(handler=_bench_run)
 
@@ -97,7 +125,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return int(args.handler(args))
-    except (BenchmarkError, ValueError) as error:
+    except (BenchmarkError, GroundGuardError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
 

@@ -53,7 +53,7 @@ def build_manifest(dataset: Dataset, config: dict[str, Any]) -> dict[str, Any]:
     return {
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "groundguard_version": groundguard_version(),
-        "engine": "v1",
+        "engine": config.get("engine", "v1"),
         "git": {
             "commit": _git("rev-parse", "HEAD"),
             "dirty": None if status is None else bool(status),

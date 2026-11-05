@@ -31,6 +31,7 @@ from groundguard.domain.decision import evaluate_decision
 from groundguard.domain.grounding import evaluate_grounding
 from groundguard.domain.relevance import evaluate_relevance
 from groundguard.evaluation.decision_metrics import reliability_score
+from groundguard.pipeline import PipelineConfig, evaluate_v2
 
 
 InputMode = Literal["context", "oracle", "oracle_no_question"]
@@ -117,3 +118,45 @@ def run_v1(
     if input_mode == "oracle_no_question":
         return tuple(_predict_oracle(record, use_question=False) for record in records)
     raise ValueError(f"unknown input_mode {input_mode!r}; expected one of {INPUT_MODES}")
+
+
+def _predict_v2(record: BenchmarkRecord, config: PipelineConfig) -> Prediction:
+    report = evaluate_v2(
+        question=record.question,
+        context=record.context,
+        answer=record.answer,
+        config=config,
+    )
+    labels = [verdict.label for verdict in report.verdicts]
+    supported_fraction = labels.count("SUPPORTED") / len(labels) if labels else 0.0
+    contradiction_score = 1.0 if "CONTRADICTED" in labels else 0.0
+    relevance_score = float(report.relevance["score"])
+    decision = report.decision.decision
+    if decision not in ("ACCEPT", "FLAG", "REJECT"):
+        raise ValueError(f"unexpected decision {decision!r} for a legacy-label benchmark")
+    return Prediction(
+        id=record.id,
+        grounding_label=report.labels["grounding_label"],
+        grounding_score=round(supported_fraction, 4),
+        relevance_label=str(report.relevance["label"]),
+        relevance_score=relevance_score,
+        contradiction_label=report.labels["contradiction_label"],
+        contradiction_score=contradiction_score,
+        reliability_score=round(
+            min(supported_fraction, relevance_score, 1.0 - contradiction_score), 4
+        ),
+        system_decision=decision,
+    )
+
+
+def run_v2(
+    records: Sequence[BenchmarkRecord],
+    config: PipelineConfig,
+) -> tuple[Prediction, ...]:
+    """Run the v2 pipeline on the production path (record context as the source).
+
+    Claim verdicts are mapped to the legacy answer-level labels with
+    ``pipeline.derive_v1_labels`` so both engines are scored on the same gold labels.
+    """
+
+    return tuple(_predict_v2(record, config) for record in records)
