@@ -1,8 +1,9 @@
 """HTTP adapter for the v2 claim-level engine.
 
-M2 scope: evaluation only, no persistence (storage with migrations is M7),
-no authentication (M7). Input sizes are capped so a single request cannot
-exhaust the process.
+Evaluation only: no persistence and no authentication yet (both M7). Input
+sizes are capped so a single request cannot exhaust the process. Callers can
+choose a builtin policy by name; uploading arbitrary policy files waits for
+authentication (M7).
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ from pydantic import BaseModel, Field, model_validator
 from groundguard.core.errors import InvalidInput
 from groundguard.core.types import SourceDocument
 from groundguard.pipeline import PipelineConfig, evaluate_v2
+from groundguard.policy import DEFAULT_POLICY, builtin_names, load_builtin
 
 
 MAX_QUESTION_CHARS = 4_000
@@ -40,12 +42,21 @@ class EvaluateV2Request(BaseModel):
     context: str | None = Field(default=None, min_length=1, max_length=MAX_SOURCE_CHARS)
     contexts: list[SourceIn] | None = Field(default=None, min_length=1, max_length=MAX_SOURCES)
     options: OptionsIn = Field(default_factory=OptionsIn)
+    policy: str = Field(default=DEFAULT_POLICY, description="Name of a builtin policy (GET /v2/policies).")
 
     @model_validator(mode="after")
     def _exactly_one_context_field(self) -> "EvaluateV2Request":
         if (self.context is None) == (self.contexts is None):
             raise ValueError("provide exactly one of 'context' or 'contexts'")
+        if self.policy not in v2_policy_names():
+            raise ValueError(f"unknown policy {self.policy!r}; known: {list(v2_policy_names())}")
         return self
+
+
+def v2_policy_names() -> tuple[str, ...]:
+    """Builtin policies usable with the v2 engine (v1-compat is excluded)."""
+
+    return tuple(name for name in builtin_names() if not load_builtin(name).requires_v1)
 
 
 router = APIRouter(prefix="/v2", tags=["v2"])
@@ -54,7 +65,7 @@ router = APIRouter(prefix="/v2", tags=["v2"])
 @router.post("/evaluate")
 def evaluate_answer_v2(request: EvaluateV2Request) -> Any:
     """Claim-level evaluation: claims, per-claim verdicts with evidence spans,
-    derived labels, safety signals, and the provisional M2 decision."""
+    derived labels, safety signals, and the policy decision with its rule trace."""
 
     try:
         report = evaluate_v2(
@@ -70,6 +81,7 @@ def evaluate_answer_v2(request: EvaluateV2Request) -> Any:
                 granularity=request.options.granularity,
                 top_k=request.options.top_k,
             ),
+            policy=load_builtin(request.policy),
         )
     except InvalidInput as error:
         return JSONResponse(
@@ -77,3 +89,10 @@ def evaluate_answer_v2(request: EvaluateV2Request) -> Any:
             content={"error": {"code": "invalid_input", "message": str(error)}},
         )
     return report.to_dict()
+
+
+@router.get("/policies")
+def list_policies() -> Any:
+    """Builtin policies usable with the v2 engine: rules, versions and content hashes."""
+
+    return [load_builtin(name).to_dict() | {"hash": load_builtin(name).hash} for name in v2_policy_names()]

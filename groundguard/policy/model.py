@@ -174,6 +174,12 @@ class Policy:
     default_rule_id: str = "default"
     hash: str = field(default="", compare=False)
 
+    @property
+    def requires_v1(self) -> bool:
+        """True if any rule uses v1.* conditions (usable with the v1 engine only)."""
+
+        return any(condition.kind.startswith("v1.") for rule in self.rules for condition in rule.when)
+
     def to_dict(self) -> dict[str, Any]:
         """Canonical content. The policy hash is computed over this, so
         comments and formatting in the TOML file do not change it."""

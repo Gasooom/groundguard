@@ -11,7 +11,7 @@ def test_v2_requires_the_production_input_mode():
 
 
 def test_pipeline_config_only_applies_to_v2():
-    with pytest.raises(ValueError, match="only applies to engine v2"):
+    with pytest.raises(ValueError, match="only apply to engine v2"):
         run_benchmark("gg-legacy-v1", input_mode="context", engine="v1", pipeline_config=PipelineConfig())
 
 
@@ -42,13 +42,20 @@ RESULTS = __import__("pathlib").Path(__file__).resolve().parents[1] / "benchmark
 def test_v2_engine_reproduces_committed_m2_results(granularity):
     from groundguard.bench import read_run
 
+    from groundguard.policy import load_builtin
+
     committed = read_run(RESULTS / f"v2-m2.{granularity}.context.json")
     run = run_benchmark(
         "gg-legacy-v1",
         input_mode="context",
         engine="v2",
         pipeline_config=PipelineConfig(granularity=granularity),
+        policy=load_builtin("provisional-m2"),
     )
-    assert run["manifest"]["config"] == committed["manifest"]["config"]
+    # The M2 decisions now come from the provisional-m2 policy. Until the run
+    # files are regenerated with the policy recorded in their config, compare
+    # the pipeline config, predictions and metrics exactly.
+    assert run["manifest"]["config"]["pipeline"] == committed["manifest"]["config"]["pipeline"]
+    assert run["manifest"]["config"]["policy"]["id"] == "provisional-m2"
     assert run["predictions_hash"] == committed["predictions_hash"]
     assert run["metrics"] == committed["metrics"]

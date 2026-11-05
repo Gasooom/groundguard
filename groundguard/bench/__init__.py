@@ -19,6 +19,7 @@ from groundguard.bench.manifest import RUN_FILE_SCHEMA_VERSION, build_manifest
 from groundguard.bench.report import build_metrics, predictions_hash
 from groundguard.bench.runner import INPUT_MODES, InputMode, run_v1, run_v2
 from groundguard.pipeline import ENGINE_VERSION, PipelineConfig
+from groundguard.policy import DEFAULT_POLICY, Policy, load_builtin
 
 
 def run_benchmark(
@@ -27,6 +28,7 @@ def run_benchmark(
     input_mode: InputMode,
     engine: Literal["v1", "v2"] = "v1",
     pipeline_config: PipelineConfig | None = None,
+    policy: Policy | None = None,
 ) -> dict[str, Any]:
     """Run an engine over a dataset and return a self-describing run.
 
@@ -40,20 +42,22 @@ def run_benchmark(
     dataset = load_dataset(dataset_id)
     config: dict[str, Any]
     if engine == "v1":
-        if pipeline_config is not None:
-            raise ValueError("pipeline_config only applies to engine v2")
+        if pipeline_config is not None or policy is not None:
+            raise ValueError("pipeline_config and policy only apply to engine v2")
         predictions = run_v1(dataset.records, input_mode)
         config = {"engine": "v1", "input_mode": input_mode, "threshold": None}
     elif engine == "v2":
         if input_mode != "context":
             raise ValueError("engine v2 only supports input_mode 'context'")
         pipeline_config = pipeline_config or PipelineConfig()
-        predictions = run_v2(dataset.records, pipeline_config)
+        policy = policy or load_builtin(DEFAULT_POLICY)
+        predictions = run_v2(dataset.records, pipeline_config, policy)
         config = {
             "engine": "v2",
             "engine_version": ENGINE_VERSION,
             "input_mode": input_mode,
             "pipeline": pipeline_config.to_dict(),
+            "policy": {"id": policy.id, "version": policy.version, "hash": policy.hash},
         }
     else:
         raise ValueError(f"unknown engine {engine!r}")

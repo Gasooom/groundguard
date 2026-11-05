@@ -19,6 +19,7 @@ from groundguard.bench.runner import INPUT_MODES
 from groundguard.core.errors import GroundGuardError
 from groundguard.core.types import GRANULARITIES
 from groundguard.pipeline import PipelineConfig
+from groundguard.policy import builtin_names, load_policy
 
 
 def _summary(run: dict[str, object]) -> str:
@@ -51,7 +52,7 @@ def _bench_run(args: argparse.Namespace) -> int:
         )
     elif any(
         (args.granularity != "conjunct", args.no_guards, args.no_structured_facts,
-         args.lexical_mode != "content", args.lexical_threshold != 1.0)
+         args.lexical_mode != "content", args.lexical_threshold != 1.0, args.policy is not None)
     ):
         raise ValueError("pipeline options only apply to --engine v2")
     run = run_benchmark(
@@ -59,6 +60,7 @@ def _bench_run(args: argparse.Namespace) -> int:
         input_mode=args.input_mode,
         engine=args.engine,
         pipeline_config=pipeline_config,
+        policy=None if args.policy is None else load_policy(args.policy),
     )
     if args.out:
         write_run(run, Path(args.out))
@@ -84,6 +86,25 @@ def _bench_compare(args: argparse.Namespace) -> int:
     return 0
 
 
+def _policy_check(args: argparse.Namespace) -> int:
+    loaded = load_policy(args.policy)
+    print(f"{loaded.id} {loaded.version}  sha256:{loaded.hash}")
+    print(f"  {loaded.description}")
+    for index, rule in enumerate(loaded.rules, start=1):
+        conditions = " AND ".join(f"{c.kind}={c.value}" for c in rule.when)
+        marker = "" if rule.terminal else "  (non-terminal)"
+        print(f"  {index}. {rule.id}: {conditions} -> {rule.decision}{marker}")
+    print(f"  default: {loaded.default_rule_id} -> {loaded.default_decision}")
+    return 0
+
+
+def _policy_list(args: argparse.Namespace) -> int:
+    for name in builtin_names():
+        loaded = load_policy(name)
+        print(f"{loaded.id:16} {loaded.version:8} {loaded.hash[:12]}  {loaded.description}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="groundguard")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -100,6 +121,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--lexical-threshold", type=float, default=1.0, help="v2 only")
     run.add_argument("--no-guards", action="store_true", help="v2 only: disable the guard verifier")
     run.add_argument("--no-structured-facts", action="store_true", help="v2 only")
+    run.add_argument("--policy", help="v2 only: builtin policy name or path to a .toml policy")
     run.add_argument("--out", help="write the run file to this path")
     run.set_defaults(handler=_bench_run)
 
@@ -118,6 +140,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="allowed worsening for a metric, e.g. decision.false_accept=0.01 (default 0)",
     )
     compare.set_defaults(handler=_bench_compare)
+
+    policy = commands.add_parser("policy", help="decision policies")
+    policy_commands = policy.add_subparsers(dest="policy_command", required=True)
+    check = policy_commands.add_parser("check", help="validate a policy and print its rules")
+    check.add_argument("policy", help="builtin policy name or path to a .toml file")
+    check.set_defaults(handler=_policy_check)
+    listing = policy_commands.add_parser("list", help="list builtin policies")
+    listing.set_defaults(handler=_policy_list)
     return parser
 
 

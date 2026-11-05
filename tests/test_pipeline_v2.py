@@ -4,13 +4,8 @@ from fastapi.testclient import TestClient
 from groundguard.api.app import app
 from groundguard.core.errors import InvalidInput
 from groundguard.core.types import ClaimVerdict, SourceDocument
-from groundguard.pipeline import (
-    PROVISIONAL_RULES,
-    PipelineConfig,
-    derive_v1_labels,
-    evaluate_v2,
-    provisional_decision,
-)
+from groundguard.pipeline import PipelineConfig, derive_v1_labels, evaluate_v2
+from groundguard.policy import decide, facts_from_v2, load_builtin
 
 
 client = TestClient(app)
@@ -52,19 +47,58 @@ def test_derived_v1_labels(labels, expected):
         (["CONTRADICTED"], False, False, False, "grounding.contradicted", "REJECT"),
     ],
 )
-def test_provisional_decision_rules_in_priority_order(labels, relevant, pii, injection, rule, decision):
-    result = provisional_decision(
-        [_verdict(label) for label in labels],
-        relevant=relevant,
-        pii_detected=pii,
-        injection_detected=injection,
+def test_provisional_m2_policy_rules_in_priority_order(labels, relevant, pii, injection, rule, decision):
+    # Same cases as the M2 provisional-rule test; the rules now live in
+    # groundguard/policy/builtin/provisional-m2.toml.
+    result = decide(
+        load_builtin("provisional-m2"),
+        facts_from_v2(
+            [_verdict(label) for label in labels],
+            relevant=relevant,
+            pii_detected=pii,
+            injection_detected=injection,
+        ),
     )
     assert (result.rule, result.decision) == (rule, decision)
 
 
-def test_rule_table_is_complete_and_ordered():
-    assert [rule for rule, _, _ in PROVISIONAL_RULES][-1] == "default.accept"
-    assert len({rule for rule, _, _ in PROVISIONAL_RULES}) == len(PROVISIONAL_RULES)
+def test_provisional_m2_rule_order():
+    policy = load_builtin("provisional-m2")
+    assert [r.id for r in policy.rules] + [policy.default_rule_id] == [
+        "safety.pii",
+        "safety.prompt_injection",
+        "grounding.contradicted",
+        "relevance.irrelevant",
+        "grounding.none_supported",
+        "grounding.not_enough_info",
+        "default.accept",
+    ]
+
+
+def test_pipeline_uses_default_policy_and_records_it_in_the_manifest():
+    report = evaluate_v2(
+        question="What is Drug X approved for?",
+        context="Drug X is approved to treat hypertension in adults.",
+        answer="Drug X is approved to treat hypertension in children.",
+    )
+    assert (report.decision.decision, report.decision.rule) == ("HUMAN_REVIEW", "grounding.qualifier_mismatch")
+    assert report.decision.matched_rules == ("grounding.qualifier_mismatch", "grounding.none_supported", "grounding.not_enough_info")
+    default = load_builtin("default")
+    assert report.manifest["policy"] == {"id": "default", "version": "2.0.0", "hash": default.hash}
+
+    m2 = evaluate_v2(
+        question="What is Drug X approved for?",
+        context="Drug X is approved to treat hypertension in adults.",
+        answer="Drug X is approved to treat hypertension in children.",
+        policy=load_builtin("provisional-m2"),
+    )
+    assert (m2.decision.decision, m2.decision.rule) == ("REJECT", "grounding.none_supported")
+    assert m2.manifest["config_hash"] != report.manifest["config_hash"]
+
+
+def test_pipeline_rejects_v1_only_policies():
+    with pytest.raises(InvalidInput, match="only works with the v1 engine"):
+        evaluate_v2(question="q", answer="a", context="c", policy=load_builtin("v1-compat"))
 
 
 def test_evaluate_v2_end_to_end_reports_claims_verdicts_and_manifest():
@@ -83,6 +117,7 @@ def test_evaluate_v2_end_to_end_reports_claims_verdicts_and_manifest():
     assert report.labels["grounding_label"] == "PARTIALLY_SUPPORTED"
     assert (report.decision.decision, report.decision.rule) == ("FLAG", "grounding.not_enough_info")
     assert report.manifest["engine"] == "v2"
+    assert report.manifest["policy"]["id"] == "default"
     assert report.manifest["verifier_chain"] == ["guards@1", "structured_facts@1", "lexical@1-content-1"]
     assert len(report.manifest["config_hash"]) == 64
 
@@ -199,3 +234,31 @@ def test_v1_evaluate_endpoint_is_unchanged_by_v2():
     # v1 still accepts this negation (documented audit finding); v2 rejects it.
     assert response.status_code == 200
     assert response.json()["system_decision"] == "ACCEPT"
+
+
+def test_api_v2_policy_selection():
+    payload = {
+        "question": "What is Drug X approved for?",
+        "context": "Drug X is approved to treat hypertension in adults.",
+        "answer": "Drug X is approved to treat hypertension in children.",
+    }
+    decisions = {}
+    for name in ("default", "provisional-m2", "strict"):
+        response = client.post("/v2/evaluate", json=payload | {"policy": name})
+        assert response.status_code == 200
+        data = response.json()
+        assert data["decision"]["policy"]["id"] == name
+        decisions[name] = data["decision"]["decision"]
+    assert decisions == {"default": "HUMAN_REVIEW", "provisional-m2": "REJECT", "strict": "REJECT"}
+
+    for bad in ("v1-compat", "nonexistent"):
+        assert client.post("/v2/evaluate", json=payload | {"policy": bad}).status_code == 422
+
+
+def test_api_v2_lists_v2_policies_with_hashes():
+    response = client.get("/v2/policies")
+    assert response.status_code == 200
+    policies = {item["id"]: item for item in response.json()}
+    assert set(policies) == {"default", "provisional-m2", "strict"}
+    assert policies["default"]["hash"] == load_builtin("default").hash
+    assert policies["default"]["rules"][4]["id"] == "grounding.qualifier_mismatch"

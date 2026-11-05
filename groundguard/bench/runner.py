@@ -32,6 +32,7 @@ from groundguard.domain.grounding import evaluate_grounding
 from groundguard.domain.relevance import evaluate_relevance
 from groundguard.evaluation.decision_metrics import reliability_score
 from groundguard.pipeline import PipelineConfig, evaluate_v2
+from groundguard.policy import Policy
 
 
 InputMode = Literal["context", "oracle", "oracle_no_question"]
@@ -120,20 +121,19 @@ def run_v1(
     raise ValueError(f"unknown input_mode {input_mode!r}; expected one of {INPUT_MODES}")
 
 
-def _predict_v2(record: BenchmarkRecord, config: PipelineConfig) -> Prediction:
+def _predict_v2(record: BenchmarkRecord, config: PipelineConfig, policy: Policy) -> Prediction:
     report = evaluate_v2(
         question=record.question,
         context=record.context,
         answer=record.answer,
         config=config,
+        policy=policy,
     )
     labels = [verdict.label for verdict in report.verdicts]
     supported_fraction = labels.count("SUPPORTED") / len(labels) if labels else 0.0
     contradiction_score = 1.0 if "CONTRADICTED" in labels else 0.0
     relevance_score = float(report.relevance["score"])
     decision = report.decision.decision
-    if decision not in ("ACCEPT", "FLAG", "REJECT"):
-        raise ValueError(f"unexpected decision {decision!r} for a legacy-label benchmark")
     return Prediction(
         id=record.id,
         grounding_label=report.labels["grounding_label"],
@@ -152,6 +152,7 @@ def _predict_v2(record: BenchmarkRecord, config: PipelineConfig) -> Prediction:
 def run_v2(
     records: Sequence[BenchmarkRecord],
     config: PipelineConfig,
+    policy: Policy,
 ) -> tuple[Prediction, ...]:
     """Run the v2 pipeline on the production path (record context as the source).
 
@@ -159,4 +160,4 @@ def run_v2(
     ``pipeline.derive_v1_labels`` so both engines are scored on the same gold labels.
     """
 
-    return tuple(_predict_v2(record, config) for record in records)
+    return tuple(_predict_v2(record, config, policy) for record in records)

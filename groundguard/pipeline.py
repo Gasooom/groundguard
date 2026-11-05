@@ -4,10 +4,11 @@
     context ─► chunk ────────────┼─► per claim: BM25 candidates ─► verifier chain ─► verdict
     question ─► relevance (v1)   │
     answer ─► PII + injection (v1)
-                                  └─► derived labels ─► provisional decision ─► report
+                                  └─► derived labels ─► policy decision ─► report
 
-The provisional decision rules below are replaced by the declarative policy
-engine in M3, which must reproduce them exactly. The v1 engine
+The decision comes from a declarative policy (``groundguard.policy``); the
+default is the builtin ``default`` policy. The M2 provisional rules are the
+builtin ``provisional-m2`` policy. The v1 engine
 (``groundguard.application.evaluator``) is untouched and still serves
 ``POST /evaluate``.
 """
@@ -15,7 +16,7 @@ engine in M3, which must reproduce them exactly. The v1 engine
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Any, Literal, Sequence
+from typing import Any, Sequence
 
 from groundguard.claims.segmenter import segment
 from groundguard.core.errors import InvalidInput
@@ -24,7 +25,6 @@ from groundguard.core.types import (
     GRANULARITIES,
     Claim,
     ClaimVerdict,
-    DecisionLabel,
     Granularity,
     SourceDocument,
 )
@@ -33,13 +33,14 @@ from groundguard.domain.prompt_injection import detect_prompt_injection
 from groundguard.domain.relevance import evaluate_relevance
 from groundguard.evidence.bm25 import select_evidence
 from groundguard.evidence.chunking import chunk_sources
+from groundguard.policy import DEFAULT_POLICY, Policy, PolicyDecision, decide, facts_from_v2, load_builtin
 from groundguard.verifiers.base import Verifier, VerifierChain
 from groundguard.verifiers.guards import GuardVerifier
 from groundguard.verifiers.lexical import LexicalMode, LexicalVerifier
 from groundguard.verifiers.structured_facts import StructuredFactsVerifier
 
 
-ENGINE_VERSION = "2.0.0-m2"
+ENGINE_VERSION = "2.0.0-m3"
 
 
 @dataclass(frozen=True)
@@ -71,63 +72,6 @@ class PipelineConfig:
         return asdict(self)
 
 
-# ------------------------------------------------------------ decision (M2)
-
-RuleId = Literal[
-    "safety.pii",
-    "safety.prompt_injection",
-    "grounding.contradicted",
-    "relevance.irrelevant",
-    "grounding.none_supported",
-    "grounding.not_enough_info",
-    "default.accept",
-]
-
-PROVISIONAL_RULES: tuple[tuple[RuleId, DecisionLabel, str], ...] = (
-    ("safety.pii", "REJECT", "PII was detected in the answer."),
-    ("safety.prompt_injection", "REJECT", "Prompt-injection patterns were detected in the answer."),
-    ("grounding.contradicted", "REJECT", "At least one claim is contradicted by the evidence."),
-    ("relevance.irrelevant", "REJECT", "The answer does not address the question."),
-    ("grounding.none_supported", "REJECT", "No claim in the answer is supported by the evidence."),
-    ("grounding.not_enough_info", "FLAG", "Some claims cannot be verified from the evidence."),
-    ("default.accept", "ACCEPT", "Every claim is supported and no check failed."),
-)
-
-
-@dataclass(frozen=True)
-class Decision:
-    decision: DecisionLabel
-    rule: RuleId
-    reason: str
-    policy: str = "provisional-m2"
-
-    def to_dict(self) -> dict[str, str]:
-        return asdict(self)
-
-
-def provisional_decision(
-    verdicts: Sequence[ClaimVerdict],
-    *,
-    relevant: bool,
-    pii_detected: bool,
-    injection_detected: bool,
-) -> Decision:
-    labels = [verdict.label for verdict in verdicts]
-    fired: dict[RuleId, bool] = {
-        "safety.pii": pii_detected,
-        "safety.prompt_injection": injection_detected,
-        "grounding.contradicted": "CONTRADICTED" in labels,
-        "relevance.irrelevant": not relevant,
-        "grounding.none_supported": "SUPPORTED" not in labels,
-        "grounding.not_enough_info": "NOT_ENOUGH_INFO" in labels,
-        "default.accept": True,
-    }
-    for rule, decision, reason in PROVISIONAL_RULES:
-        if fired[rule]:
-            return Decision(decision, rule, reason)
-    raise AssertionError("default rule always fires")  # pragma: no cover
-
-
 def derive_v1_labels(verdicts: Sequence[ClaimVerdict]) -> dict[str, str]:
     """Answer-level labels in the v1 vocabulary (GROUNDGUARD_V2.md §7)."""
 
@@ -156,7 +100,7 @@ class EvaluationReportV2:
     labels: dict[str, str]
     relevance: dict[str, Any]
     safety: dict[str, Any]
-    decision: Decision
+    decision: PolicyDecision
     manifest: dict[str, Any]
 
     def to_dict(self) -> dict[str, Any]:
@@ -202,14 +146,21 @@ def evaluate_v2(
     context: str | None = None,
     contexts: Sequence[SourceDocument] | None = None,
     config: PipelineConfig | None = None,
+    policy: Policy | None = None,
 ) -> EvaluationReportV2:
-    """Evaluate an answer claim by claim against the supplied sources."""
+    """Evaluate an answer claim by claim against the supplied sources.
+
+    ``policy`` defaults to the builtin ``default`` policy.
+    """
 
     if not question.strip():
         raise InvalidInput("question must not be empty")
     if not answer.strip():
         raise InvalidInput("answer must not be empty")
     config = config or PipelineConfig()
+    policy = policy or load_builtin(DEFAULT_POLICY)
+    if policy.requires_v1:
+        raise InvalidInput(f"policy {policy.id!r} uses v1 conditions and only works with the v1 engine")
     sources = _sources(context, contexts)
     chain = config.chain()
 
@@ -225,21 +176,27 @@ def evaluate_v2(
     pii = detect_pii(answer)
     injection = detect_prompt_injection(answer)
 
-    decision = provisional_decision(
-        verdicts,
-        relevant=relevance.relevant,
-        pii_detected=pii.detected,
-        injection_detected=injection.detected,
+    decision = decide(
+        policy,
+        facts_from_v2(
+            verdicts,
+            relevant=relevance.relevant,
+            pii_detected=pii.detected,
+            injection_detected=injection.detected,
+        ),
     )
 
     config_dict = config.to_dict()
+    policy_ref = {"id": policy.id, "version": policy.version, "hash": policy.hash}
     manifest = {
         "engine": "v2",
         "engine_version": ENGINE_VERSION,
         "verifier_chain": list(chain.ids),
         "config": config_dict,
-        "config_hash": sha256_json({"engine_version": ENGINE_VERSION, **config_dict}),
-        "decision_policy": decision.policy,
+        "policy": policy_ref,
+        "config_hash": sha256_json(
+            {"engine_version": ENGINE_VERSION, **config_dict, "policy_hash": policy.hash}
+        ),
         "relevance": "v1 domain.relevance (answer level)",
         "safety": "v1 domain.pii + domain.prompt_injection (answer only)",
     }

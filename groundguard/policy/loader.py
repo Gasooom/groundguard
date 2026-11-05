@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import tomllib
 from dataclasses import replace
+from functools import lru_cache
 from importlib import resources
 from pathlib import Path
 from typing import Any
@@ -125,6 +126,7 @@ def load_policy_text(text: str, *, source: str = "<string>") -> Policy:
         raise PolicyError(f"{source}: {error}") from None
 
 
+@lru_cache(maxsize=None)
 def builtin_names() -> tuple[str, ...]:
     files = resources.files(BUILTIN_PACKAGE)
     return tuple(
@@ -132,7 +134,10 @@ def builtin_names() -> tuple[str, ...]:
     )
 
 
+@lru_cache(maxsize=None)
 def load_builtin(name: str) -> Policy:
+    """Builtin policies are immutable package data, so they are cached."""
+
     if name not in builtin_names():
         raise PolicyError(f"unknown builtin policy {name!r}; known: {list(builtin_names())}")
     text = resources.files(BUILTIN_PACKAGE).joinpath(f"{name}.toml").read_text(encoding="utf-8")
