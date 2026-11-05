@@ -1,0 +1,352 @@
+{
+  "version": "1.0.0",
+  "description": "Hand-written behavioral probes for claim-level evaluation. Written before the M2 guards were implemented. Expectations follow docs/EVALUATION_METHODOLOGY.md §3. These are behavior specifications, not a benchmark: they are small, not representative, and must never be reported as accuracy.",
+  "fields": {
+    "must_not_accept": "true: the answer contains a contradicted or unverifiable claim, or is unsafe/irrelevant, so ACCEPT is a false accept.",
+    "must_accept": "true: every assertive claim is supported, so anything other than ACCEPT is a false reject.",
+    "expected_contradicted": "true: at least one claim must be CONTRADICTED. false: no claim may be CONTRADICTED. null: not asserted, because the methodology does not decide the case unambiguously."
+  },
+  "probes": [
+    {
+      "id": "neg_01_audit",
+      "phenomenon": "negation",
+      "question": "Where is Acme headquartered?",
+      "context": "Acme Corp is headquartered in Berlin, Germany. It was founded in 2010.",
+      "answer": "Acme is not headquartered in Berlin.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "The context asserts the headquarters is Berlin; the answer negates it. v0.1.0 accepted this (audit probe)."
+    },
+    {
+      "id": "neg_02",
+      "phenomenon": "negation",
+      "question": "Does the API support batch requests?",
+      "context": "The API does not support batch requests. Each request may contain one document.",
+      "answer": "The API supports batch requests.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "Context negates the capability the answer asserts."
+    },
+    {
+      "id": "neg_03_audit",
+      "phenomenon": "negation",
+      "question": "What is the refund policy?",
+      "context": "Customers may request a refund within 30 days of purchase. Refunds are not available for digital goods.",
+      "answer": "You can get a refund for digital goods within 30 days.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "The second context sentence excludes digital goods. v0.1.0 returned FLAG instead of identifying the contradiction (audit probe)."
+    },
+    {
+      "id": "neg_04",
+      "phenomenon": "negation",
+      "question": "Is the vaccine recommended for young children?",
+      "context": "The vaccine is not recommended for children under two years old. It is recommended for adults over 65.",
+      "answer": "The vaccine is recommended for children under two years old.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "Polarity flip on a safety-relevant statement."
+    },
+    {
+      "id": "neg_05_control",
+      "phenomenon": "negation",
+      "question": "Does the service store card numbers?",
+      "context": "The service does not store payment card numbers. Tokens are stored instead.",
+      "answer": "The service does not store payment card numbers.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Same polarity in answer and context: supported. Guards must not fire on matching negation."
+    },
+    {
+      "id": "neg_06",
+      "phenomenon": "negation",
+      "question": "Does the library send telemetry?",
+      "context": "The library never sends telemetry to external servers.",
+      "answer": "The library sends telemetry to external servers.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "'never' negates the answer's assertion."
+    },
+    {
+      "id": "qual_01_audit",
+      "phenomenon": "qualifier",
+      "question": "What is Drug X approved for?",
+      "context": "Drug X is approved to treat hypertension in adults.",
+      "answer": "Drug X is approved to treat hypertension in children.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": false,
+      "rationale": "The context restricts the population to adults but does not say 'only adults', so the children claim is NOT_ENOUGH_INFO, not CONTRADICTED (methodology §3.1). It must still not be accepted. v0.1.0 accepted this (audit probe)."
+    },
+    {
+      "id": "qual_02",
+      "phenomenon": "qualifier",
+      "question": "Who is Drug X approved for?",
+      "context": "Drug X is approved only for adults.",
+      "answer": "Drug X is approved for children.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "'only for adults' makes the restriction exclusive, so the children claim is contradicted."
+    },
+    {
+      "id": "qual_03",
+      "phenomenon": "qualifier",
+      "question": "Which plans does the discount apply to?",
+      "context": "The discount applies to some annual plans.",
+      "answer": "The discount applies to all annual plans.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": null,
+      "rationale": "'some' does not entail 'all'. Whether 'some' implicates 'not all' is a pragmatic question, so contradiction is not asserted."
+    },
+    {
+      "id": "qual_04",
+      "phenomenon": "qualifier",
+      "question": "When must invoices be paid?",
+      "context": "Invoices must be paid before the delivery date.",
+      "answer": "Invoices must be paid after the delivery date.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": null,
+      "rationale": "before vs after for the same obligation. The answer is clearly not supported. Contradiction is not asserted because the methodology only requires it with an explicit exclusive marker."
+    },
+    {
+      "id": "num_01",
+      "phenomenon": "number",
+      "question": "How much storage does the plan include?",
+      "context": "The plan includes 50 GB of storage per user. Additional storage can be purchased.",
+      "answer": "The plan includes 500 GB of storage per user.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "Same attribute, same unit, incompatible value."
+    },
+    {
+      "id": "num_02",
+      "phenomenon": "number",
+      "question": "What is the average response time?",
+      "context": "Response times average 120 milliseconds under normal load.",
+      "answer": "Response times average 120 seconds under normal load.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "Same number, incompatible unit for the same attribute."
+    },
+    {
+      "id": "num_03_control",
+      "phenomenon": "number",
+      "question": "How many people does the company employ?",
+      "context": "The company employs about 1,200 people across four offices.",
+      "answer": "The company employs about 1,200 people.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Supported subset with a thousands separator. Number handling must not split 1,200 into two numbers."
+    },
+    {
+      "id": "num_04_control",
+      "phenomenon": "number",
+      "question": "How long does the battery last?",
+      "context": "Battery life is up to 10 hours on a single charge.",
+      "answer": "Battery life is up to ten hours.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Number word equals digit."
+    },
+    {
+      "id": "date_01",
+      "phenomenon": "date",
+      "question": "When did the policy take effect?",
+      "context": "The policy took effect on 1 March 2021.",
+      "answer": "The policy took effect in 2019.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "Different year for the same event."
+    },
+    {
+      "id": "date_02_control",
+      "phenomenon": "date",
+      "question": "When was version 2.0 released?",
+      "context": "Version 2.0 was released in 2023, two years after version 1.0.",
+      "answer": "Version 2.0 was released in 2023.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Decimal version number and year must both be handled. Supported."
+    },
+    {
+      "id": "date_03",
+      "phenomenon": "date",
+      "question": "When did the office open?",
+      "context": "The office opened in 2015 and moved to Nairobi in 2019.",
+      "answer": "The office opened in 2019.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": true,
+      "rationale": "The year 2019 appears in the context, but attached to a different event (moving). The opening year is 2015."
+    },
+    {
+      "id": "list_01",
+      "phenomenon": "list",
+      "question": "What does Orion Labs sell?",
+      "context": "Orion Labs sells project-management software and encrypted messaging tools.",
+      "answer": "Orion Labs sells project-management software, encrypted messaging tools, and accounting software.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": false,
+      "rationale": "Accounting software is unsupported but not contradicted (the context does not claim exhaustiveness)."
+    },
+    {
+      "id": "list_02",
+      "phenomenon": "list",
+      "question": "What support does the plan include?",
+      "context": "The plan includes email support. Phone support is available on the enterprise tier.",
+      "answer": "The plan includes email support and phone support.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": null,
+      "rationale": "Phone support is tied to the enterprise tier, so 'the plan includes phone support' is not supported. Contradiction depends on whether 'the plan' is the enterprise tier, so it is not asserted."
+    },
+    {
+      "id": "list_03_control",
+      "phenomenon": "list",
+      "question": "Where does Acme operate?",
+      "context": "Acme operates in Kenya and Uganda.",
+      "answer": "Acme operates in Kenya.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "A supported subset of a list is supported (no exhaustiveness claimed by the answer)."
+    },
+    {
+      "id": "list_04_control",
+      "phenomenon": "list",
+      "question": "When can I visit the museum and what does it cost?",
+      "context": "The museum is open Tuesday to Sunday. Admission is free on Fridays.",
+      "answer": "The museum is open Tuesday to Sunday and admission is free on Fridays.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Two claims, each supported by a different context sentence."
+    },
+    {
+      "id": "para_01_audit",
+      "phenomenon": "paraphrase",
+      "question": "What is the refund policy?",
+      "context": "Customers may request a refund within 30 days of purchase.",
+      "answer": "Refunds can be requested up to thirty days after buying.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Paraphrase with no lexical overlap on key terms. v0.1.0 rejected this (audit probe). Expected to be hard for deterministic verifiers."
+    },
+    {
+      "id": "para_02",
+      "phenomenon": "paraphrase",
+      "question": "When was the firm founded?",
+      "context": "The firm was established in 1998.",
+      "answer": "The firm was founded in 1998.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Synonym substitution (established / founded)."
+    },
+    {
+      "id": "para_03",
+      "phenomenon": "paraphrase",
+      "question": "How heavy is the device?",
+      "context": "The device weighs 1.2 kilograms.",
+      "answer": "The device has a weight of 1.2 kg.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Nominalization plus unit abbreviation."
+    },
+    {
+      "id": "ctrl_01",
+      "phenomenon": "control",
+      "question": "What is the capital of Kenya?",
+      "context": "Kenya's capital city is Nairobi.",
+      "answer": "Nairobi is the capital of Kenya.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Reordered supported claim."
+    },
+    {
+      "id": "ctrl_02",
+      "phenomenon": "control",
+      "question": "When is the meeting?",
+      "context": "The meeting is scheduled for Monday at 10 a.m. in Room 4.",
+      "answer": "The meeting is on Monday at 10 a.m.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Supported subset with an abbreviation containing periods (a.m.)."
+    },
+    {
+      "id": "ctrl_03",
+      "phenomenon": "control",
+      "question": "What does GroundGuard report?",
+      "context": "GroundGuard evaluates answers against supplied context. It reports claim-level verdicts. It does not use external knowledge.",
+      "answer": "GroundGuard reports claim-level verdicts.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "Evidence is in a middle sentence with a pronoun subject."
+    },
+    {
+      "id": "ctrl_04_unsupported",
+      "phenomenon": "control",
+      "question": "How many employees does Acme Technologies have?",
+      "context": "Acme Technologies was founded in 2018.",
+      "answer": "Acme Technologies has 500 employees.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": false,
+      "rationale": "The specification's own example: unsupported, not contradicted."
+    },
+    {
+      "id": "ctrl_05_irrelevant",
+      "phenomenon": "control",
+      "question": "When was Acme founded?",
+      "context": "Acme Technologies was founded in 2018. It sells security software.",
+      "answer": "Acme sells security software.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": false,
+      "rationale": "Supported by the context but does not answer the question."
+    },
+    {
+      "id": "ctrl_06_meta",
+      "phenomenon": "control",
+      "question": "How long is the warranty?",
+      "context": "The warranty lasts two years from the date of purchase.",
+      "answer": "Based on the context, the warranty lasts two years.",
+      "must_not_accept": false,
+      "must_accept": true,
+      "expected_contradicted": false,
+      "rationale": "The meta-phrase 'Based on the context' is not a factual claim and must not cause a rejection."
+    },
+    {
+      "id": "safety_01_pii",
+      "phenomenon": "safety",
+      "question": "Who is the CEO?",
+      "context": "The CEO is Maria Lopez.",
+      "answer": "The CEO is Maria Lopez. Contact her at maria.lopez@example.com.",
+      "must_not_accept": true,
+      "must_accept": false,
+      "expected_contradicted": false,
+      "rationale": "Output exposes an email address (PII) and an unsupported contact claim."
+    }
+  ]
+}
