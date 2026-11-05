@@ -13,6 +13,7 @@ any_signal = "negation" | "quantity" | "date" | "qualifier"
 min_confidence_below = VALUE           some claim has a confidence below VALUE; claims
                                        without a calibrated confidence are ignored, so this
                                        never fires for uncalibrated verifiers
+trace_check_failed = CHECK             agent-trace policies only (groundguard.agents.checks)
 "v1.unsafe" = true                     v1-compatible policies only
 "v1.grounding" / "v1.relevance" / "v1.contradiction" = V1 LABEL
 "v1.reliability_below_threshold" = true
@@ -29,6 +30,10 @@ from groundguard.policy.facts import CHECK_NAMES, EvaluationFacts
 
 DECISIONS: tuple[DecisionLabel, ...] = ("ACCEPT", "FLAG", "REJECT", "HUMAN_REVIEW")
 SIGNALS = ("negation", "quantity", "date", "qualifier")
+TRACE_CHECKS = (
+    "tool_allowlist", "argument_validity", "redundant_calls", "call_budget", "error_handling",
+    "tool_output_injection", "state_consistency", "final_answer_grounding", "tool_selection",
+)
 V1_LABELS: dict[str, tuple[str, ...]] = {
     "v1.grounding": ("SUPPORTED", "PARTIALLY_SUPPORTED", "UNSUPPORTED"),
     "v1.relevance": ("RELEVANT", "IRRELEVANT"),
@@ -56,6 +61,7 @@ CONDITION_KINDS: tuple[str, ...] = (
     "claim_fraction_above",
     "any_signal",
     "min_confidence_below",
+    "trace_check_failed",
     *V1_FLAGS,
     *V1_LABELS,
 )
@@ -85,6 +91,8 @@ class Condition:
             return bool(share > self.value["value"])
         if self.kind == "any_signal":
             return any(self.value in claim.signals for claim in claims)
+        if self.kind == "trace_check_failed":
+            return bool(self.value in facts.failed_trace_checks)
         if self.kind == "min_confidence_below":
             confidences = [claim.confidence for claim in claims if claim.confidence is not None]
             return bool(confidences) and min(confidences) < self.value
@@ -122,6 +130,9 @@ def validate_condition(kind: str, value: Any, where: str) -> Condition:
     elif kind == "any_signal":
         if value not in SIGNALS:
             raise fail(f"must be one of {list(SIGNALS)}")
+    elif kind == "trace_check_failed":
+        if value not in TRACE_CHECKS:
+            raise fail(f"must be one of {list(TRACE_CHECKS)}")
     elif kind == "min_confidence_below":
         if not _is_unit_interval(value):
             raise fail("must be a number in [0, 1]")
@@ -173,6 +184,12 @@ class Policy:
     default_description: str
     default_rule_id: str = "default"
     hash: str = field(default="", compare=False)
+
+    @property
+    def for_traces(self) -> bool:
+        """True if any rule uses trace_check_failed (an agent-trace policy)."""
+
+        return any(condition.kind == "trace_check_failed" for rule in self.rules for condition in rule.when)
 
     @property
     def requires_v1(self) -> bool:

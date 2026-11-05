@@ -47,7 +47,7 @@ def claim(label, confidence=None, signals=()):
 
 
 def test_builtins_load_and_have_stable_hashes():
-    assert set(builtin_names()) == {"default", "provisional-m2", "strict", "v1-compat"}
+    assert set(builtin_names()) == {"agent-default", "default", "provisional-m2", "strict", "v1-compat"}
     for name in builtin_names():
         loaded = load_builtin(name)
         assert loaded.id == name

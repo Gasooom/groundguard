@@ -48,6 +48,7 @@ files = [
     "groundguard/verifiers",
     "groundguard/policy",
     "groundguard/checks",
+    "groundguard/agents",
     "groundguard/calibration",
     "groundguard/pipeline.py",
     "groundguard/bench",

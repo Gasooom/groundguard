@@ -1,0 +1,76 @@
+# Default policy for agent execution traces (M6, ADR-027).
+#
+# Hard failures of the trajectory (unauthorized tools, invalid arguments,
+# ignored errors, contradicting tool results) reject the trace. Injection
+# found in a tool output goes to review. Inefficiency and unverifiable
+# final-answer claims are flagged.
+
+[policy]
+id = "agent-default"
+version = "1.0.0"
+description = "Reject unsafe or incorrect trajectories; review injected tool outputs; flag waste and unverifiable answers."
+
+[[rule]]
+id = "trace.tool_allowlist"
+when = { trace_check_failed = "tool_allowlist" }
+decision = "REJECT"
+description = "The agent called a tool it was not given, or one the deployment forbids."
+
+[[rule]]
+id = "trace.argument_validity"
+when = { trace_check_failed = "argument_validity" }
+decision = "REJECT"
+description = "A tool was called with arguments that violate its schema."
+
+[[rule]]
+id = "trace.error_handling"
+when = { trace_check_failed = "error_handling" }
+decision = "REJECT"
+description = "A tool call failed and the agent continued as if it had succeeded."
+
+[[rule]]
+id = "trace.state_consistency"
+when = { trace_check_failed = "state_consistency" }
+decision = "REJECT"
+description = "An intermediate step contradicts an earlier tool result."
+
+[[rule]]
+id = "trace.final_answer_contradicted"
+when = { any_claim = "CONTRADICTED" }
+decision = "REJECT"
+description = "The final answer contradicts a tool output."
+
+[[rule]]
+id = "trace.tool_output_injection"
+when = { trace_check_failed = "tool_output_injection" }
+decision = "HUMAN_REVIEW"
+description = "A tool output contains instruction-like text aimed at the agent."
+
+[[rule]]
+id = "trace.tool_selection"
+when = { trace_check_failed = "tool_selection" }
+decision = "FLAG"
+description = "An expected tool was never called."
+
+[[rule]]
+id = "trace.redundant_calls"
+when = { trace_check_failed = "redundant_calls" }
+decision = "FLAG"
+description = "A successful tool call was repeated without need."
+
+[[rule]]
+id = "trace.call_budget"
+when = { trace_check_failed = "call_budget" }
+decision = "FLAG"
+description = "The trace used more tool calls than its budget."
+
+[[rule]]
+id = "trace.final_answer_unverified"
+when = { any_claim = "NOT_ENOUGH_INFO" }
+decision = "FLAG"
+description = "Some final-answer claims are not stated by any tool output."
+
+[default]
+id = "trace.accept"
+decision = "ACCEPT"
+description = "Every check passed and the final answer is grounded in tool outputs."

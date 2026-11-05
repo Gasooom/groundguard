@@ -49,7 +49,7 @@ jobs:
 
       - name: Validate builtin policies
         run: |
-          for policy in default provisional-m2 strict v1-compat; do
+          for policy in default provisional-m2 strict v1-compat agent-default; do
             groundguard policy check "$policy"
           done
 

@@ -38,6 +38,7 @@ class EvaluationFacts:
     claims: tuple[ClaimFact, ...]
     failed_checks: frozenset[CheckName]
     v1: V1Facts | None = None
+    failed_trace_checks: frozenset[str] = frozenset()
 
 
 def facts_from_v2(

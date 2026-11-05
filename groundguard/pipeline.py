@@ -164,6 +164,33 @@ def _sources(
     return tuple(contexts)
 
 
+def verify_claims(
+    text: str,
+    sources: Sequence[SourceDocument],
+    config: PipelineConfig,
+    *,
+    calibration: CalibrationSet | None = None,
+) -> tuple[tuple[Claim, ...], tuple[ClaimVerdict, ...]]:
+    """Segment ``text`` and verify its assertive claims against ``sources``.
+
+    Shared by answer evaluation and agent-trace evaluation. With no sources,
+    every assertive claim is NOT_ENOUGH_INFO.
+    """
+
+    chain = config.chain()
+    claims = segment(text, config.granularity)
+    chunks = chunk_sources(sources)
+    verdicts = apply_to_verdicts(
+        [
+            chain.verify(claim, select_evidence(claim.text, chunks, top_k=config.top_k))
+            for claim in claims
+            if claim.assertive
+        ],
+        calibration,
+    )
+    return claims, verdicts
+
+
 def evaluate_v2(
     *,
     question: str,
@@ -197,16 +224,7 @@ def evaluate_v2(
     markers = find_citations(answer, sources)
     checked_answer = mask_citations(answer, markers)
 
-    claims = segment(checked_answer, config.granularity)
-    chunks = chunk_sources(sources)
-    verdicts = apply_to_verdicts(
-        [
-            chain.verify(claim, select_evidence(claim.text, chunks, top_k=config.top_k))
-            for claim in claims
-            if claim.assertive
-        ],
-        calibration,
-    )
+    claims, verdicts = verify_claims(checked_answer, sources, config, calibration=calibration)
 
     relevance = evaluate_relevance(question, checked_answer)
     pii = detect_pii(answer)

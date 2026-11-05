@@ -18,6 +18,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, Field, model_validator
 
 from groundguard.api.security import ApiError, Principal, RateLimiter, authenticate
+from groundguard.agents.evaluate import evaluate_trace
 from groundguard.api.settings import Settings
 from groundguard.storage.v2_store import V2Store
 from groundguard.core.errors import InvalidInput
@@ -61,9 +62,16 @@ class EvaluateV2Request(BaseModel):
 
 
 def v2_policy_names() -> tuple[str, ...]:
-    """Builtin policies usable with the v2 engine (v1-compat is excluded)."""
+    """Builtin policies for answer evaluation (v1-only and trace policies excluded)."""
 
-    return tuple(name for name in builtin_names() if not load_builtin(name).requires_v1)
+    return tuple(
+        name for name in builtin_names()
+        if not load_builtin(name).requires_v1 and not load_builtin(name).for_traces
+    )
+
+
+def trace_policy_names() -> tuple[str, ...]:
+    return tuple(name for name in builtin_names() if load_builtin(name).for_traces)
 
 
 def require_principal(request: Request) -> Principal:
@@ -222,3 +230,23 @@ def list_policies(principal: Principal = Depends(require_principal)) -> Any:
     """Builtin policies usable with the v2 engine: rules, versions and content hashes."""
 
     return [load_builtin(name).to_dict() | {"hash": load_builtin(name).hash} for name in v2_policy_names()]
+
+
+class TraceEvaluateRequest(BaseModel):
+    trace: dict[str, Any]
+    policy: str = Field(default="agent-default", description="Name of a builtin trace policy.")
+
+
+@router.post("/traces/evaluate")
+def evaluate_agent_trace(request: TraceEvaluateRequest, principal: Principal = Depends(require_principal)) -> Any:
+    """Deterministic checks over an agent execution trace (tool allowlist,
+    argument schemas, redundancy, budget, error handling, tool-output
+    injection, state consistency, final-answer grounding against tool
+    outputs, expected tools), then a trace policy decision. Not persisted."""
+
+    if request.policy not in trace_policy_names():
+        raise ApiError(422, "invalid_input", f"unknown trace policy {request.policy!r}; known: {list(trace_policy_names())}")
+    try:
+        return evaluate_trace(request.trace, policy=load_builtin(request.policy))
+    except InvalidInput as error:
+        raise ApiError(422, "invalid_input", str(error)) from None
