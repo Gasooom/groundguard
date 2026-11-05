@@ -1,0 +1,50 @@
+# The v0.1.0 decision order (groundguard/domain/decision.py) expressed as a
+# policy over v1 component outputs. Use with the v1 engine only. Decisions
+# match v1 exactly (tests/test_policy_equivalence.py); reason texts come
+# from the rule descriptions and do not reproduce v1's templated reasons.
+
+[policy]
+id = "v1-compat"
+version = "1.0.0"
+description = "v0.1.0 decision order: unsafe, contradictory, unsupported, irrelevant, partial, below threshold."
+
+[[rule]]
+id = "v1.unsafe"
+when = { "v1.unsafe" = true }
+decision = "REJECT"
+description = "The safety component found PII or prompt injection."
+
+[[rule]]
+id = "v1.contradictory"
+when = { "v1.contradiction" = "CONTRADICTORY" }
+decision = "REJECT"
+description = "The contradiction component found a conflict with the evidence."
+
+[[rule]]
+id = "v1.unsupported"
+when = { "v1.grounding" = "UNSUPPORTED" }
+decision = "REJECT"
+description = "The grounding component found the answer unsupported."
+
+[[rule]]
+id = "v1.irrelevant"
+when = { "v1.relevance" = "IRRELEVANT" }
+decision = "REJECT"
+description = "The relevance component found the answer irrelevant."
+
+[[rule]]
+id = "v1.partially_supported"
+when = { "v1.grounding" = "PARTIALLY_SUPPORTED" }
+decision = "FLAG"
+description = "The grounding component found the answer partially supported."
+
+[[rule]]
+id = "v1.below_threshold"
+when = { "v1.reliability_below_threshold" = true }
+decision = "FLAG"
+description = "The reliability score is below the configured threshold."
+
+[default]
+id = "v1.accept"
+decision = "ACCEPT"
+description = "All v1 components are satisfactory and the reliability score meets the threshold."

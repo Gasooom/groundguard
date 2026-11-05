@@ -1,0 +1,60 @@
+# Default policy for engine v2.
+#
+# Differs from provisional-m2 in one rule: a non-exclusive qualifier mismatch
+# (the evidence covers a different population, period or scope than the
+# claim, e.g. "approved for adults" vs a claim about children) goes to
+# HUMAN_REVIEW instead of FLAG. It is not a proven contradiction, but it is
+# the kind of unsupported claim that is costly in medical, legal or
+# financial answers. Decision recorded in ADR-019.
+
+[policy]
+id = "default"
+version = "2.0.0"
+description = "Reject safety failures, contradictions, irrelevant and fully unsupported answers; send scope mismatches to a person; flag partially unverifiable answers."
+
+[[rule]]
+id = "safety.pii"
+when = { check_failed = "pii" }
+decision = "REJECT"
+description = "PII was detected in the answer."
+
+[[rule]]
+id = "safety.prompt_injection"
+when = { check_failed = "prompt_injection" }
+decision = "REJECT"
+description = "Prompt-injection patterns were detected in the answer."
+
+[[rule]]
+id = "grounding.contradicted"
+when = { any_claim = "CONTRADICTED" }
+decision = "REJECT"
+description = "At least one claim is contradicted by the evidence."
+
+[[rule]]
+id = "relevance.irrelevant"
+when = { check_failed = "relevance" }
+decision = "REJECT"
+description = "The answer does not address the question."
+
+[[rule]]
+id = "grounding.qualifier_mismatch"
+when = { any_signal = "qualifier" }
+decision = "HUMAN_REVIEW"
+description = "A claim refers to a different population, period or scope than the evidence; a person should check it."
+
+[[rule]]
+id = "grounding.none_supported"
+when = { no_claim = "SUPPORTED" }
+decision = "REJECT"
+description = "No claim in the answer is supported by the evidence."
+
+[[rule]]
+id = "grounding.not_enough_info"
+when = { any_claim = "NOT_ENOUGH_INFO" }
+decision = "FLAG"
+description = "Some claims cannot be verified from the evidence."
+
+[default]
+id = "default.accept"
+decision = "ACCEPT"
+description = "Every claim is supported and no check failed."

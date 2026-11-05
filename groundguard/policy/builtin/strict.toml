@@ -1,0 +1,48 @@
+# Strict policy: only fully supported, relevant, safe answers are accepted.
+# Every unverifiable claim rejects the answer.
+
+[policy]
+id = "strict"
+version = "1.0.0"
+description = "Accept only when every claim is supported; reject everything else."
+
+[[rule]]
+id = "safety.pii"
+when = { check_failed = "pii" }
+decision = "REJECT"
+description = "PII was detected in the answer."
+
+[[rule]]
+id = "safety.prompt_injection"
+when = { check_failed = "prompt_injection" }
+decision = "REJECT"
+description = "Prompt-injection patterns were detected in the answer."
+
+[[rule]]
+id = "grounding.contradicted"
+when = { any_claim = "CONTRADICTED" }
+decision = "REJECT"
+description = "At least one claim is contradicted by the evidence."
+
+[[rule]]
+id = "relevance.irrelevant"
+when = { check_failed = "relevance" }
+decision = "REJECT"
+description = "The answer does not address the question."
+
+[[rule]]
+id = "grounding.not_enough_info"
+when = { any_claim = "NOT_ENOUGH_INFO" }
+decision = "REJECT"
+description = "At least one claim cannot be verified from the evidence."
+
+[[rule]]
+id = "grounding.none_supported"
+when = { no_claim = "SUPPORTED" }
+decision = "REJECT"
+description = "No claim in the answer is supported by the evidence."
+
+[default]
+id = "default.accept"
+decision = "ACCEPT"
+description = "Every claim is supported and no check failed."

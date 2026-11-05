@@ -26,6 +26,9 @@ groundguard = "groundguard.cli:main"
 [tool.setuptools.packages.find]
 include = ["groundguard*"]
 
+[tool.setuptools.package-data]
+"groundguard.policy.builtin" = ["*.toml"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
@@ -38,6 +41,7 @@ files = [
     "groundguard/claims",
     "groundguard/evidence",
     "groundguard/verifiers",
+    "groundguard/policy",
     "groundguard/pipeline.py",
     "groundguard/bench",
     "groundguard/cli.py",
