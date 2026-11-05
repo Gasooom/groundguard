@@ -43,8 +43,16 @@ the rules were iterated against the same records.
 | Grounding / contradiction | 20 public_text only | context | 50% / 85% |
 | End-to-end decision, gold reliable = SUPPORTED ∧ RELEVANT ∧ NOT_CONTRADICTORY | 250 | context | FAR 8/168 (4.8%), FRR 50/82 (61.0%) |
 
-M1 commits these as `benchmarks/results/v0.1.0-baseline*.json` so they are
-reproducible by command rather than by prose.
+M1 committed these as `benchmark/results/v0.1.0-baseline.{context,oracle,oracle_no_question}.json`,
+so they are reproducible by command (`groundguard bench run`) rather than by
+prose, and `tests/test_bench_baseline.py` pins them. Group-bootstrap 95%
+intervals over the 68 context groups are wide (e.g. FAR 0.0–15.0% on all 250
+records), so differences smaller than that are noise on this dataset.
+
+The v0.1.0 README threshold table (FAR 7.74% / FRR 62.20% at 0.70) does not
+match the current code (6.55% / 60.98% in `oracle_no_question` mode). It was
+generated before commit `491b85c` changed the contradiction code and was not
+regenerated, because `tests/test_threshold_analysis.py` prints but never asserts.
 
 ## 3. Units of evaluation and labels
 

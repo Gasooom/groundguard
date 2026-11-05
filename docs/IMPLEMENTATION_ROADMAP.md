@@ -25,7 +25,7 @@ Deliverables: `GROUNDGUARD_V2.md`, `ARCHITECTURE_V2.md`,
 `TECHNICAL_DECISIONS.md`.
 Exit: owner approval.
 
-## M1 — Benchmark integrity and harness
+## M1 — Benchmark integrity and harness ✅ (report at the end of this document)
 
 **Objective:** make every number reproducible by command, and publish the
 honest v0.1.0 baseline.
@@ -36,8 +36,8 @@ honest v0.1.0 baseline.
 | `groundguard/bench/metrics.py` | confusion matrix, P/R/F1, macro-F1, FAR/FRR, group bootstrap CI, Wilson interval, threshold sweep. **Reuse** `evaluation/decision_metrics.evaluate_threshold` semantics, and test that they agree |
 | `groundguard/bench/manifest.py`, `runner.py`, `compare.py` | run manifest. v1-engine runner. Paired deltas + per-record flips + tolerance rules |
 | `groundguard/cli.py` + `[project.scripts]` | `groundguard bench run`, `groundguard bench compare` |
-| `benchmarks/datasets/gg-legacy-v1/1.0.0/` | registry entry pointing to the existing `benchmark/` files (not copied, so history is preserved) + `DATASHEET.md` |
-| `benchmarks/results/` | `v0.1.0-baseline.context.json`, `v0.1.0-baseline.oracle.json`, each in raw and dedup views |
+| `benchmark/DATASHEET_legacy_v1.md` | dataset registered in code, pointing to the existing `benchmark/` files (not copied, so history is preserved) |
+| `benchmark/results/` | `v0.1.0-baseline.{context,oracle,oracle_no_question}.json`. Each contains all / dedup / per-source views |
 | tests | Replace `assert correct >= 0` (relevance) and the grounding test without a bound with **regression assertions against the committed baseline** (exact for deterministic engines). Add metric unit tests (hand-computed fixtures), bootstrap determinism test, and manifest test |
 | cleanup | remove dead `_propositions_conflict` (unreferenced. Undefined name `evidence`) |
 | `README.md` | replace the benchmark section with reproduced numbers, oracle vs context, dedup, and a link to run files. The old numbers stay, labeled with how they were produced |
@@ -153,3 +153,64 @@ Known regressions and why accepted:
 Limitations discovered:
 Remaining work:
 ```
+
+---
+
+## M1 report
+
+**Objective:** make every published number reproducible by command, and
+publish the honest v0.1.0 baseline.
+
+**Components changed:**
+- New: `groundguard/bench/` (`datasets`, `metrics`, `runner`, `report`,
+  `manifest`, `compare`, `errors`), `groundguard/cli.py`
+  (`groundguard bench run|compare`), `benchmark/results/v0.1.0-baseline.*.json`,
+  `benchmark/DATASHEET_legacy_v1.md`, `.github/workflows/ci.yml`.
+- Changed: `pyproject.toml` (`api` extra, console script, explicit package
+  discovery), three benchmark tests (assertions strengthened), README
+  benchmark section.
+- Removed: two unused helpers in `groundguard/domain/contradiction.py`.
+  Behavior is unchanged, as proven by the exact baseline match.
+
+**Approach.** The harness reads the existing benchmark files in place and does
+not copy them. The input mode is explicit because it changes results:
+`context` is the production path, `oracle` and `oracle_no_question` reproduce
+what the v0.1.0 tests measured. Intervals are bootstrap over context groups,
+because records are heavily duplicated. Standard library only (ADR-014).
+Rejected alternatives: copying data into a new `benchmarks/` tree, which would
+split history across two directories, and record-level bootstrap, which gives
+falsely narrow intervals with duplicated records.
+
+**Tests.** 226 → 268 passing. No test weakened, skipped, or deleted.
+- `assert correct >= 0` (relevance, contradiction) and the unbounded grounding
+  test now assert the reproduced counts.
+- A new production-path contradiction test asserts 245/250.
+- `test_bench_baseline.py` requires exact reproduction of committed predictions
+  and metrics in all three modes, plus regression detection and CLI exit codes.
+- Metric unit tests use hand-computed values and include an equivalence check
+  with `evaluation.decision_metrics.evaluate_threshold`.
+
+**Benchmark runs** (dataset sha256 `b455b7d4…`, generated from clean commit `bf58994`):
+
+| Mode | predictions_hash | Grounding | Relevance | Contradiction | FAR | FRR |
+|---|---|---|---|---|---|---|
+| context, all 250 | `58223226…` | 161/250 | 243/250 | 245/250 | 8/168 | 50/82 |
+| context, dedup 99 | — | 59/99 | 97/99 | 94/99 | 3/61 | 22/38 |
+| oracle, all 250 | `e360af76…` | 161/250 | 243/250 | 248/250 | 8/168 | 50/82 |
+| oracle_no_question, all 250 | `0091e112…` | 161/250 | 243/250 | 235/250 | 8/168 | 50/82 |
+
+**Findings during M1:**
+- The README threshold table was stale. It predates commit `491b85c`.
+  Current code gives FAR 6.55% / FRR 60.98% at 0.70, not 7.74% / 62.20%.
+  README now shows the reproduced table and explains the difference.
+- The contradiction benchmark test was also vacuous (`>= 0`), so the published
+  248/250 had never been enforced.
+- With only 68 context groups, 95% intervals are wide (FAR 0.0–15.0%). The
+  legacy dataset cannot distinguish small improvements, which is a further
+  reason for `gg-claims-v2` in M4.
+
+**Not verified locally:** the CI `docker build` step (no Docker daemon in the
+development environment). The Dockerfile is unchanged from v0.1.0.
+
+**Remaining (next: M2):** claim-level pipeline, negation/number/qualifier
+guards with a probe suite, `/v2/evaluate`, and a v1 equivalence suite.

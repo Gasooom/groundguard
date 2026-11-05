@@ -144,9 +144,12 @@ large-scale observability (traces at millions per day).
    reported contradiction accuracy is a **training-set** number.
 2. The contradiction benchmark test and the decision-metrics test feed
    `record["evidence"]` (oracle evidence) instead of `record["context"]`.
-3. Vacuous assertions: `tests/test_relevance_benchmark.py` asserts
-   `correct >= 0`, and the grounding benchmark test asserts no accuracy bound.
-   These tests cannot fail on regression.
+3. Vacuous assertions: `tests/test_relevance_benchmark.py` and
+   `tests/test_contradiction_benchmark.py` assert `correct >= 0`, and the
+   grounding benchmark test asserts no accuracy bound. These tests cannot fail
+   on regression. The README threshold table is also stale: it predates
+   commit `491b85c` (current code: FAR 6.55% / FRR 60.98% at 0.70, not
+   7.74% / 62.20%). *Fixed in M1.*
 4. Label noise. 4 of the 16 unique `PARTIALLY_SUPPORTED` records conflict with
    the guideline's own definition or the annotator's note: `synthetic_075` and
    `synthetic_077` are fully supported but incomplete answers (completeness, not
@@ -407,7 +410,7 @@ Trace-level decisions use the same policy engine with trace-scoped rules (e.g.
 ## 12. Benchmark architecture
 
 ```
-benchmarks/
+benchmark/                 (existing directory; one place for data and results)
   datasets/<dataset_id>/<version>/
       records.jsonl          one record per line, schema-validated
       DATASHEET.md           provenance, construction, annotation guide version, known issues
@@ -552,7 +555,7 @@ See [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md). Summary:
 
 ## 20. Measurable success criteria
 
-These are targets, not claims. Each one is verified by an artifact in `benchmarks/results/`.
+These are targets, not claims. Each one is verified by an artifact in `benchmark/results/`.
 
 1. **Reproducibility:** `groundguard bench run --dataset gg-legacy-v1` produces
    an identical predictions hash on two machines (deterministic chain).

@@ -118,7 +118,7 @@ GET /dashboard provides a human-readable interface for inspecting evaluation act
 
 **Benchmark Methodology**
 
-The V1 benchmark focuses on grounding, relevance, and contradiction using 250 current benchmark records covering fully supported answers, partially supported answers, unsupported answers, contradictory answers, relevant but unsupported answers, irrelevant answers, multi-claim and edge cases, numerical claims, temporal claims, and paraphrases.
+The V1 benchmark focuses on grounding, relevance, and contradiction using 250 benchmark records (99 unique) covering fully supported answers, partially supported answers, unsupported answers, contradictory answers, relevant but unsupported answers, irrelevant answers, multi-claim and edge cases, numerical claims, temporal claims, and paraphrases.
 
 The benchmark methodology and annotation rules are documented in:
 
@@ -140,33 +140,50 @@ Total: 250
 
 These targets describe benchmark construction rather than expected real-world class frequencies.
 
-**V1 Benchmark Results**
+**V1 Benchmark Results (reproduced)**
 
-The current 250-record benchmark produced the following baseline results:
+> **Correction (V2 audit).** The v0.1.0 README reported grounding 64.40%, relevance 97.20% and contradiction 99.20% on "250 records". An independent reproduction (`docs/GROUNDGUARD_V2.md` §5.2) found two problems. (1) The 250 records contain only **99 unique** (question, context, answer) triples, because 29 templates repeat 6–7 times. (2) The 99.20% contradiction figure was measured with the annotator-selected `evidence` field as input, not with the `context` that `POST /evaluate` receives. The v0.1.0 rules were also developed against these same records, so every number below is a **development-set** result, not a generalization claim. See `benchmark/DATASHEET_legacy_v1.md`.
 
-Grounding: 64.40% accuracy — 161/250 correct  
-Relevance: 97.20% accuracy — 243/250 correct  
-Contradiction: 99.20% accuracy — 248/250 correct
+Every number in this section is produced by a command and stored in a run file with the dataset hash, git commit and predictions hash:
 
-Grounding is currently the primary evaluation bottleneck. Relevance and contradiction perform substantially better, with the current contradiction benchmark reaching 99.20% accuracy after question-aware and structured comparison fixes.
+```bash
+pip install -e ".[dev]"
+groundguard bench run --dataset gg-legacy-v1 --input-mode context --out run.json
+groundguard bench compare benchmark/results/v0.1.0-baseline.context.json run.json --fail-on-regression
+```
 
-These results are reported as baseline results on the current construction dataset and are not claims of universal factual accuracy.
+Input modes: `context` is the production path (`application/evaluator.evaluate`, as `POST /evaluate`). `oracle` passes the annotator `evidence` to contradiction (the v0.1.0 contradiction test). `oracle_no_question` additionally omits the question (the v0.1.0 threshold-analysis test). 95% intervals are bootstrap over the 68 context groups, because records within a group are correlated.
+
+| Metric | All 250, `context` | Unique 99, `context` | All 250, `oracle` | Public text only (20), `context` |
+|---|---|---|---|---|
+| Grounding accuracy | 161/250 = 64.4% (48.2–76.6) | 59/99 = 59.6% (48.1–69.2) | 161/250 = 64.4% | 10/20 = 50.0% |
+| Relevance accuracy | 243/250 = 97.2% (91.9–100) | 97/99 = 98.0% | 243/250 = 97.2% | 20/20 = 100% |
+| Contradiction accuracy | 245/250 = 98.0% (94.9–99.5) | 94/99 = 94.9% (89.7–98.9) | **248/250 = 99.2%** (README v0.1.0 figure) | 17/20 = 85.0% |
+| Contradiction recall (CONTRADICTORY) | 56/61 | 20/25 | 59/61 | 2/5 |
+| Decision FAR (bad answers accepted) | 8/168 = 4.8% (0.0–15.0) | 3/61 = 4.9% (0.0–11.7) | 8/168 | 0/11 |
+| Decision FRR (good answers not accepted) | 50/82 = 61.0% (37.9–82.4) | 22/38 = 57.9% (42.4–73.0) | 50/82 | 6/9 |
+
+Decision FAR/FRR use the full decision engine at the default threshold 0.70. A gold answer is *good* if it is SUPPORTED, RELEVANT and NOT_CONTRADICTORY. Only ACCEPT counts as acceptance. Run files: `benchmark/results/v0.1.0-baseline.{context,oracle,oracle_no_question}.json`.
+
+Grounding is the main bottleneck. Hand-written probes outside the benchmark also show false accepts on negation ("Acme is **not** headquartered in Berlin") and on qualifiers ("approved for **children**" against "approved for adults"). See `docs/GROUNDGUARD_V2.md` §5.2.
 
 **Threshold Analysis**
 
-The benchmark exposed a clear false-accept / false-reject trade-off:
+`reliability_score = min(grounding, relevance, 1 − contradiction)` swept over thresholds (score ≥ threshold counts as accept), all 250 records, `oracle_no_question` mode, which is what `tests/test_threshold_analysis.py` computes:
 
-Threshold 0.50 — FAR 30.95%, FRR 6.10%  
-Threshold 0.55 — FAR 28.57%, FRR 26.83%  
-Threshold 0.60 — FAR 25.00%, FRR 29.27%  
-Threshold 0.65 — FAR 19.05%, FRR 30.49%  
-Threshold 0.70 — FAR 7.74%, FRR 62.20%  
-Threshold 0.75 — FAR 6.55%, FRR 62.20%  
-Threshold 0.80 — FAR 3.57%, FRR 73.17%  
-Threshold 0.85 — FAR 3.57%, FRR 82.93%  
-Threshold 0.90 — FAR 3.57%, FRR 85.37%
+| Threshold | FAR | FRR |
+|---|---|---|
+| 0.50 | 29.76% (50/168) | 4.88% (4/82) |
+| 0.55 | 27.38% | 25.61% |
+| 0.60 | 23.81% | 28.05% |
+| 0.65 | 17.86% | 29.27% |
+| 0.70 | 6.55% (11/168) | 60.98% (50/82) |
+| 0.75 | 5.95% | 60.98% |
+| 0.80 | 3.57% | 71.95% |
+| 0.85 | 3.57% | 81.71% |
+| 0.90 | 3.57% | 84.15% |
 
-This demonstrates that reliability thresholds require calibration for the target application rather than assuming that one threshold is universally optimal.
+The v0.1.0 README table (e.g. FAR 7.74% / FRR 62.20% at 0.70) was generated before commit `491b85c` changed the contradiction code, and it was not regenerated. The table above is what the current code produces. The trade-off is the same either way: no single threshold is universally right, and thresholds chosen on this data say nothing about held-out data.
 
 **Safety Benchmark Results**
 
@@ -196,18 +213,15 @@ These results are benchmark-specific and should not be interpreted as production
 
 Testing is a major part of the project. The automated suite covers API behavior, evaluation pipeline, grounding, grounding regressions, relevance, relevance regressions, contradiction, contradiction regressions, structured contradiction evaluation, proposition analysis, PII detection, prompt injection, safety, decision logic, decision metrics, thresholds, threshold integration, evaluation records, persistent storage, pagination, filtering, benchmark schemas, benchmark records, benchmark manifests, dashboard behavior, and production behavior.
 
-Current release validation:
+v0.1.0 release validation: 226 tests passed.
 
-226 tests passed.
-
-Current contradiction benchmark validation:
-
-248/250 correct — 99.20% accuracy
-2 false negatives — 0.80% error rate
+The benchmark tests now enforce the reproduced baseline instead of `correct >= 0`. `tests/test_bench_baseline.py` requires the v1 engine to reproduce the committed predictions and metrics exactly.
 
 Run the complete test suite with:
 
+```bash
 pytest
+```
 
 **Docker Deployment**
 
@@ -283,7 +297,9 @@ Current limitations include:
 - PII and prompt-injection benchmarks are relatively small.
 - SQLite is intended for the current release rather than high-scale workloads.
 - Reliability thresholds require calibration for the target application.
-- Grounding is currently the weakest major evaluation component at 64.40% baseline accuracy.
+- Grounding is currently the weakest major evaluation component at 64.40% baseline accuracy (59.6% on the 99 unique records).
+- The 250-record benchmark contains 99 unique records, a single annotator, and was used during rule development. It has no held-out split.
+- Grounding misses negation and qualifier mismatches, which can cause false accepts.
 
 These limitations are explicitly documented rather than hidden.
 
@@ -303,6 +319,8 @@ Potential directions include:
 - Additional evaluator strategies
 
 These are future directions and are not requirements of v0.1.0.
+
+The V2 plan is specified in `docs/GROUNDGUARD_V2.md`, with architecture, methodology, roadmap and decisions in `docs/ARCHITECTURE_V2.md`, `docs/EVALUATION_METHODOLOGY.md`, `docs/IMPLEMENTATION_ROADMAP.md` and `docs/TECHNICAL_DECISIONS.md`.
 
 **End-to-End Workflow**
 

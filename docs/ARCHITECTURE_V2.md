@@ -275,7 +275,7 @@ flowchart LR
 ```
 
 `run_id = <dataset>@<ver>-<split>-<config_hash[:8]>-<git_sha[:8]>`. Test-split
-runs are additionally appended to `benchmarks/results/TEST_ACCESS_LOG.jsonl`
+runs are additionally appended to `benchmark/results/TEST_ACCESS_LOG.jsonl`
 (who, when, why), so every look at held-out data is visible.
 
 ## 9. Agent trace evaluation
