@@ -24,6 +24,17 @@ def test_chunks_are_sentences_and_adjacent_pairs_with_offsets():
         assert chunk.source_id == "doc-1"
 
 
+def test_pair_windows_require_a_referring_second_sentence():
+    source = SourceDocument(
+        "ctx", "The plan includes email support. Phone support is available on the enterprise tier."
+    )
+    texts = [chunk.text for chunk in chunk_sources([source])]
+    assert texts == [
+        "The plan includes email support",
+        "Phone support is available on the enterprise tier",
+    ]
+
+
 def test_chunking_validates_window_sizes():
     with pytest.raises(ValueError):
         chunk_sources([SourceDocument("d", "x.")], window_sizes=(0,))
