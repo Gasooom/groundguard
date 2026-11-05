@@ -185,6 +185,16 @@ Grounding is the main bottleneck. Hand-written probes outside the benchmark also
 
 The v0.1.0 README table (e.g. FAR 7.74% / FRR 62.20% at 0.70) was generated before commit `491b85c` changed the contradiction code, and it was not regenerated. The table above is what the current code produces. The trade-off is the same either way: no single threshold is universally right, and thresholds chosen on this data say nothing about held-out data.
 
+**Engine v2 (claim-level, in development)**
+
+`POST /v2/evaluate` and `groundguard.pipeline.evaluate_v2` split the answer into claims and return, for each one, a verdict (SUPPORTED, CONTRADICTED or NOT_ENOUGH_INFO), the evidence span it was decided on (source id and character offsets), the verifier that decided it, and the signal that fired. The default chain is deterministic and standard-library only: guards for negation, quantities with units, years and exclusive qualifiers, then a contradiction-only adapter over the v1 proposition engine, then content-coverage support. `POST /evaluate` (v1) is unchanged.
+
+On the 31 hand-written probes in `tests/probes/probes.json`, written before the guards, v2 makes 0 false accepts (v1: 9) and 6 false rejects (v1: 8). On the legacy benchmark (seen data), v2 improves grounding accuracy (200/250 vs 161/250) and halves FRR. Contradiction recall drops (43/61 vs 56/61), because v2 no longer infers exhaustiveness from the question wording. Details, ablations and error analysis: the M2 report in `docs/IMPLEMENTATION_ROADMAP.md`.
+
+```bash
+groundguard bench run --dataset gg-legacy-v1 --input-mode context --engine v2 --granularity conjunct
+```
+
 **Safety Benchmark Results**
 
 PII benchmark:

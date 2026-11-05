@@ -15,6 +15,7 @@ api = [
 ]
 dev = [
     "pytest>=9,<10",
+    "mypy>=1.13,<2",
     "fastapi>=0.115,<1",
     "uvicorn[standard]>=0.34,<1"
 ]
@@ -28,3 +29,36 @@ include = ["groundguard*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = [
+    "groundguard/core",
+    "groundguard/claims",
+    "groundguard/evidence",
+    "groundguard/verifiers",
+    "groundguard/pipeline.py",
+    "groundguard/bench",
+    "groundguard/cli.py",
+    "groundguard/api/v2.py",
+]
+
+# v0.1.0 modules are kept unchanged (ADR-004). They are type-checked with
+# mypy's default rules rather than strict mode, to avoid churn in code whose
+# behavior is pinned by the v1 baseline.
+[[tool.mypy.overrides]]
+module = [
+    "groundguard.domain.*",
+    "groundguard.application.*",
+    "groundguard.evaluation.*",
+    "groundguard.storage.*",
+    "groundguard.api.app",
+    "groundguard.api.dashboard",
+    "groundguard.api.schemas",
+]
+strict = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_any_generics = false
+warn_return_any = false

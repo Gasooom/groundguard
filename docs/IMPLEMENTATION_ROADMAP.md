@@ -47,7 +47,7 @@ honest v0.1.0 baseline.
 groundguard bench run --dataset gg-legacy-v1`, which reproduces the committed
 baseline hash. README numbers match run files.
 
-## M2 — Claim-level pipeline and guards
+## M2 — Claim-level pipeline and guards ✅ (report at the end of this document)
 
 **Objective:** per-claim verdicts with evidence spans, and closing the
 negation/qualifier false-accept class.
@@ -60,7 +60,7 @@ negation/qualifier false-accept class.
 | `verifiers/` | `base` (protocol + chain), `lexical` (v1 adapter), `structured_facts` (v1 adapter with declared scope), `guards` (negation, number/unit, date, qualifier) |
 | `pipeline.py` | orchestration. Derived v1-compatible labels |
 | `api/v2.py` | `POST /v2/evaluate` (no auth yet. Local-only flag) |
-| app factory | stop creating the store at import time. v1 routes unchanged (snapshot tests first) |
+| app factory | **moved to M7**: existing tests import `app` at module level, so the refactor belongs with the storage and auth work |
 | tests | segmenter offset property tests. Each guard table-driven. **Probe suite** (`tests/probes/`) including the four audit probes. v1 equivalence over 250 records. Ablation runs (sentence/clause/conjunct) as bench configs |
 
 **Exit criteria:** probe suite has 0 false accepts. The equivalence suite is
@@ -113,7 +113,7 @@ per-check P/R.
 
 ## M7 — Developer infrastructure and security
 
-API keys (hashed, prefix lookup, constant-time compare), tenant scoping, token
+App factory with lifespan (no store creation at import time). API keys (hashed, prefix lookup, constant-time compare), tenant scoping, token
 bucket, payload caps, error envelope. Storage migrations + `evaluations_v2` +
 SQL stats. `POST /v2/evaluate/batch`. `sdk/client.py`. `groundguard eval
 --input`. CI regression-gate example workflow (`examples/ci/`). Integration
@@ -214,3 +214,89 @@ development environment). The Dockerfile is unchanged from v0.1.0.
 
 **Remaining (next: M2):** claim-level pipeline, negation/number/qualifier
 guards with a probe suite, `/v2/evaluate`, and a v1 equivalence suite.
+
+---
+
+## M2 report
+
+**Objective:** claim-level verdicts (SUPPORTED / CONTRADICTED /
+NOT_ENOUGH_INFO) with evidence spans, and closing the negation / qualifier /
+number / date false-accept class found in the audit.
+
+**Components.** New: `groundguard/core` (types, errors, text, serialization),
+`groundguard/claims` (segmenter, assertiveness), `groundguard/evidence`
+(chunking, BM25), `groundguard/verifiers` (chain, guards, structured_facts,
+lexical), `groundguard/pipeline.py`, `groundguard/api/v2.py`
+(`POST /v2/evaluate`), v2 engine in `groundguard/bench`. Changed:
+`groundguard/api/app.py` (one line mounts the v2 router), `pyproject.toml`
+(mypy config), CI (mypy + v2 regression gate). **Unchanged:**
+`groundguard/domain`, `application`, `evaluation`, `storage`. The v1
+baseline still reproduces exactly.
+
+**Process.** The probe suite (`tests/probes/probes.json`, 31 probes) was
+committed (`34b6f71`) before any guard code existed. Defaults were chosen
+by ablation and recorded in ADR-016 to ADR-018.
+
+**Tests.** 268 → 427 passing, none weakened or skipped. mypy `--strict`
+is clean on all new packages.
+
+### Probe suite (behavior specification, not a benchmark)
+
+| Engine | False accepts (of 18 must-not-accept) | False rejects (of 13 must-accept) | Contradiction expectations missed |
+|---|---|---|---|
+| v1 (`POST /evaluate`) | 9 | 8 | not measured |
+| v2 default | **0** | 6 | 0 |
+
+The six v2 failures are listed in `tests/test_probes.py::KNOWN_LIMITATIONS`:
+three paraphrases (no deterministic synonym handling) and three caused by
+the v1 relevance check that v2 reuses unchanged ("when" questions require a
+year).
+
+### gg-legacy-v1, production path (seen data: development results only)
+
+| | v1 | v2 sentence | v2 clause | v2 conjunct (default) |
+|---|---|---|---|---|
+| Grounding acc., all 250 | 161 | 185 | 185 | **200** |
+| Grounding acc., unique 99 | 59 | 72 | 72 | **76** |
+| Contradiction acc., all 250 | **245** | 232 | 232 | 232 |
+| CONTRADICTORY recall / precision, all | **56/61** / 56/56 | 43/61 / 43/43 | 43/61 / 43/43 | 43/61 / 43/43 |
+| Decision FAR, all 250 | **8/168** | 13/168 | 13/168 | 13/168 |
+| Decision FAR, unique 99 | 3/61 | **2/61** | **2/61** | **2/61** |
+| Decision FRR, all 250 | 50/82 | 27/82 | 27/82 | **27/82** |
+| Decision FRR, unique 99 | 22/38 | **11/38** | **11/38** | **11/38** |
+
+Run files: `benchmark/results/v2-m2.{sentence,clause,conjunct}.context.json`.
+The ablation over lexical mode and threshold is in ADR-016. With only 68
+context groups, most of these differences are within the confidence
+intervals (M1 report).
+
+### Error analysis (unique records)
+
+- **False accepts (2 unique, 13 with duplicates):** `synthetic_075` ×7 and
+  `synthetic_077` ×6. Both answers are fully supported but incomplete. These
+  are the label issues documented in `benchmark/DATASHEET_legacy_v1.md`
+  before M2 started. Under the methodology's grounding definition, ACCEPT is
+  correct. Completeness is a separate dimension (methodology §3.2).
+- **Contradiction misses (7):**
+  - 5 are a deliberate change. The legacy labels treat additive facts as
+    exclusive ("sells A" vs "sells B", "operates in Rwanda and Tanzania" vs a
+    different list), which the methodology classifies as NOT_ENOUGH_INFO
+    unless the source claims exhaustiveness (ADR-005).
+  - 2 are real gaps: superlatives are exclusive by meaning ("the largest
+    ocean": `public_067`), and a year conflict inside a long evidence
+    sentence, where the topic gate is diluted (`public_059`). **Not fixed in
+    M2**, so the guards are not tuned on seen data. Queued for M4 dev-split
+    work.
+- **False rejects (11):** all are paraphrase, synonym, or inference
+  (bicycles/bikes, people/employees, established/founded, "three offices"
+  from a list of three, "early 2021"). This is the expected ceiling of
+  deterministic coverage and the motivation for the optional NLI backend.
+
+### Not done / moved
+
+- App factory refactor: moved to M7 (with storage and auth).
+- Injection checks on retrieved sources: still M5 (v2 checks the answer only).
+- Persistence of v2 evaluations: M7.
+
+**Next (M3):** the declarative policy engine, which must reproduce the
+provisional M2 rules exactly, plus HUMAN_REVIEW.

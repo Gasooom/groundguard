@@ -15,8 +15,11 @@ class Verifier(Protocol):
     decides. Verifiers must be deterministic for a given input and version.
     """
 
-    name: str
-    version: str
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def version(self) -> str: ...
 
     def verify(self, claim: Claim, candidates: Sequence[EvidenceSpan]) -> ClaimVerdict | None: ...
 

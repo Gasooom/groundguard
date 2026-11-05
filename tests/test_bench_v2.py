@@ -33,3 +33,22 @@ def test_cli_rejects_pipeline_options_for_v1(capsys):
     code = main(["bench", "run", "--dataset", "gg-legacy-v1", "--input-mode", "context", "--granularity", "sentence"])
     assert code == 2
     assert "only apply to --engine v2" in capsys.readouterr().err
+
+
+RESULTS = __import__("pathlib").Path(__file__).resolve().parents[1] / "benchmark" / "results"
+
+
+@pytest.mark.parametrize("granularity", ["sentence", "clause", "conjunct"])
+def test_v2_engine_reproduces_committed_m2_results(granularity):
+    from groundguard.bench import read_run
+
+    committed = read_run(RESULTS / f"v2-m2.{granularity}.context.json")
+    run = run_benchmark(
+        "gg-legacy-v1",
+        input_mode="context",
+        engine="v2",
+        pipeline_config=PipelineConfig(granularity=granularity),
+    )
+    assert run["manifest"]["config"] == committed["manifest"]["config"]
+    assert run["predictions_hash"] == committed["predictions_hash"]
+    assert run["metrics"] == committed["metrics"]

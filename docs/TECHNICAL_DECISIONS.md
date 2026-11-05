@@ -169,3 +169,37 @@ co-author trailers. No history rewriting. Nothing is pushed without explicit
 owner approval.
 **Consequences.** The session environment's default git identity is
 overridden locally before the first commit.
+
+## ADR-016 — Default coverage backend: content tokens at threshold 1.0
+**Status.** Accepted (M2), to be re-validated on held-out data in M4.
+**Context.** v1 scored support as token overlap including stop words, with
+threshold 0.80. On short claims one uncovered key word still passes
+("Orion Labs sells **accounting** software" against "sells project-management
+software" scores 0.8).
+**Decision.** The v2 lexical backend scores the fraction of *content* tokens
+covered (stop and negation words removed, light stemming, canonical numbers)
+and requires full coverage by default.
+**Evidence (gg-legacy-v1, unique records, seen data).** content@1.0 gives FAR 2/61
+and FRR 11/38. content@0.8 gives FAR 5/61 and FRR 7/38. v1-similarity@0.8 gives FAR 4/61 and FRR 11/38
+(conjunct granularity, guards on). FAR is the primary metric (ADR-007).
+**Consequences.** Synonyms and paraphrases are NOT_ENOUGH_INFO (false
+rejects). The optional NLI backend (M4) exists for this. The threshold is
+configurable per pipeline.
+
+## ADR-017 — Multi-sentence evidence windows only for coreference
+**Context.** Pooling tokens across adjacent sentences let claims borrow
+support from unrelated neighbours.
+**Decision.** A multi-sentence window is created only when each later
+sentence opens with a referring word (it, they, this, ...).
+**Consequences.** Claims whose support genuinely spans two non-anaphoric
+sentences are NOT_ENOUGH_INFO. That is a false reject, not a false accept.
+
+## ADR-018 — Structured facts are contradiction-only
+**Context.** A matching v1 proposition does not cover content the extractor
+ignored ("founded in 2018 by Jane Doe" matches "founded in 2018").
+**Decision.** The structured-facts verifier only returns CONTRADICTED, for
+single-valued predicates. Support is always decided by coverage.
+**Consequences.** No false support from partial extraction. On gg-legacy-v1
+(conjunct, content@1.0, guards on), contradiction recall is 43/61 with the
+verifier and 23/61 without it (unique records: 18/25 vs 13/25), with no
+false contradictions in either configuration.
