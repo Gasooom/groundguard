@@ -1,0 +1,68 @@
+"""Reproducible benchmark harness for GroundGuard.
+
+Typical use::
+
+    from groundguard.bench import run_benchmark
+    run = run_benchmark("gg-legacy-v1", input_mode="context")
+    run["metrics"]["dedup"]["grounding"]["accuracy"]["value"]
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+from groundguard.bench.datasets import load_dataset
+from groundguard.bench.errors import RunFileError
+from groundguard.bench.manifest import RUN_FILE_SCHEMA_VERSION, build_manifest
+from groundguard.bench.report import build_metrics, predictions_hash
+from groundguard.bench.runner import INPUT_MODES, InputMode, run_v1
+
+
+def run_benchmark(dataset_id: str, *, input_mode: InputMode) -> dict[str, Any]:
+    """Run the v1 engine over a dataset and return a self-describing run."""
+
+    if input_mode not in INPUT_MODES:
+        raise ValueError(f"unknown input_mode {input_mode!r}")
+
+    dataset = load_dataset(dataset_id)
+    predictions = run_v1(dataset.records, input_mode)
+    config = {"engine": "v1", "input_mode": input_mode, "threshold": None}
+
+    return {
+        "schema_version": RUN_FILE_SCHEMA_VERSION,
+        "manifest": build_manifest(dataset, config),
+        "metrics": build_metrics(dataset.records, predictions),
+        "predictions_hash": predictions_hash(predictions),
+        "predictions": [prediction.to_dict() for prediction in predictions],
+    }
+
+
+def write_run(run: dict[str, Any], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as file:
+        json.dump(run, file, indent=2, sort_keys=True, ensure_ascii=False)
+        file.write("\n")
+
+
+def read_run(path: Path) -> dict[str, Any]:
+    try:
+        with path.open(encoding="utf-8") as file:
+            run: dict[str, Any] = json.load(file)
+    except FileNotFoundError:
+        raise RunFileError(f"run file not found: {path}") from None
+    except json.JSONDecodeError as error:
+        raise RunFileError(f"run file is not valid JSON: {path}: {error}") from None
+
+    if run.get("schema_version") != RUN_FILE_SCHEMA_VERSION:
+        raise RunFileError(
+            f"{path}: unsupported schema_version {run.get('schema_version')!r}"
+        )
+    for key in ("manifest", "metrics", "predictions", "predictions_hash"):
+        if key not in run:
+            raise RunFileError(f"{path}: missing key {key!r}")
+    return run
+
+
+__all__ = ["run_benchmark", "write_run", "read_run"]
