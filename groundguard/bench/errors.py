@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from groundguard.core.errors import GroundGuardError
 
-class BenchmarkError(Exception):
+
+class BenchmarkError(GroundGuardError):
     """Base class for benchmark harness errors."""
 
 
