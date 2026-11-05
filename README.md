@@ -421,6 +421,8 @@ Docker Deployment
 
 
 
-**Status: SHIPPED**
+**Project status (closed at this point)**
 
-**Release: v0.1.0**
+- **v0.1.0** (shipped): the original heuristic engine and `/evaluate` API, unchanged and still pinned by its reproduced baseline.
+- **v2** (built, unreleased): claim-level verification with evidence spans, declarative policies with HUMAN_REVIEW, source-injection and citation checks, agent-trace evaluation, a secured `/v2` API with storage, an SDK and a console. 1183 tests; mypy `--strict` on all v2 packages.
+- **Not done:** the held-out evaluation (M4b). Every v2 number above comes from `gg-legacy-v1`, which was seen during development, so none of them is a generalization result. Finishing it needs the public-domain sources for `gg-claims-v2` (blocked by the development environment's network policy), a person to review the drafted records, and optional NLI runs (`scripts/run_nli_benchmark.sh`). The tooling for all of it is in place: `groundguard annotate`, `groundguard bench claims`, `groundguard calibrate`. The steps are listed in `docs/IMPLEMENTATION_ROADMAP.md`.

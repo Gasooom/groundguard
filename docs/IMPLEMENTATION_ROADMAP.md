@@ -522,3 +522,13 @@ hardware profile is stored with them in `benchmark/results/latency.dev-container
 owner, calibration and the deferred guard gaps), NLI results from the owner's
 machine, a Docker image build in CI, and a README rewritten around the
 held-out results.
+
+---
+
+## Project closed
+
+Closed by the owner after M9 (partial). Open items, in order: M4b
+(held-out gg-claims-v2: sources, review, freeze, dev-only tuning of the
+deferred guard gaps, calibration, one logged test run), NLI results from a
+machine with model access, a Docker image build in CI, and a v2.0.0 release
+whose README is built around the held-out results.
