@@ -16,7 +16,7 @@ builtin ``provisional-m2`` policy. The v1 engine
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Any, Sequence
+from typing import Any, Literal, Sequence
 
 from groundguard.calibration import CalibrationSet, apply_to_verdicts
 from groundguard.claims.segmenter import segment
@@ -38,6 +38,7 @@ from groundguard.policy import DEFAULT_POLICY, Policy, PolicyDecision, decide, f
 from groundguard.verifiers.base import Verifier, VerifierChain
 from groundguard.verifiers.guards import GuardVerifier
 from groundguard.verifiers.lexical import LexicalMode, LexicalVerifier
+from groundguard.verifiers.nli import NLIVerifier, get_nli_model
 from groundguard.verifiers.structured_facts import StructuredFactsVerifier
 
 
@@ -53,12 +54,21 @@ class PipelineConfig:
     min_topic_dice: float = 0.5
     lexical_mode: LexicalMode = "content"
     lexical_threshold: float = 1.0
+    backend: Literal["lexical", "nli"] = "lexical"
+    nli_model: str | None = None
+    nli_revision: str | None = None
+    nli_entail_threshold: float = 0.5
+    nli_contradict_threshold: float = 0.5
 
     def __post_init__(self) -> None:
         if self.granularity not in GRANULARITIES:
             raise InvalidInput(f"granularity must be one of {GRANULARITIES}")
         if self.top_k < 1:
             raise InvalidInput("top_k must be positive")
+        if self.backend not in ("lexical", "nli"):
+            raise InvalidInput("backend must be 'lexical' or 'nli'")
+        if self.backend == "nli" and not (self.nli_model and self.nli_revision):
+            raise InvalidInput("the nli backend needs nli_model and a pinned nli_revision")
 
     def chain(self) -> VerifierChain:
         verifiers: list[Verifier] = []
@@ -66,7 +76,17 @@ class PipelineConfig:
             verifiers.append(GuardVerifier(min_topic_dice=self.min_topic_dice))
         if self.structured_facts:
             verifiers.append(StructuredFactsVerifier())
-        verifiers.append(LexicalVerifier(threshold=self.lexical_threshold, mode=self.lexical_mode))
+        if self.backend == "nli":
+            assert self.nli_model is not None and self.nli_revision is not None
+            verifiers.append(
+                NLIVerifier(
+                    get_nli_model(self.nli_model, self.nli_revision),
+                    entail_threshold=self.nli_entail_threshold,
+                    contradict_threshold=self.nli_contradict_threshold,
+                )
+            )
+        else:
+            verifiers.append(LexicalVerifier(threshold=self.lexical_threshold, mode=self.lexical_mode))
         return VerifierChain(tuple(verifiers))
 
     def to_dict(self) -> dict[str, Any]:

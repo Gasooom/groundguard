@@ -46,19 +46,38 @@ def _summary(run: dict[str, object]) -> str:
     return "\n".join(lines)
 
 
+def _pipeline_config(args: argparse.Namespace) -> PipelineConfig:
+    return PipelineConfig(
+        granularity=args.granularity,
+        guards=not args.no_guards,
+        structured_facts=not args.no_structured_facts,
+        lexical_mode=args.lexical_mode,
+        lexical_threshold=args.lexical_threshold,
+        backend=args.backend,
+        nli_model=args.nli_model,
+        nli_revision=args.nli_revision,
+    )
+
+
+def _add_pipeline_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--granularity", choices=GRANULARITIES, default="conjunct", help="v2 only")
+    parser.add_argument("--lexical-mode", choices=("content", "v1"), default="content", help="v2 only")
+    parser.add_argument("--lexical-threshold", type=float, default=1.0, help="v2 only")
+    parser.add_argument("--no-guards", action="store_true", help="v2 only: disable the guard verifier")
+    parser.add_argument("--no-structured-facts", action="store_true", help="v2 only")
+    parser.add_argument("--backend", choices=("lexical", "nli"), default="lexical", help="v2 only")
+    parser.add_argument("--nli-model", help="v2 + nli: Hugging Face model id")
+    parser.add_argument("--nli-revision", help="v2 + nli: pinned model commit hash")
+
+
 def _bench_run(args: argparse.Namespace) -> int:
     pipeline_config = None
     if args.engine == "v2":
-        pipeline_config = PipelineConfig(
-            granularity=args.granularity,
-            guards=not args.no_guards,
-            structured_facts=not args.no_structured_facts,
-            lexical_mode=args.lexical_mode,
-            lexical_threshold=args.lexical_threshold,
-        )
+        pipeline_config = _pipeline_config(args)
     elif any(
         (args.granularity != "conjunct", args.no_guards, args.no_structured_facts,
-         args.lexical_mode != "content", args.lexical_threshold != 1.0, args.policy is not None)
+         args.lexical_mode != "content", args.lexical_threshold != 1.0, args.policy is not None,
+         args.backend != "lexical", args.nli_model is not None, args.nli_revision is not None)
     ):
         raise ValueError("pipeline options only apply to --engine v2")
     run = run_benchmark(
@@ -116,6 +135,7 @@ def _bench_claims(args: argparse.Namespace) -> int:
         Path(args.records),
         split=args.split,
         dataset_id=args.dataset_id,
+        pipeline_config=_pipeline_config(args),
         policy=None if args.policy is None else load_policy(args.policy),
         purpose=args.purpose,
         test_access_log=Path(args.test_access_log),
@@ -181,11 +201,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--dataset", required=True, choices=sorted(DATASETS))
     run.add_argument("--input-mode", required=True, choices=INPUT_MODES)
     run.add_argument("--engine", choices=("v1", "v2"), default="v1")
-    run.add_argument("--granularity", choices=GRANULARITIES, default="conjunct", help="v2 only")
-    run.add_argument("--lexical-mode", choices=("content", "v1"), default="content", help="v2 only")
-    run.add_argument("--lexical-threshold", type=float, default=1.0, help="v2 only")
-    run.add_argument("--no-guards", action="store_true", help="v2 only: disable the guard verifier")
-    run.add_argument("--no-structured-facts", action="store_true", help="v2 only")
+    _add_pipeline_options(run)
     run.add_argument("--policy", help="v2 only: builtin policy name or path to a .toml policy")
     run.add_argument("--out", help="write the run file to this path")
     run.set_defaults(handler=_bench_run)
@@ -198,6 +214,7 @@ def build_parser() -> argparse.ArgumentParser:
     claims.add_argument("--purpose", help="required for --split test; recorded in the test access log")
     claims.add_argument("--test-access-log", default="benchmark/results/TEST_ACCESS_LOG.jsonl")
     claims.add_argument("--calibration", help="calibration file from 'groundguard calibrate fit'")
+    _add_pipeline_options(claims)
     claims.add_argument("--out", help="write the run file to this path")
     claims.set_defaults(handler=_bench_claims)
 

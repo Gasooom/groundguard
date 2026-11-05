@@ -5,11 +5,16 @@
       "engine_version": "2.0.0-m4a",
       "input_mode": "context",
       "pipeline": {
+        "backend": "lexical",
         "granularity": "conjunct",
         "guards": true,
         "lexical_mode": "content",
         "lexical_threshold": 1.0,
         "min_topic_dice": 0.5,
+        "nli_contradict_threshold": 0.5,
+        "nli_entail_threshold": 0.5,
+        "nli_model": null,
+        "nli_revision": null,
         "structured_facts": true,
         "top_k": 5
       },
@@ -24,8 +29,8 @@
         "lexical@1-content-1"
       ]
     },
-    "config_hash": "e62c9ff72edefb8d98f79ea815775a106713c579577b090565f54ac3ccc25715",
-    "created_at": "2026-11-05T11:35:12+00:00",
+    "config_hash": "7a427be83d766ebea760611c32cdfce3e6b005c84cbc344b74f2d4e7cab7c5ef",
+    "created_at": "2026-11-05T11:40:44+00:00",
     "dataset": {
       "files": [
         "benchmark/examples/human_labeled_001_020.json",
@@ -60,7 +65,7 @@
     },
     "engine": "v2",
     "git": {
-      "commit": "d0b57f1bdf09068c917e1abcf709327e883b7693",
+      "commit": "be0764827a3f7fcf388f16a79bb0e101e203f9a1",
       "dirty": true
     },
     "groundguard_version": "0.1.0",

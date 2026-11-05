@@ -20,6 +20,11 @@ dev = [
     "uvicorn[standard]>=0.34,<1"
 ]
 
+nli = [
+    "transformers>=4.40",
+    "torch>=2.2"
+]
+
 [project.scripts]
 groundguard = "groundguard.cli:main"
 
@@ -68,3 +73,7 @@ disallow_untyped_defs = false
 disallow_incomplete_defs = false
 disallow_any_generics = false
 warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = ["torch", "torch.*", "transformers", "transformers.*"]
+ignore_missing_imports = true
