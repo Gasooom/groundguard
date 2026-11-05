@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GroundGuard Console</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #14181f; --muted: #5b6472; --line: #dde1e7; --soft: #eef1f5;
+  --accept: #1f7a4d; --accept-bg: #e3f4ea; --flag: #8a5a00; --flag-bg: #fdf1d8;
+  --reject: #b42318; --reject-bg: #fde8e6; --review: #3b4fb8; --review-bg: #e6e9fb;
+  --supported: #1f7a4d; --contradicted: #b42318; --nei: #6b7280;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1216; --panel: #171b21; --ink: #e7eaee; --muted: #9aa3af; --line: #2a3039; --soft: #1e232b;
+    --accept: #5cc98d; --accept-bg: #16301f; --flag: #f0b955; --flag-bg: #33270e;
+    --reject: #f2786d; --reject-bg: #3a1714; --review: #8e9cf5; --review-bg: #1d2244;
+    --supported: #5cc98d; --contradicted: #f2786d; --nei: #9aa3af;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1216; --panel: #171b21; --ink: #e7eaee; --muted: #9aa3af; --line: #2a3039; --soft: #1e232b;
+  --accept: #5cc98d; --accept-bg: #16301f; --flag: #f0b955; --flag-bg: #33270e;
+  --reject: #f2786d; --reject-bg: #3a1714; --review: #8e9cf5; --review-bg: #1d2244;
+  --supported: #5cc98d; --contradicted: #f2786d; --nei: #9aa3af;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sans); }
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; padding: 12px 20px;
+  border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+header h1 { font-size: 15px; margin: 0; letter-spacing: .02em; }
+header h1 span { color: var(--muted); font-weight: 400; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav button { background: none; border: 1px solid transparent; color: var(--muted); padding: 6px 10px;
+  border-radius: 6px; font: inherit; cursor: pointer; }
+nav button[aria-current="page"] { color: var(--ink); border-color: var(--line); background: var(--soft); }
+.key { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.key input { width: 260px; max-width: 50vw; }
+main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 60px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 28px 0 10px; }
+h2:first-child { margin-top: 4px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.two { display: grid; gap: 16px; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+@media (max-width: 820px) { .two { grid-template-columns: 1fr; } .key input { width: 160px; } }
+.figure { font: 600 28px/1.1 var(--sans); font-variant-numeric: tabular-nums; }
+.sub { color: var(--muted); font-size: 12px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+td.num, th.num { text-align: right; }
+tr.clickable { cursor: pointer; } tr.clickable:hover td { background: var(--soft); }
+.mono { font-family: var(--mono); font-size: 12.5px; }
+.badge { display: inline-flex; gap: 5px; align-items: center; padding: 1px 8px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; white-space: nowrap; }
+.d-ACCEPT { color: var(--accept); background: var(--accept-bg); }
+.d-FLAG { color: var(--flag); background: var(--flag-bg); }
+.d-REJECT { color: var(--reject); background: var(--reject-bg); }
+.d-HUMAN_REVIEW { color: var(--review); background: var(--review-bg); }
+.v-SUPPORTED { color: var(--supported); } .v-CONTRADICTED { color: var(--contradicted); } .v-NOT_ENOUGH_INFO { color: var(--nei); }
+.bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--soft); margin: 10px 0 8px; }
+.bar > div { height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.answer { font-size: 15px; line-height: 1.9; white-space: pre-wrap; }
+mark.claim { background: none; color: inherit; border-bottom: 2px solid; padding: 1px 0; cursor: pointer; border-radius: 2px; }
+mark.claim.SUPPORTED { border-color: var(--supported); }
+mark.claim.CONTRADICTED { border-color: var(--contradicted); background: var(--reject-bg); }
+mark.claim.NOT_ENOUGH_INFO { border-color: var(--nei); border-bottom-style: dashed; }
+mark.claim[aria-pressed="true"] { outline: 2px solid var(--review); outline-offset: 2px; }
+mark.evidence { background: var(--review-bg); color: inherit; border-radius: 2px; padding: 1px 0; }
+.source { white-space: pre-wrap; border-left: 3px solid var(--line); padding: 4px 0 4px 10px; margin: 6px 0; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 13px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; overflow-wrap: anywhere; }
+label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+input, textarea, select { width: 100%; font: inherit; color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; }
+textarea { min-height: 86px; resize: vertical; }
+button.primary, button.plain { font: inherit; border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+button.primary { background: var(--ink); color: var(--bg); border: 1px solid var(--ink); }
+button.plain { background: var(--panel); color: var(--ink); border: 1px solid var(--line); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.notice { padding: 10px 12px; border-radius: 8px; background: var(--soft); color: var(--muted); }
+.error { padding: 10px 12px; border-radius: 8px; background: var(--reject-bg); color: var(--reject); }
+.pos { color: var(--accept); } .neg { color: var(--reject); }
+ol.rules { margin: 0; padding-left: 20px; } ol.rules li { margin: 4px 0; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>GroundGuard <span>console</span></h1>
+  <nav aria-label="Sections">
+    <button data-view="overview">Overview</button>
+    <button data-view="evaluations">Evaluations</button>
+    <button data-view="try">Evaluate</button>
+    <button data-view="benchmarks">Benchmarks</button>
+    <button data-view="policies">Policies</button>
+    <button data-view="docs">API</button>
+  </nav>
+  <div class="key">
+    <input id="api-key" type="password" placeholder="API key (gg_…)" autocomplete="off" aria-label="API key">
+    <button class="plain" id="save-key">Use key</button>
+  </div>
+</header>
+<main id="main" aria-live="polite"></main>
+
+<script>
+"use strict";
+const DECISIONS = ["ACCEPT", "FLAG", "REJECT", "HUMAN_REVIEW"];
+const DECISION_COLORS = { ACCEPT: "var(--accept)", FLAG: "var(--flag)", REJECT: "var(--reject)", HUMAN_REVIEW: "var(--review)" };
+const VERDICT_ICON = { SUPPORTED: "✓", CONTRADICTED: "✕", NOT_ENOUGH_INFO: "?" };
+const main = document.getElementById("main");
+
+// ------------------------------------------------------------ helpers
+function el(tag, attrs, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs || {})) {
+    if (value === null || value === undefined || value === false) continue;
+    if (key === "class") node.className = value;
+    else if (key.startsWith("on")) node.addEventListener(key.slice(2), value);
+    else node.setAttribute(key, value === true ? "" : value);
+  }
+  for (const child of children.flat()) {
+    if (child === null || child === undefined || child === false) continue;
+    node.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  }
+  return node;
+}
+const pct = (v) => (v === null || v === undefined) ? "n/a" : (100 * v).toFixed(1) + "%";
+const ci = (r) => r && r.group_bootstrap_95 ? `95% CI ${pct(r.group_bootstrap_95[0])}–${pct(r.group_bootstrap_95[1])}` : "";
+const frac = (r) => r ? `${r.numerator}/${r.denominator}` : "n/a";
+const short = (h) => h ? String(h).slice(0, 12) : "";
+function decisionBadge(d) { return el("span", { class: `badge d-${d}` }, d.replace("_", " ")); }
+function verdictBadge(v) { return el("span", { class: `badge v-${v}` }, `${VERDICT_ICON[v] || ""} ${v.replaceAll("_", " ")}`); }
+
+let apiKey = "";
+try { apiKey = sessionStorage.getItem("gg-key") || ""; } catch (e) { apiKey = ""; }
+document.getElementById("api-key").value = apiKey;
+document.getElementById("save-key").addEventListener("click", () => {
+  apiKey = document.getElementById("api-key").value.trim();
+  try { sessionStorage.setItem("gg-key", apiKey); } catch (e) { /* private mode: keep in memory */ }
+  route();
+});
+
+async function api(path, options = {}) {
+  const headers = { "Accept": "application/json" };
+  if (apiKey) headers["Authorization"] = "Bearer " + apiKey;
+  if (options.body) headers["Content-Type"] = "application/json";
+  const response = await fetch(path, { ...options, headers });
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const error = (data && data.error) || { code: "http_" + response.status, message: response.statusText };
+    throw Object.assign(new Error(error.message), { code: error.code, status: response.status });
+  }
+  return data;
+}
+function failure(error) {
+  if (error.status === 401) return el("div", { class: "error" }, "This view needs an API key. Create one with ",
+    el("span", { class: "mono" }, "groundguard keys create --tenant <name>"), " and enter it above.");
+  return el("div", { class: "error" }, `${error.code || "error"}: ${error.message}`);
+}
+function render(...nodes) { main.replaceChildren(...nodes); }
+
+// ------------------------------------------------------------ overview
+async function overview() {
+  render(el("p", { class: "notice" }, "Loading…"));
+  let stats;
+  try { stats = await api("/v2/stats"); } catch (e) { return render(failure(e)); }
+  if (!stats.total) return render(el("h2", {}, "Overview"),
+    el("div", { class: "notice" }, "No evaluations stored for this key yet. Use Evaluate, the SDK or POST /v2/evaluate."));
+  const bar = el("div", { class: "bar", role: "img", "aria-label": DECISIONS.map(d => `${d} ${stats.decisions[d]}`).join(", ") },
+    DECISIONS.filter(d => stats.decisions[d]).map(d => el("div", { style: `width:${100 * stats.decisions[d] / stats.total}%;background:${DECISION_COLORS[d]}` })));
+  const legend = el("div", { class: "legend" }, DECISIONS.map(d =>
+    el("span", {}, el("i", { style: `background:${DECISION_COLORS[d]}` }), `${d.replace("_", " ")} ${stats.decisions[d]} (${pct(stats.decision_rates[d])})`)));
+  render(
+    el("h2", {}, "Overview"),
+    el("div", { class: "grid" },
+      el("div", { class: "panel" }, el("div", { class: "sub" }, "Evaluations"), el("div", { class: "figure" }, stats.total), bar, legend),
+      el("div", { class: "panel" }, el("div", { class: "sub" }, "Claims checked"), el("div", { class: "figure" }, stats.claims),
+        el("div", { class: "sub" }, `${stats.contradicted_claims} contradicted · ${stats.not_enough_info_claims} not enough info`)),
+      el("div", { class: "panel" }, el("div", { class: "sub" }, "Evaluations with safety findings"),
+        el("div", { class: "figure" }, stats.evaluations_with_safety_findings),
+        el("div", { class: "sub" }, "PII or prompt injection in the answer"))),
+    el("div", { class: "two" },
+      el("div", {}, el("h2", {}, "Deciding rules"), el("div", { class: "panel" }, el("table", {},
+        el("thead", {}, el("tr", {}, el("th", {}, "Rule"), el("th", { class: "num" }, "Evaluations"))),
+        el("tbody", {}, Object.entries(stats.by_rule).map(([rule, n]) => el("tr", {}, el("td", { class: "mono" }, rule), el("td", { class: "num" }, n))))))),
+      el("div", {}, el("h2", {}, "By day"), el("div", { class: "panel" }, el("table", {},
+        el("thead", {}, el("tr", {}, el("th", {}, "Day"), DECISIONS.map(d => el("th", { class: "num" }, d.replace("_", " "))))),
+        el("tbody", {}, stats.by_day.map(row => el("tr", {}, el("td", { class: "mono" }, row.day), DECISIONS.map(d => el("td", { class: "num" }, row[d]))))))))));
+}
+
+// ---------------------------------------------------------- evaluations
+async function evaluations(cursor, decision) {
+  const params = new URLSearchParams({ limit: "25" });
+  if (decision) params.set("decision", decision);
+  if (cursor) params.set("cursor", cursor);
+  let page;
+  try { page = await api("/v2/evaluations?" + params); } catch (e) { return render(failure(e)); }
+  const filter = el("select", { "aria-label": "Filter by decision", onchange: (ev) => evaluations(null, ev.target.value) },
+    el("option", { value: "" }, "All decisions"), DECISIONS.map(d => el("option", { value: d, selected: d === decision }, d.replace("_", " "))));
+  const rows = page.items.map(item => el("tr", { class: "clickable", tabindex: "0",
+      onclick: () => detail(item.id), onkeydown: (ev) => ev.key === "Enter" && detail(item.id) },
+    el("td", { class: "mono" }, item.created_at.replace("T", " ").slice(0, 19)),
+    el("td", {}, decisionBadge(item.decision)), el("td", { class: "mono" }, item.rule),
+    el("td", { class: "num" }, item.n_claims), el("td", { class: "num" }, item.n_contradicted), el("td", { class: "num" }, item.n_nei),
+    el("td", { class: "mono" }, `${item.policy_id}@${item.policy_version}`), el("td", {}, item.payload_mode)));
+  render(el("h2", {}, "Evaluations"), el("div", { class: "row" }, filter),
+    el("div", { class: "panel", style: "margin-top:10px;overflow-x:auto" }, rows.length ? el("table", {},
+      el("thead", {}, el("tr", {}, ["Time (UTC)", "Decision", "Rule"].map(h => el("th", {}, h)),
+        ["Claims", "Contradicted", "Not enough info"].map(h => el("th", { class: "num" }, h)), el("th", {}, "Policy"), el("th", {}, "Stored"))),
+      el("tbody", {}, rows)) : el("div", { class: "notice" }, "No evaluations match.")),
+    page.next_cursor ? el("div", { class: "row", style: "margin-top:10px" }, el("button", { class: "plain", onclick: () => evaluations(page.next_cursor, decision) }, "Older →")) : null);
+}
+
+async function detail(id) {
+  let record;
+  try { record = await api("/v2/evaluations/" + encodeURIComponent(id)); } catch (e) { return render(failure(e)); }
+  render(el("h2", {}, "Evaluation ", el("span", { class: "mono" }, id)), reportView(record.report, record.payload_mode));
+}
+
+// ---------------------------------------------------------- report view
+function reportView(report, payloadMode) {
+  const decision = report.decision;
+  const decisionPanel = el("div", { class: "panel" },
+    el("div", { class: "row" }, decisionBadge(decision.decision), el("span", { class: "mono" }, decision.rule)),
+    el("p", {}, decision.reason),
+    el("dl", { class: "kv" },
+      el("dt", {}, "Policy"), el("dd", { class: "mono" }, `${decision.policy.id}@${decision.policy.version} · ${short(decision.policy.hash)}`),
+      el("dt", {}, "Matched rules"), el("dd", { class: "mono" }, decision.matched_rules.length ? decision.matched_rules.join(", ") : "none"),
+      el("dt", {}, "Verifiers"), el("dd", { class: "mono" }, (report.manifest.verifier_chain || []).join(" → ")),
+      el("dt", {}, "Engine"), el("dd", { class: "mono" }, `${report.manifest.engine_version} · config ${short(report.manifest.config_hash)}`)));
+
+  if (payloadMode === "none" || !report.answer) {
+    return el("div", { class: "two" }, el("div", {}, el("div", { class: "notice" },
+      "This evaluation was stored without text (payload mode 'none'): verdict labels and the decision are kept, claims and evidence are not."),
+      el("h2", {}, "Verdicts"), el("div", { class: "panel" }, el("table", {}, el("tbody", {}, report.verdicts.map(v =>
+        el("tr", {}, el("td", { class: "mono" }, v.claim_id), el("td", {}, verdictBadge(v.label)), el("td", { class: "mono" }, v.verifier))))))),
+      el("div", {}, el("h2", {}, "Decision"), decisionPanel));
+  }
+
+  const verdicts = Object.fromEntries(report.verdicts.map(v => [v.claim_id, v]));
+  const sources = Object.fromEntries(report.sources.map(s => [s.id, s]));
+  const inspector = el("div", { class: "panel" }, el("div", { class: "notice" }, "Select a claim to see its evidence."));
+  const answer = el("div", { class: "answer" });
+  let cursor = 0;
+  const marks = [];
+  for (const claim of [...report.claims].sort((a, b) => a.answer_span.start - b.answer_span.start)) {
+    const { start, end } = claim.answer_span;
+    if (start < cursor) continue;
+    answer.append(report.answer.slice(cursor, start));
+    const verdict = verdicts[claim.id];
+    const label = verdict ? verdict.label : "NOT_ENOUGH_INFO";
+    const mark = el("mark", { class: `claim ${verdict ? label : ""}`, role: "button", tabindex: "0", "aria-pressed": "false",
+      title: verdict ? label : (claim.non_assertive_reason || "not checked") }, report.answer.slice(start, end));
+    const select = () => { marks.forEach(m => m.setAttribute("aria-pressed", "false")); mark.setAttribute("aria-pressed", "true");
+      inspector.replaceChildren(claimView(claim, verdict, sources)); };
+    mark.addEventListener("click", select);
+    mark.addEventListener("keydown", (ev) => (ev.key === "Enter" || ev.key === " ") && (ev.preventDefault(), select()));
+    marks.push(mark); answer.append(mark); cursor = end;
+  }
+  answer.append(report.answer.slice(cursor));
+
+  const extras = [];
+  if (report.citations) extras.push(el("h2", {}, "Citations"), el("div", { class: "panel" },
+    el("p", { class: "sub" }, `${report.citations.supported_citations} of ${report.citations.cited_claims} cited claims supported by their cited sources`),
+    el("table", {}, el("tbody", {}, report.citations.items.map(item => el("tr", {},
+      el("td", { class: "mono" }, item.claim_id), el("td", { class: "mono" }, item.markers.join(" ")),
+      el("td", { class: "mono" }, item.cited_sources.join(", ")), el("td", {}, verdictBadge(item.label_against_cited))))))));
+  const safety = report.safety || {};
+  const findings = [];
+  if (safety.pii_detected) findings.push(`PII in the answer: ${safety.pii_categories.join(", ")}`);
+  if (safety.prompt_injection_detected) findings.push(`Prompt-injection patterns in the answer: ${safety.prompt_injection_categories.join(", ")}`);
+  for (const item of safety.source_injection || []) findings.push(`Injection in source ${item.source_id}: ${item.categories.join(", ")}`);
+  extras.push(el("h2", {}, "Safety"), el("div", { class: "panel" }, findings.length ? el("ul", {}, findings.map(f => el("li", {}, f))) : el("span", { class: "sub" }, "No findings.")));
+
+  return el("div", { class: "two" },
+    el("div", {}, el("div", { class: "panel" }, el("div", { class: "sub" }, "Question"), el("p", {}, report.question),
+        el("div", { class: "sub" }, "Answer: claims are underlined by verdict (solid = supported, red = contradicted, dashed = not enough info)"), answer),
+      el("div", { class: "legend", style: "margin-top:8px" }, ["SUPPORTED", "CONTRADICTED", "NOT_ENOUGH_INFO"].map(v => verdictBadge(v))),
+      ...extras),
+    el("div", {}, el("h2", {}, "Decision"), decisionPanel, el("h2", {}, "Claim"), inspector));
+}
+
+function claimView(claim, verdict, sources) {
+  if (!verdict) return el("div", {}, el("p", {}, claim.text), el("div", { class: "notice" }, `Not checked: ${claim.non_assertive_reason || "non-assertive"}.`));
+  const evidence = verdict.evidence.map(item => {
+    const source = sources[item.source_id];
+    const text = source ? source.text : item.text;
+    const { start, end } = item.span;
+    const body = source ? el("div", { class: "source" }, text.slice(0, start), el("mark", { class: "evidence" }, text.slice(start, end)), text.slice(end))
+                        : el("div", { class: "source" }, item.text);
+    return el("div", {}, el("div", { class: "sub mono" }, `${item.source_id} [${start}, ${end})`), body);
+  });
+  return el("div", {},
+    el("div", { class: "row" }, verdictBadge(verdict.label)), el("p", {}, claim.text),
+    el("dl", { class: "kv" },
+      el("dt", {}, "Rationale"), el("dd", {}, verdict.rationale),
+      el("dt", {}, "Verifier"), el("dd", { class: "mono" }, verdict.verifier),
+      el("dt", {}, "Raw score"), el("dd", { class: "mono" }, verdict.raw_score.toFixed(3)),
+      el("dt", {}, "Confidence"), el("dd", {}, verdict.confidence === null ? "uncalibrated" : pct(verdict.confidence)),
+      el("dt", {}, "Signals"), el("dd", { class: "mono" }, JSON.stringify(verdict.signals))),
+    el("div", { class: "sub", style: "margin-top:10px" }, evidence.length ? "Evidence (highlighted in its source)" : "No evidence selected"),
+    evidence);
+}
+
+// --------------------------------------------------------------- try it
+async function tryIt() {
+  let policies = [];
+  try { policies = await api("/v2/policies"); } catch (e) { return render(failure(e)); }
+  const question = el("input", { id: "q", value: "Where is Acme headquartered?" });
+  const context = el("textarea", { id: "c" }, "Acme Corp is headquartered in Berlin, Germany. It was founded in 2010.");
+  const answer = el("textarea", { id: "a" }, "Acme is not headquartered in Berlin. It was founded in 2010.");
+  const policy = el("select", { id: "p" }, policies.map(p => el("option", { value: p.id }, `${p.id}@${p.version}`)));
+  const output = el("div", {});
+  const submit = el("button", { class: "primary", onclick: async () => {
+    submit.disabled = true;
+    try {
+      const report = await api("/v2/evaluate", { method: "POST", body: JSON.stringify({
+        question: question.value, context: context.value, answer: answer.value, policy: policy.value }) });
+      output.replaceChildren(el("h2", {}, "Result"), reportView(report, "full"));
+    } catch (e) { output.replaceChildren(failure(e)); }
+    submit.disabled = false;
+  } }, "Evaluate");
+  render(el("h2", {}, "Evaluate an answer"), el("div", { class: "panel" },
+    el("label", { for: "q" }, "Question"), question, el("label", { for: "c" }, "Context (sources)"), context,
+    el("label", { for: "a" }, "Answer"), answer, el("label", { for: "p" }, "Policy"), policy,
+    el("div", { class: "row", style: "margin-top:12px" }, submit, el("span", { class: "sub" }, "Stored under this key's tenant, subject to the service payload mode."))), output);
+}
+
+// ----------------------------------------------------------- benchmarks
+function metricRows(view) {
+  const rows = [];
+  for (const dim of ["grounding", "relevance", "contradiction"]) if (view[dim]) rows.push([`${dim} accuracy`, view[dim].accuracy]);
+  if (view.decision) rows.push(["decision FAR (bad answers accepted)", view.decision.false_accept], ["decision FRR (good answers not accepted)", view.decision.false_reject],
+    ["review rate", view.decision.review_rate]);
+  if (view.claim_level && view.claim_level.claims) rows.push(["claim accuracy", view.claim_level.accuracy], ["evidence localization", view.claim_level.evidence_localization]);
+  if (view.answer_level && view.answer_level.answers) rows.push(["answer FAR", view.answer_level.false_accept], ["answer FRR", view.answer_level.false_reject], ["review rate", view.answer_level.review_rate]);
+  return rows.filter(([, rate]) => rate);
+}
+function confusion(matrix) {
+  const labels = Object.keys(matrix);
+  return el("table", { class: "mono" }, el("thead", {}, el("tr", {}, el("th", {}, "gold \\ predicted"), labels.map(l => el("th", { class: "num" }, l)))),
+    el("tbody", {}, labels.map(g => el("tr", {}, el("th", {}, g), labels.map(p => el("td", { class: "num", style: g === p ? "font-weight:700" : "" }, matrix[g][p]))))));
+}
+async function benchmarks() {
+  let listing;
+  try { listing = await api("/v2/benchmarks/runs"); } catch (e) { return render(failure(e)); }
+  if (!listing.runs.length) return render(el("h2", {}, "Benchmarks"), el("div", { class: "notice" },
+    listing.results_dir_present ? "No run files found." : "No results directory: benchmark runs are available from a repository checkout (GROUNDGUARD_RESULTS_DIR)."));
+  const names = listing.runs.map(r => r.name);
+  const left = el("select", { "aria-label": "Run" }, names.map(n => el("option", { value: n }, n)));
+  const right = el("select", { "aria-label": "Compare with" }, el("option", { value: "" }, "— compare with —"), names.map(n => el("option", { value: n }, n)));
+  const out = el("div", {});
+  const show = async () => {
+    try {
+      const a = await api("/v2/benchmarks/runs/" + encodeURIComponent(left.value));
+      const b = right.value ? await api("/v2/benchmarks/runs/" + encodeURIComponent(right.value)) : null;
+      out.replaceChildren(runView(a, b));
+    } catch (e) { out.replaceChildren(failure(e)); }
+  };
+  left.addEventListener("change", show); right.addEventListener("change", show);
+  render(el("h2", {}, "Benchmark runs"), el("div", { class: "panel", style: "overflow-x:auto" }, el("table", {},
+      el("thead", {}, el("tr", {}, ["Run", "Dataset", "Engine", "Input / split", "Policy", "Commit"].map(h => el("th", {}, h)))),
+      el("tbody", {}, listing.runs.map(r => el("tr", {}, el("td", { class: "mono" }, r.name), el("td", {}, `${r.dataset}@${r.dataset_version}`),
+        el("td", {}, r.engine), el("td", {}, r.input_mode || r.split || ""), el("td", { class: "mono" }, r.policy || "—"), el("td", { class: "mono" }, short(r.git_commit))))))),
+    el("h2", {}, "Metrics"), el("div", { class: "row" }, left, right), out);
+  show();
+}
+function runView(a, b) {
+  const views = Object.keys(a.metrics);
+  const blocks = views.map(name => {
+    const view = a.metrics[name];
+    const other = b && b.metrics[name];
+    const rows = metricRows(view).map(([label, rate]) => {
+      const counterpart = other && metricRows(other).find(([l]) => l === label);
+      const delta = counterpart && rate.value !== null && counterpart[1].value !== null ? rate.value - counterpart[1].value : null;
+      const lowerIsBetter = /FAR|FRR|review/.test(label);
+      const better = delta !== null && delta !== 0 && ((delta < 0) === lowerIsBetter);
+      return el("tr", {}, el("td", {}, label), el("td", { class: "num mono" }, frac(rate)), el("td", { class: "num" }, pct(rate.value)),
+        el("td", { class: "sub" }, ci(rate)), b ? el("td", { class: "num mono" }, counterpart ? pct(counterpart[1].value) : "n/a") : null,
+        b ? el("td", { class: `num mono ${delta ? (better ? "pos" : "neg") : ""}` }, delta === null ? "n/a" : (delta > 0 ? "+" : "") + (100 * delta).toFixed(1) + " pt") : null);
+    });
+    const matrices = ["grounding", "contradiction"].filter(d => view[d] && view[d].confusion_matrix)
+      .map(d => el("div", {}, el("div", { class: "sub" }, `${d} confusion matrix`), confusion(view[d].confusion_matrix)));
+    if (view.claim_level && view.claim_level.confusion_matrix) matrices.push(el("div", {}, el("div", { class: "sub" }, "claim verdict confusion matrix"), confusion(view.claim_level.confusion_matrix)));
+    const records = view.records !== undefined ? `${view.records} records · ${view.context_groups} context groups` : "";
+    return el("div", { class: "panel", style: "margin-top:12px;overflow-x:auto" }, el("div", { class: "row" }, el("strong", {}, name), el("span", { class: "sub" }, records)),
+      el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Metric"), el("th", { class: "num" }, "Count"), el("th", { class: "num" }, "Value"), el("th", {}, "Interval"),
+        b ? el("th", { class: "num" }, "Compared run") : null, b ? el("th", { class: "num" }, "Δ") : null)), el("tbody", {}, rows)),
+      matrices.length ? el("div", { class: "grid", style: "margin-top:12px" }, matrices) : null);
+  });
+  const caution = a.summary.dataset === "gg-legacy-v1" ? el("div", { class: "notice" },
+    "gg-legacy-v1 was seen during development (99 unique of 250 records, 68 context groups): these are development results, not evidence of generalization.") : null;
+  return el("div", {}, caution, blocks);
+}
+
+// ------------------------------------------------------------- policies
+async function policies() {
+  let list;
+  try { list = await api("/v2/policies"); } catch (e) { return render(failure(e)); }
+  render(el("h2", {}, "Policies"), el("div", { class: "grid" }, list.map(p => el("div", { class: "panel" },
+    el("div", { class: "row" }, el("strong", { class: "mono" }, `${p.id}@${p.version}`), el("span", { class: "sub mono" }, short(p.hash))),
+    el("p", { class: "sub" }, p.description),
+    el("ol", { class: "rules" }, p.rules.map(r => el("li", {}, el("span", { class: "mono" }, r.id), " ",
+      el("span", { class: "sub mono" }, Object.entries(r.when).map(([k, v]) => `${k}=${typeof v === "object" ? JSON.stringify(v) : v}`).join(" AND ")), " → ", decisionBadge(r.decision))),
+      el("li", {}, el("span", { class: "mono" }, p.default.id), " → ", decisionBadge(p.default.decision)))))));
+}
+
+function docs() {
+  render(el("h2", {}, "API"), el("div", { class: "panel" },
+    el("p", {}, "Interactive OpenAPI documentation: ", el("a", { href: "/docs" }, "/docs"), ". Routes under /v2 need ", el("span", { class: "mono" }, "Authorization: Bearer gg_…"), "."),
+    el("table", {}, el("tbody", {}, [
+      ["POST /v2/evaluate", "claims, verdicts with evidence spans, citations, safety, policy decision"],
+      ["POST /v2/evaluate/batch", "several answers; per-item results and errors"],
+      ["POST /v2/traces/evaluate", "agent execution trace checks and trace policy"],
+      ["GET /v2/evaluations[/{id}]", "stored evaluations for this key's tenant"],
+      ["GET /v2/stats", "aggregates computed in SQL"],
+      ["GET /v2/policies", "builtin answer policies with rules and hashes"],
+      ["GET /v2/benchmarks/runs[/{name}]", "committed benchmark run files"],
+    ].map(([route, what]) => el("tr", {}, el("td", { class: "mono" }, route), el("td", {}, what)))))));
+}
+
+// --------------------------------------------------------------- router
+const VIEWS = { overview, evaluations: () => evaluations(null, ""), try: tryIt, benchmarks, policies, docs };
+function route() {
+  const name = (location.hash || "#overview").slice(1).split("/")[0];
+  const view = VIEWS[name] ? name : "overview";
+  document.querySelectorAll("nav button").forEach(b => b.setAttribute("aria-current", b.dataset.view === view ? "page" : "false"));
+  VIEWS[view]();
+}
+document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.view; }));
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

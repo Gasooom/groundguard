@@ -234,6 +234,14 @@ v2 routes: `POST /v2/evaluate`, `POST /v2/evaluate/batch`, `GET /v2/evaluations`
 
 Limits stated plainly: the rate limiter is per process; redaction is regex-based and can miss names and addresses; injection detection is pattern-based and is a signal, not a defence. The benchmark commands (`groundguard bench ...`) need a repository checkout.
 
+**Console**
+
+`GET /v2/dashboard` serves a self-contained console (no CDN, no build step). It covers the decision overview, stored evaluations, a claim inspector, benchmark runs with comparison, policies, and a form to evaluate an answer. The page asks for an API key, and every number on it comes from stored evaluations or committed run files.
+
+![Claim inspector: the contradicted claim is highlighted in the answer, and its evidence span is highlighted in the source](docs/images/console-claim-inspector.png)
+
+The screenshots show evaluations created through the API in a local session. They are not benchmark results.
+
 **Safety Benchmark Results**
 
 PII benchmark:

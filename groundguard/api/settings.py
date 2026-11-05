@@ -21,6 +21,8 @@ class Settings:
     max_body_bytes: int = 1_000_000
     payload_mode: PayloadMode = "redacted"
     max_batch_items: int = 50
+    # Committed benchmark run files shown by the dashboard (repository checkout).
+    results_dir: str = "benchmark/results"
 
     def __post_init__(self) -> None:
         if self.auth not in ("required", "disabled"):
@@ -45,4 +47,5 @@ class Settings:
             max_body_bytes=int(env.get("GROUNDGUARD_MAX_BODY_BYTES", defaults.max_body_bytes)),
             payload_mode=env.get("GROUNDGUARD_PAYLOAD_MODE", defaults.payload_mode),  # type: ignore[arg-type]
             max_batch_items=int(env.get("GROUNDGUARD_MAX_BATCH_ITEMS", defaults.max_batch_items)),
+            results_dir=env.get("GROUNDGUARD_RESULTS_DIR", defaults.results_dir),
         )

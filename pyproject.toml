@@ -33,6 +33,7 @@ include = ["groundguard*"]
 
 [tool.setuptools.package-data]
 "groundguard.policy.builtin" = ["*.toml"]
+"groundguard.api" = ["static/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

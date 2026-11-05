@@ -468,3 +468,35 @@ evaluations. A benchmark of real agent traces, which needs collected and
 reviewed traces.
 
 **Tests.** 1139 → 1179 passing. mypy `--strict` is clean on 54 source files.
+
+---
+
+## M8 report (console)
+
+**Delivered.** `GET /v2/dashboard`: one static HTML file shipped as package
+data, with no external resources, no build step and light/dark themes. Views:
+- overview: decision distribution, deciding rules, per-day counts
+- evaluations: list with filter and cursor paging
+- claim inspector: claims underlined by verdict; selecting one shows its
+  evidence highlighted inside its source, with the verifier, raw score,
+  confidence or "uncalibrated", and signals
+- decision panel with policy, hash and every matched rule; citations; safety
+  findings, including source injection
+- benchmark runs, with a metric comparison that knows each metric's direction
+  and shows the dev-data caveat for gg-legacy-v1
+- policies, an evaluate form, and an API index
+
+New endpoints `GET /v2/benchmarks/runs[/{name}]` read only `*.json` names from
+the configured results directory, with path resolution checked.
+
+**Safety.** All data is rendered through `textContent` and DOM nodes. The
+tests assert the page contains no `innerHTML`-style sinks and no external URLs,
+and the page is served with a restrictive Content-Security-Policy. The API key
+is kept in `sessionStorage`, with an in-memory fallback.
+
+**Verified.** Seeded through the API on a live server, then captured with
+Playwright at 1280 px and 390 px: no page errors and no horizontal overflow.
+The only console error is the expected 401 on first load, before a key is
+entered.
+
+**Tests.** 1179 → 1183.

@@ -12,9 +12,15 @@ from __future__ import annotations
 from typing import Any, Literal
 
 import base64
+import json
 import math
+import re
+from pathlib import Path
+
+from importlib import resources
 
 from fastapi import APIRouter, Depends, Query, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field, model_validator
 
 from groundguard.api.security import ApiError, Principal, RateLimiter, authenticate
@@ -250,3 +256,80 @@ def evaluate_agent_trace(request: TraceEvaluateRequest, principal: Principal = D
         return evaluate_trace(request.trace, policy=load_builtin(request.policy))
     except InvalidInput as error:
         raise ApiError(422, "invalid_input", str(error)) from None
+
+
+_RUN_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*\.json$")
+
+
+def _results_dir(http_request: Request) -> Path:
+    settings: Settings = http_request.app.state.settings
+    return Path(settings.results_dir)
+
+
+def _run_summary(name: str, run: dict[str, Any]) -> dict[str, Any]:
+    manifest = run.get("manifest", {})
+    config = manifest.get("config", {})
+    return {
+        "name": name,
+        "kind": run.get("kind", "legacy"),
+        "dataset": manifest.get("dataset", {}).get("id"),
+        "dataset_version": manifest.get("dataset", {}).get("version"),
+        "engine": config.get("engine"),
+        "input_mode": config.get("input_mode"),
+        "split": config.get("split"),
+        "label_status": config.get("label_status"),
+        "policy": (config.get("policy") or {}).get("id"),
+        "created_at": manifest.get("created_at"),
+        "git_commit": (manifest.get("git") or {}).get("commit"),
+        "predictions_hash": run.get("predictions_hash"),
+    }
+
+
+@router.get("/benchmarks/runs")
+def list_benchmark_runs(http_request: Request, principal: Principal = Depends(require_principal)) -> Any:
+    """Committed benchmark run files (metadata only)."""
+
+    directory = _results_dir(http_request)
+    if not directory.is_dir():
+        return {"results_dir_present": False, "runs": []}
+    runs = []
+    for path in sorted(directory.glob("*.json")):
+        if not _RUN_NAME.match(path.name):
+            continue
+        try:
+            runs.append(_run_summary(path.name, json.loads(path.read_text(encoding="utf-8"))))
+        except (OSError, json.JSONDecodeError):
+            continue
+    return {"results_dir_present": True, "runs": runs}
+
+
+@router.get("/benchmarks/runs/{name}")
+def get_benchmark_run(name: str, http_request: Request, principal: Principal = Depends(require_principal)) -> Any:
+    """One run file's manifest and metrics (predictions omitted)."""
+
+    if not _RUN_NAME.match(name):
+        raise ApiError(404, "not_found", "run not found")
+    directory = _results_dir(http_request).resolve()
+    path = (directory / name).resolve()
+    if path.parent != directory or not path.is_file():
+        raise ApiError(404, "not_found", "run not found")
+    run = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        "summary": _run_summary(name, run),
+        "manifest": run.get("manifest"),
+        "metrics": run.get("metrics"),
+    }
+
+
+@router.get("/dashboard", response_class=HTMLResponse, include_in_schema=False)
+def dashboard_v2() -> HTMLResponse:
+    """The v2 console. The page itself needs no key; every data call it makes
+    is authenticated with the key the user enters (kept in sessionStorage)."""
+
+    page = resources.files("groundguard.api").joinpath("static/dashboard.html").read_text(encoding="utf-8")
+    return HTMLResponse(page, headers={
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+                                   "style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "no-referrer",
+    })
