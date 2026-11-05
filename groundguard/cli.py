@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -26,6 +27,7 @@ from groundguard.core.errors import GroundGuardError
 from groundguard.core.types import GRANULARITIES
 from groundguard.pipeline import PipelineConfig
 from groundguard.policy import builtin_names, load_policy
+from groundguard.storage.v2_store import V2Store
 
 
 def _summary(run: dict[str, object]) -> str:
@@ -173,6 +175,27 @@ def _calibrate_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _keys_create(args: argparse.Namespace) -> int:
+    key = V2Store(args.db).create_api_key(args.tenant, label=args.label)
+    print(key)
+    print("Store this key now; only its hash is kept.", file=sys.stderr)
+    return 0
+
+
+def _keys_list(args: argparse.Namespace) -> int:
+    for record in V2Store(args.db).list_api_keys():
+        status = "revoked" if record.revoked_at else "active"
+        print(f"{record.key_id}  tenant={record.tenant_id}  {status}  created={record.created_at}  {record.label}")
+    return 0
+
+
+def _keys_revoke(args: argparse.Namespace) -> int:
+    if not V2Store(args.db).revoke_api_key(args.key_id):
+        raise ValueError(f"no active key with id {args.key_id!r}")
+    print(f"revoked {args.key_id}")
+    return 0
+
+
 def _annotate_review(args: argparse.Namespace) -> int:
     outcomes = review(Path(args.records), args.reviewer)
     print(f"reviewed: {dict(outcomes)}")
@@ -255,6 +278,22 @@ def build_parser() -> argparse.ArgumentParser:
     calibration_report_parser.add_argument("--run", required=True)
     calibration_report_parser.add_argument("--calibration", required=True)
     calibration_report_parser.set_defaults(handler=_calibrate_report)
+
+    keys = commands.add_parser("keys", help="manage API keys for the /v2 service")
+    keys_commands = keys.add_subparsers(dest="keys_command", required=True)
+    default_db = os.environ.get("GROUNDGUARD_DATABASE_PATH", "groundguard.db")
+    create = keys_commands.add_parser("create", help="create a key (printed once)")
+    create.add_argument("--tenant", required=True)
+    create.add_argument("--label", default="")
+    create.add_argument("--db", default=default_db)
+    create.set_defaults(handler=_keys_create)
+    key_list = keys_commands.add_parser("list", help="list keys (never shows secrets)")
+    key_list.add_argument("--db", default=default_db)
+    key_list.set_defaults(handler=_keys_list)
+    revoke = keys_commands.add_parser("revoke", help="revoke a key by its key id")
+    revoke.add_argument("key_id")
+    revoke.add_argument("--db", default=default_db)
+    revoke.set_defaults(handler=_keys_revoke)
 
     annotate = commands.add_parser("annotate", help="review claim-level dataset records")
     annotate_commands = annotate.add_subparsers(dest="annotate_command", required=True)

@@ -1,14 +1,22 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from groundguard.api.app import app
+import tempfile
+from pathlib import Path
+
+from groundguard.api.app import create_app
+from groundguard.api.settings import Settings
 from groundguard.core.errors import InvalidInput
 from groundguard.core.types import ClaimVerdict, SourceDocument
 from groundguard.pipeline import PipelineConfig, derive_v1_labels, evaluate_v2
 from groundguard.policy import decide, facts_from_v2, load_builtin
 
 
-client = TestClient(app)
+# These tests cover evaluation behavior, so they use an app with auth
+# disabled and its own database; auth is tested in tests/test_api_security.py.
+client = TestClient(
+    create_app(Settings(database_path=str(Path(tempfile.mkdtemp()) / "gg.db"), auth="disabled"))
+)
 
 
 def _verdict(label):

@@ -1,7 +1,8 @@
 """HTTP adapter for the v2 claim-level engine.
 
-Evaluation only: no persistence and no authentication yet (both M7). Input
-sizes are capped so a single request cannot exhaust the process. Callers can
+Every route requires an API key unless the service runs with
+GROUNDGUARD_AUTH=disabled (see groundguard.api.security). Input sizes are
+capped so a single request cannot exhaust the process. Callers can
 choose a builtin policy by name; uploading arbitrary policy files waits for
 authentication (M7).
 """
@@ -10,10 +11,10 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field, model_validator
 
+from groundguard.api.security import ApiError, Principal, authenticate
 from groundguard.core.errors import InvalidInput
 from groundguard.core.types import SourceDocument
 from groundguard.pipeline import PipelineConfig, evaluate_v2
@@ -59,11 +60,15 @@ def v2_policy_names() -> tuple[str, ...]:
     return tuple(name for name in builtin_names() if not load_builtin(name).requires_v1)
 
 
+def require_principal(request: Request) -> Principal:
+    return authenticate(request)
+
+
 router = APIRouter(prefix="/v2", tags=["v2"])
 
 
 @router.post("/evaluate")
-def evaluate_answer_v2(request: EvaluateV2Request) -> Any:
+def evaluate_answer_v2(request: EvaluateV2Request, principal: Principal = Depends(require_principal)) -> Any:
     """Claim-level evaluation: claims, per-claim verdicts with evidence spans,
     derived labels, safety signals, and the policy decision with its rule trace."""
 
@@ -84,15 +89,12 @@ def evaluate_answer_v2(request: EvaluateV2Request) -> Any:
             policy=load_builtin(request.policy),
         )
     except InvalidInput as error:
-        return JSONResponse(
-            status_code=422,
-            content={"error": {"code": "invalid_input", "message": str(error)}},
-        )
+        raise ApiError(422, "invalid_input", str(error)) from None
     return report.to_dict()
 
 
 @router.get("/policies")
-def list_policies() -> Any:
+def list_policies(principal: Principal = Depends(require_principal)) -> Any:
     """Builtin policies usable with the v2 engine: rules, versions and content hashes."""
 
     return [load_builtin(name).to_dict() | {"hash": load_builtin(name).hash} for name in v2_policy_names()]

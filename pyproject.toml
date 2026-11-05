@@ -54,6 +54,9 @@ files = [
     "groundguard/annotate.py",
     "groundguard/storage/v2_store.py",
     "groundguard/api/v2.py",
+    "groundguard/api/app.py",
+    "groundguard/api/security.py",
+    "groundguard/api/settings.py",
 ]
 
 # v0.1.0 modules are kept unchanged (ADR-004). They are type-checked with
@@ -65,7 +68,7 @@ module = [
     "groundguard.application.*",
     "groundguard.evaluation.*",
     "groundguard.storage.*",
-    "groundguard.api.app",
+    "groundguard.api.v1",
     "groundguard.api.dashboard",
     "groundguard.api.schemas",
 ]
