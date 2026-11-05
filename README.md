@@ -232,6 +232,8 @@ The response lists each claim with its verdict, evidence span (source id and off
 
 v2 routes: `POST /v2/evaluate`, `POST /v2/evaluate/batch`, `GET /v2/evaluations`, `GET /v2/evaluations/{id}`, `GET /v2/stats`, `GET /v2/policies`. Agent execution traces: `POST /v2/traces/evaluate` runs nine deterministic checks: tool allowlist, argument schemas, redundant calls, call budget, error handling, injection in tool outputs, consistency with earlier tool results, final-answer grounding against tool outputs, and expected tools. A trace policy (`agent-default`) then decides. Errors use `{"error": {"code", "message", "details"?}}`. The v0.1.0 routes are unchanged and unauthenticated (legacy).
 
+Latency (default deterministic chain, in-process, one warm process on a 4-vCPU Xeon @ 2.1 GHz): p50 0.67 ms / p95 1.36 ms per evaluation for short contexts, and p50 2.36 ms / p95 3.76 ms for ~360-word contexts. HTTP, auth, storage and the optional NLI backend are not included. Reproduce with `python scripts/measure_latency.py`; results are in `benchmark/results/latency.dev-container.json`.
+
 Limits stated plainly: the rate limiter is per process; redaction is regex-based and can miss names and addresses; injection detection is pattern-based and is a signal, not a defence. The benchmark commands (`groundguard bench ...`) need a repository checkout.
 
 **Console**

@@ -500,3 +500,25 @@ The only console error is the expected 401 on first load, before a key is
 entered.
 
 **Tests.** 1179 → 1183.
+
+---
+
+## M9 (partial): latency
+
+`scripts/measure_latency.py` measures the default deterministic chain in
+process. Run on the development container (4 vCPU Intel Xeon @ 2.10 GHz,
+Python 3.13), 5 repeats × 99 inputs:
+
+| Inputs | p50 | p95 | p99 | Throughput (1 process) |
+|---|---|---|---|---|
+| gg-legacy-v1 unique records (median context 6 words) | 0.67 ms | 1.36 ms | 1.86 ms | ~1350 / s |
+| same answers, ~360-word context | 2.36 ms | 3.76 ms | 5.51 ms | ~380 / s |
+
+These exclude HTTP, authentication and storage, and the optional NLI backend
+(which will dominate latency when used). Numbers are machine-specific; the
+hardware profile is stored with them in `benchmark/results/latency.dev-container.json`.
+
+**Remaining for the v2.0.0 release:** M4b (held-out dataset, reviewed by the
+owner, calibration and the deferred guard gaps), NLI results from the owner's
+machine, a Docker image build in CI, and a README rewritten around the
+held-out results.
