@@ -33,6 +33,7 @@ KNOWN_LIMITATIONS = {
     "ctrl_02": "v1 relevance treats every 'when' question as requiring a year",
     "coref_01": "pronoun subject: guards anchor to the sentence naming the entity (qualifier) instead of the negated pronoun sentence",
     "coref_02": "pronoun chain longer than the two-sentence evidence window",
+    "src_inj_02": "the answer quotes 'ignore previous instructions', so the v1 answer-level injection pattern fires (pattern matching cannot tell describing an attack from attempting one)",
 }
 
 

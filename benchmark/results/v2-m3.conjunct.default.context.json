@@ -19,9 +19,9 @@
         "top_k": 5
       },
       "policy": {
-        "hash": "682d5462e0f3b18d15783ab155d33e9bcc7ba0aaad1f0971ac59391c4aac2623",
+        "hash": "4d2fd7a55493bd37ae155ced145be2d8993e827a4fa39974da086c665b88bfa9",
         "id": "default",
-        "version": "2.0.0"
+        "version": "2.1.0"
       },
       "verifier_chain": [
         "guards@2",
@@ -29,8 +29,8 @@
         "lexical@1-content-1"
       ]
     },
-    "config_hash": "7a427be83d766ebea760611c32cdfce3e6b005c84cbc344b74f2d4e7cab7c5ef",
-    "created_at": "2026-11-05T11:40:44+00:00",
+    "config_hash": "aa1246ce40bec142a8c2a787e77f4b5824fd239a58b6610b261c79743465ce18",
+    "created_at": "2026-11-05T12:03:27+00:00",
     "dataset": {
       "files": [
         "benchmark/examples/human_labeled_001_020.json",
@@ -65,7 +65,7 @@
     },
     "engine": "v2",
     "git": {
-      "commit": "be0764827a3f7fcf388f16a79bb0e101e203f9a1",
+      "commit": "c8fb6d6324699ac99adb5d9506b1f2fd89f22476",
       "dirty": true
     },
     "groundguard_version": "0.1.0",

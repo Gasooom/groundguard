@@ -1,6 +1,12 @@
 # Default policy for engine v2.
 #
-# Differs from provisional-m2 in one rule: a non-exclusive qualifier mismatch
+# 2.1.0 (M5a) adds two rules: instruction-like text inside a retrieved source
+# (indirect prompt injection) sends the answer to HUMAN_REVIEW, and a
+# citation whose cited source does not support its claim gives FLAG
+# (ADR-024). Both rules come after every REJECT rule, so they never soften
+# a rejection.
+#
+# 2.0.0 differs from provisional-m2 in one rule: a non-exclusive qualifier mismatch
 # (the evidence covers a different population, period or scope than the
 # claim, e.g. "approved for adults" vs a claim about children) goes to
 # HUMAN_REVIEW instead of FLAG. It is not a proven contradiction, but it is
@@ -9,7 +15,7 @@
 
 [policy]
 id = "default"
-version = "2.0.0"
+version = "2.1.0"
 description = "Reject safety failures, contradictions, irrelevant and fully unsupported answers; send scope mismatches to a person; flag partially unverifiable answers."
 
 [[rule]]
@@ -37,6 +43,12 @@ decision = "REJECT"
 description = "The answer does not address the question."
 
 [[rule]]
+id = "safety.source_injection"
+when = { check_failed = "source_injection" }
+decision = "HUMAN_REVIEW"
+description = "A retrieved source contains instruction-like text aimed at the model; a person should check the answer."
+
+[[rule]]
 id = "grounding.qualifier_mismatch"
 when = { any_signal = "qualifier" }
 decision = "HUMAN_REVIEW"
@@ -47,6 +59,12 @@ id = "grounding.none_supported"
 when = { no_claim = "SUPPORTED" }
 decision = "REJECT"
 description = "No claim in the answer is supported by the evidence."
+
+[[rule]]
+id = "quality.citation_unsupported"
+when = { check_failed = "citation" }
+decision = "FLAG"
+description = "A citation points to a source that does not support the cited claim."
 
 [[rule]]
 id = "grounding.not_enough_info"

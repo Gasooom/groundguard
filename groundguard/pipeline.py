@@ -19,6 +19,8 @@ from dataclasses import asdict, dataclass
 from typing import Any, Literal, Sequence
 
 from groundguard.calibration import CalibrationSet, apply_to_verdicts
+from groundguard.checks.citations import check_citations, find_citations, mask_citations
+from groundguard.checks.source_injection import check_sources
 from groundguard.claims.segmenter import segment
 from groundguard.core.errors import InvalidInput
 from groundguard.core.serialization import sha256_json
@@ -121,6 +123,7 @@ class EvaluationReportV2:
     labels: dict[str, str]
     relevance: dict[str, Any]
     safety: dict[str, Any]
+    citations: dict[str, Any] | None
     decision: PolicyDecision
     manifest: dict[str, Any]
 
@@ -134,6 +137,7 @@ class EvaluationReportV2:
             "labels": dict(self.labels),
             "relevance": dict(self.relevance),
             "safety": dict(self.safety),
+            "citations": None if self.citations is None else dict(self.citations),
             "decision": self.decision.to_dict(),
             "manifest": dict(self.manifest),
         }
@@ -188,7 +192,12 @@ def evaluate_v2(
     sources = _sources(context, contexts)
     chain = config.chain()
 
-    claims = segment(answer, config.granularity)
+    # Citation markers are masked (same length) so spans stay valid and marker
+    # digits never reach the verifiers or the relevance check.
+    markers = find_citations(answer, sources)
+    checked_answer = mask_citations(answer, markers)
+
+    claims = segment(checked_answer, config.granularity)
     chunks = chunk_sources(sources)
     verdicts = apply_to_verdicts(
         [
@@ -199,9 +208,18 @@ def evaluate_v2(
         calibration,
     )
 
-    relevance = evaluate_relevance(question, answer)
+    relevance = evaluate_relevance(question, checked_answer)
     pii = detect_pii(answer)
     injection = detect_prompt_injection(answer)
+    source_injection = check_sources(sources)
+
+    citations = None
+    if markers:
+        def verify_against(claim: Claim, cited: Sequence[SourceDocument]) -> ClaimVerdict:
+            cited_chunks = chunk_sources(cited)
+            return chain.verify(claim, select_evidence(claim.text, cited_chunks, top_k=config.top_k))
+
+        citations = check_citations(claims, markers, sources, verify_against)
 
     decision = decide(
         policy,
@@ -210,6 +228,8 @@ def evaluate_v2(
             relevant=relevance.relevant,
             pii_detected=pii.detected,
             injection_detected=injection.detected,
+            source_injection_detected=bool(source_injection),
+            citation_failed=bool(citations and citations["failed"]),
         ),
     )
 
@@ -233,7 +253,7 @@ def evaluate_v2(
             }
         ),
         "relevance": "v1 domain.relevance (answer level)",
-        "safety": "v1 domain.pii + domain.prompt_injection (answer only)",
+        "safety": "v1 domain.pii + domain.prompt_injection on the answer; prompt_injection on every source",
     }
 
     return EvaluationReportV2(
@@ -251,7 +271,10 @@ def evaluate_v2(
             "prompt_injection_detected": injection.detected,
             "prompt_injection_categories": list(injection.categories),
             "evidence": [*pii.evidence, *injection.evidence],
+            "source_injection_detected": bool(source_injection),
+            "source_injection": source_injection,
         },
+        citations=citations,
         decision=decision,
         manifest=manifest,
     )

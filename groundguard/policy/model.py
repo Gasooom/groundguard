@@ -5,7 +5,7 @@ There is no expression language and nothing is evaluated as code (ADR-008).
 
 Condition vocabulary
 --------------------
-check_failed = "pii" | "prompt_injection" | "relevance"
+check_failed = "pii" | "prompt_injection" | "relevance" | "source_injection" | "citation"
 any_claim = LABEL                      at least one claim has LABEL
 no_claim = LABEL                       no claim has LABEL (true when there are no claims)
 claim_fraction_above = {label, value}  share of claims with LABEL is > value (false with no claims)

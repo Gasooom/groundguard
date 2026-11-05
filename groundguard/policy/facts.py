@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from groundguard.application.evaluator import EvaluationResult
 
 
-CheckName = Literal["pii", "prompt_injection", "relevance"]
-CHECK_NAMES: tuple[CheckName, ...] = ("pii", "prompt_injection", "relevance")
+CheckName = Literal["pii", "prompt_injection", "relevance", "source_injection", "citation"]
+CHECK_NAMES: tuple[CheckName, ...] = ("pii", "prompt_injection", "relevance", "source_injection", "citation")
 
 
 @dataclass(frozen=True)
@@ -46,6 +46,8 @@ def facts_from_v2(
     relevant: bool,
     pii_detected: bool,
     injection_detected: bool,
+    source_injection_detected: bool = False,
+    citation_failed: bool = False,
 ) -> EvaluationFacts:
     failed: set[CheckName] = set()
     if pii_detected:
@@ -54,6 +56,10 @@ def facts_from_v2(
         failed.add("prompt_injection")
     if not relevant:
         failed.add("relevance")
+    if source_injection_detected:
+        failed.add("source_injection")
+    if citation_failed:
+        failed.add("citation")
     claims = tuple(
         ClaimFact(
             label=verdict.label,

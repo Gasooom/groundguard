@@ -124,6 +124,11 @@ def _redact_report(report: dict[str, Any]) -> dict[str, Any]:
             evidence["text"] = redact_text(evidence["text"])
     if "safety" in redacted:
         redacted["safety"]["evidence"] = ["[REDACTED]" for _ in redacted["safety"]["evidence"]]
+        for item in redacted["safety"].get("source_injection", []):
+            item["evidence"] = [redact_text(text) for text in item["evidence"]]
+    for item in (redacted.get("citations") or {}).get("items", []):
+        for evidence in item["evidence"]:
+            evidence["text"] = redact_text(evidence["text"])
     return redacted
 
 
@@ -132,7 +137,16 @@ def _minimal_report(report: dict[str, Any]) -> dict[str, Any]:
         "decision": report["decision"],
         "labels": report["labels"],
         "relevance": {"label": report["relevance"]["label"]},
-        "safety": {key: value for key, value in report["safety"].items() if key != "evidence"},
+        "safety": {
+            **{key: value for key, value in report["safety"].items() if key not in ("evidence", "source_injection")},
+            "source_injection": [
+                {"source_id": item["source_id"], "categories": item["categories"]}
+                for item in report["safety"].get("source_injection", [])
+            ],
+        },
+        "citations": None if not report.get("citations") else {
+            key: value for key, value in report["citations"].items() if key != "items"
+        },
         "verdicts": [
             {key: verdict[key] for key in ("claim_id", "label", "raw_score", "confidence", "verifier")}
             for verdict in report["verdicts"]

@@ -92,7 +92,7 @@ def test_pipeline_uses_default_policy_and_records_it_in_the_manifest():
     assert (report.decision.decision, report.decision.rule) == ("HUMAN_REVIEW", "grounding.qualifier_mismatch")
     assert report.decision.matched_rules == ("grounding.qualifier_mismatch", "grounding.none_supported", "grounding.not_enough_info")
     default = load_builtin("default")
-    assert report.manifest["policy"] == {"id": "default", "version": "2.0.0", "hash": default.hash}
+    assert report.manifest["policy"] == {"id": "default", "version": "2.1.0", "hash": default.hash}
 
     m2 = evaluate_v2(
         question="What is Drug X approved for?",
@@ -269,4 +269,4 @@ def test_api_v2_lists_v2_policies_with_hashes():
     policies = {item["id"]: item for item in response.json()}
     assert set(policies) == {"default", "provisional-m2", "strict"}
     assert policies["default"]["hash"] == load_builtin("default").hash
-    assert policies["default"]["rules"][4]["id"] == "grounding.qualifier_mismatch"
+    assert "grounding.qualifier_mismatch" in [rule["id"] for rule in policies["default"]["rules"]]
