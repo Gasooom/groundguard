@@ -6,9 +6,9 @@ import platform
 import subprocess
 from datetime import datetime, timezone
 from importlib import metadata
-from typing import Any
+from typing import Any, Protocol
 
-from groundguard.bench.datasets import REPO_ROOT, Dataset
+from groundguard.bench.datasets import REPO_ROOT
 from groundguard.core.serialization import sha256_json
 
 
@@ -39,11 +39,23 @@ def groundguard_version() -> str:
         return "unknown"
 
 
+class DatasetInfo(Protocol):
+    @property
+    def id(self) -> str: ...
+    @property
+    def version(self) -> str: ...
+    @property
+    def sha256(self) -> str: ...
+    @property
+    def files(self) -> tuple[str, ...]: ...
+    def __len__(self) -> int: ...
+
+
 def config_hash(config: dict[str, Any]) -> str:
     return sha256_json(config)
 
 
-def build_manifest(dataset: Dataset, config: dict[str, Any]) -> dict[str, Any]:
+def build_manifest(dataset: DatasetInfo, config: dict[str, Any]) -> dict[str, Any]:
     """Describe the run environment.
 
     Volatile fields (``created_at``, ``git``, ``python``) are informational;

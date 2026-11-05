@@ -16,6 +16,7 @@ from groundguard.annotate import review
 from groundguard.annotate import status as annotation_status
 from groundguard.bench import read_run, run_benchmark, write_run
 from groundguard.bench.claims_dataset import freeze
+from groundguard.bench.claims_runner import run_claims_benchmark
 from groundguard.bench.compare import compare_runs, format_comparison, parse_tolerances
 from groundguard.bench.datasets import DATASETS
 from groundguard.bench.errors import BenchmarkError
@@ -109,6 +110,29 @@ def _policy_list(args: argparse.Namespace) -> int:
     return 0
 
 
+def _bench_claims(args: argparse.Namespace) -> int:
+    run = run_claims_benchmark(
+        Path(args.records),
+        split=args.split,
+        dataset_id=args.dataset_id,
+        policy=None if args.policy is None else load_policy(args.policy),
+        purpose=args.purpose,
+        test_access_log=Path(args.test_access_log),
+    )
+    if args.out:
+        write_run(run, Path(args.out))
+        print(f"wrote {args.out}")
+    if run["manifest"]["config"]["label_status"] == "unreviewed":
+        print("WARNING: unreviewed labels; development use only, not a result")
+    claim = run["metrics"]["all"]["claim_level"]
+    answer = run["metrics"]["all"]["answer_level"]
+    acc, far, frr = claim["accuracy"], answer["false_accept"], answer["false_reject"]
+    print(f"claims: accuracy {acc['numerator']}/{acc['denominator']}, macro-F1 {claim['macro_f1']}")
+    print(f"answers: FAR {far['numerator']}/{far['denominator']}, FRR {frr['numerator']}/{frr['denominator']}, "
+          f"review {answer['review_rate']['numerator']}/{answer['review_rate']['denominator']}")
+    return 0
+
+
 def _annotate_review(args: argparse.Namespace) -> int:
     outcomes = review(Path(args.records), args.reviewer)
     print(f"reviewed: {dict(outcomes)}")
@@ -145,6 +169,16 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--policy", help="v2 only: builtin policy name or path to a .toml policy")
     run.add_argument("--out", help="write the run file to this path")
     run.set_defaults(handler=_bench_run)
+
+    claims = bench_commands.add_parser("claims", help="run v2 on a claim-level dataset (gg-claims-v2 format)")
+    claims.add_argument("--records", required=True, help="path to records.jsonl")
+    claims.add_argument("--dataset-id", default="gg-claims-v2")
+    claims.add_argument("--split", required=True, choices=("dev", "test", "all", "unreviewed"))
+    claims.add_argument("--policy", help="builtin policy name or path to a .toml policy")
+    claims.add_argument("--purpose", help="required for --split test; recorded in the test access log")
+    claims.add_argument("--test-access-log", default="benchmark/results/TEST_ACCESS_LOG.jsonl")
+    claims.add_argument("--out", help="write the run file to this path")
+    claims.set_defaults(handler=_bench_claims)
 
     compare = bench_commands.add_parser("compare", help="compare two run files")
     compare.add_argument("baseline")
