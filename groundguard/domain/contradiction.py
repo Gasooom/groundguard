@@ -27,64 +27,6 @@ class ContradictionResult:
     evidence: list[str]
 
 
-def _propositions_conflict(
-    answer_propositions: list[Proposition],
-    evidence_propositions: list[Proposition],
-) -> bool:
-    """
-    Determine whether any answer proposition directly conflicts
-    with an evidence proposition.
-
-    This function is intentionally conservative and does not use
-    question context.
-    """
-
-    if _set_predicate_conflicts(
-        answer_propositions,
-        evidence_propositions,
-    ):
-        return ContradictionResult(
-            score=1.0,
-            contradictory=True,
-            label="CONTRADICTORY",
-            evidence=[evidence],
-        )
-
-    for answer_proposition in answer_propositions:
-        for evidence_proposition in evidence_propositions:
-            comparison = compare_propositions(
-                answer_proposition,
-                evidence_proposition,
-            )
-
-            if comparison == "CONFLICTING":
-                return True
-
-    return False
-
-
-def _propositions_are_supported(
-    answer_propositions: list[Proposition],
-    evidence_propositions: list[Proposition],
-) -> bool:
-    """
-    Determine whether at least one answer proposition has an
-    equivalent proposition in the evidence.
-    """
-
-    for answer_proposition in answer_propositions:
-        for evidence_proposition in evidence_propositions:
-            comparison = compare_propositions(
-                answer_proposition,
-                evidence_proposition,
-            )
-
-            if comparison == "SAME":
-                return True
-
-    return False
-
-
 def _question_mentions_predicate(
     question: str,
     proposition: Proposition,
