@@ -7,11 +7,15 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 from typing import Sequence
 
+from groundguard.annotate import review
+from groundguard.annotate import status as annotation_status
 from groundguard.bench import read_run, run_benchmark, write_run
+from groundguard.bench.claims_dataset import freeze
 from groundguard.bench.compare import compare_runs, format_comparison, parse_tolerances
 from groundguard.bench.datasets import DATASETS
 from groundguard.bench.errors import BenchmarkError
@@ -105,6 +109,23 @@ def _policy_list(args: argparse.Namespace) -> int:
     return 0
 
 
+def _annotate_review(args: argparse.Namespace) -> int:
+    outcomes = review(Path(args.records), args.reviewer)
+    print(f"reviewed: {dict(outcomes)}")
+    return 0
+
+
+def _annotate_status(args: argparse.Namespace) -> int:
+    print(json.dumps(annotation_status(Path(args.records)), indent=2, sort_keys=True))
+    return 0
+
+
+def _annotate_freeze(args: argparse.Namespace) -> int:
+    manifest = freeze(Path(args.records), version=args.version)
+    print(f"frozen {args.version}: {manifest['counts']} (excluded {len(manifest['excluded'])})")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="groundguard")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -148,6 +169,20 @@ def build_parser() -> argparse.ArgumentParser:
     check.set_defaults(handler=_policy_check)
     listing = policy_commands.add_parser("list", help="list builtin policies")
     listing.set_defaults(handler=_policy_list)
+
+    annotate = commands.add_parser("annotate", help="review claim-level dataset records")
+    annotate_commands = annotate.add_subparsers(dest="annotate_command", required=True)
+    review_parser = annotate_commands.add_parser("review", help="review NEEDS_REVIEW records interactively")
+    review_parser.add_argument("records", help="path to a records.jsonl file")
+    review_parser.add_argument("--reviewer", required=True, help="your reviewer id (a person, not 'ai-assistant')")
+    review_parser.set_defaults(handler=_annotate_review)
+    status_parser = annotate_commands.add_parser("status", help="summarize a records.jsonl file")
+    status_parser.add_argument("records")
+    status_parser.set_defaults(handler=_annotate_status)
+    freeze_parser = annotate_commands.add_parser("freeze", help="freeze LABELED records into dev/test splits")
+    freeze_parser.add_argument("records")
+    freeze_parser.add_argument("--version", required=True)
+    freeze_parser.set_defaults(handler=_annotate_freeze)
     return parser
 
 
