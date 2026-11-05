@@ -52,6 +52,7 @@ files = [
     "groundguard/bench",
     "groundguard/cli.py",
     "groundguard/annotate.py",
+    "groundguard/sdk",
     "groundguard/storage/v2_store.py",
     "groundguard/api/v2.py",
     "groundguard/api/app.py",
