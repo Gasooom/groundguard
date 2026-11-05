@@ -90,10 +90,13 @@ the trade-off v1's own threshold table exposed.
 therefore versioned (`acceptability@1`).
 
 ## ADR-008 — Declarative TOML policies with a closed condition vocabulary
+**Status.** Accepted, implemented in M3 (`groundguard/policy/`).
 **Context.** Decision rules are hard-coded in `domain/decision.py`.
 **Decision.** Policies are TOML parsed with stdlib `tomllib`. Rules are
 ordered, the first terminal rule wins, and conditions come from a fixed,
-validated set. `v1_compat.toml` must reproduce v1 decisions exactly.
+validated set. `v1-compat.toml` must reproduce v1 decisions exactly; it
+does, on all 250 legacy records and 31 probes (decisions only; reason texts
+are not reproduced).
 **Rejected.** (a) YAML, which adds a dependency. (b) A Python-expression DSL
 or `eval`, which is an injection risk and hard to audit. (c) Rego/CEL, which
 is heavyweight for this scope.
@@ -203,3 +206,23 @@ single-valued predicates. Support is always decided by coverage.
 (conjunct, content@1.0, guards on), contradiction recall is 43/61 with the
 verifier and 23/61 without it (unique records: 18/25 vs 13/25), with no
 false contradictions in either configuration.
+
+## ADR-019 — HUMAN_REVIEW for non-exclusive qualifier mismatches
+**Status.** Accepted (M3). The owner chose this option.
+**Context.** A claim about a different population, period or scope than the
+evidence ("approved for adults" vs a claim about children) is NOT_ENOUGH_INFO
+under the methodology, not CONTRADICTED. Under the M2 rules it was FLAGged
+like any unverifiable claim, which hides that it is a higher-risk kind.
+**Decision.** The `default` policy (2.0.0) routes any claim whose guards fired
+the `qualifier` signal to HUMAN_REVIEW. The rule comes after safety,
+contradiction and relevance (those still REJECT), and before the support rules.
+**Rejected.** REJECT, which treats an unproven mismatch like a contradiction
+and increases false rejects for answers that are merely narrower than the
+source. FLAG, which keeps M2 behavior but loses the risk distinction.
+**Evidence.** On the probes, `qual_01_audit` and `qual_03` go to review, and
+false accepts stay at 0/18. On gg-legacy-v1 no record triggers the rule, so
+the review rate there is 0/250 and the policy's effect is untested on that
+dataset. Measuring the review rate needs data with scope mismatches (M4).
+**Consequences.** Deployments must be able to act on HUMAN_REVIEW. FAR is
+reported both overall and among auto-decided answers. A good answer sent to
+review counts as a false reject.

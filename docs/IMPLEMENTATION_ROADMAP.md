@@ -67,7 +67,7 @@ negation/qualifier false-accept class.
 green. A legacy-dev report compares v1 vs v2-deterministic (with CIs), and
 any v2 losses are explained.
 
-## M3 — Policy engine
+## M3 — Policy engine ✅ (report at the end of this document)
 
 | Area | Work |
 |---|---|
@@ -300,3 +300,66 @@ intervals (M1 report).
 
 **Next (M3):** the declarative policy engine, which must reproduce the
 provisional M2 rules exactly, plus HUMAN_REVIEW.
+
+---
+
+## M3 report
+
+**Objective:** replace hard-coded decision rules with versioned, declarative
+policies that explain every decision, and add HUMAN_REVIEW.
+
+**Components.** New: `groundguard/policy/` (`model`, `loader`, `engine`,
+`facts`, `builtin/*.toml`), `tests/reference/m2_provisional.py` (a frozen
+copy of the M2 rule code, used as an oracle). Changed: `pipeline.py` (the
+decision now comes from a policy, and the M2 rule table is removed),
+`api/v2.py` (`policy` parameter, `GET /v2/policies`), `cli.py`
+(`--policy`, `policy list|check`), `bench` (HUMAN_REVIEW metrics, run
+schema 2), CI. **Unchanged:** all v0.1.0 modules.
+
+**Equivalence (the condition for removing the M2 code):**
+- `provisional-m2` vs the frozen M2 rule code: identical decision, rule id
+  and reason on 250 legacy records and 31 probes (281 cases).
+- `v1-compat` vs the v0.1.0 decision engine: identical `system_decision` on
+  the same 281 cases.
+- After the run-schema change, all six existing run files kept identical
+  `predictions_hash` values. Only metrics were added.
+
+**Tests.** 427 → 1022 passing (562 of the new tests are per-case
+equivalence checks). None weakened or skipped. mypy `--strict` is clean on
+all new packages, including `policy`.
+
+### Policies on the probe suite
+
+| Policy | False accepts (of 18) | False rejects (of 13) | HUMAN_REVIEW |
+|---|---|---|---|
+| provisional-m2 | 0 | 6 | 0 |
+| default 2.0.0 | 0 | 6 | 2 (`qual_01_audit`, `qual_03`) |
+| strict | 0 | 6 | 0 |
+
+`qual_04` (before/after) is a qualifier mismatch too, but it is rejected
+first by the reused v1 relevance check (a "when" question without a year in
+the answer). That is the same known limitation recorded in M2.
+
+### Policies on gg-legacy-v1 (seen data)
+
+`default` and `provisional-m2` produce identical decisions: no legacy record
+fires the qualifier rule, so the review rate is 0/250. `strict` converts all
+FLAGs to REJECT and leaves FAR unchanged (2/61 on unique records). **The
+legacy dataset cannot evaluate HUMAN_REVIEW.** Data with scope mismatches is
+part of `gg-claims-v2` (M4). Run files:
+`benchmark/results/v2-m3.conjunct.{default,strict}.context.json`.
+
+### Design notes
+
+- Policy hashes are computed over parsed canonical content, so comments and
+  formatting do not change them, while any change to a rule does.
+- `min_confidence_below` is implemented and tested on synthetic facts. It
+  cannot fire in production until calibrators exist (M4). This is stated
+  in the condition's documentation.
+- The API accepts builtin policy names only. Uploading policy files waits for
+  authentication (M7). v1-only policies are rejected by the v2 pipeline.
+
+**Next (M4):** `gg-claims-v2` with a frozen held-out split, calibration
+(which activates confidence-based review), the optional NLI backend, and
+the two contradiction gaps from M2 (superlatives, long-sentence years),
+developed on the dev split only.

@@ -185,51 +185,58 @@ order. The first *terminal* rule decides. Non-terminal rules annotate only.
 The condition vocabulary is a **closed set** that the loader validates. There
 is no `eval` and no expression language.
 
+Implemented in M3 (`groundguard/policy/`). An excerpt of the shipped
+`groundguard/policy/builtin/default.toml`:
+
 ```toml
 [policy]
 id = "default"
 version = "2.0.0"
-description = "Conservative default for customer-facing RAG answers."
+description = "..."
 
 [[rule]]
 id = "safety.pii"
 when = { check_failed = "pii" }
 decision = "REJECT"
+description = "PII was detected in the answer."
 
 [[rule]]
-id = "safety.indirect_injection"
-when = { check_failed = "injection", location = "source" }
-decision = "HUMAN_REVIEW"
-
-[[rule]]
-id = "grounding.contradiction"
+id = "grounding.contradicted"
 when = { any_claim = "CONTRADICTED" }
 decision = "REJECT"
+description = "At least one claim is contradicted by the evidence."
 
 [[rule]]
-id = "grounding.low_confidence"
-when = { min_claim_confidence_below = 0.6 }     # only fires for calibrated verifiers
+id = "grounding.qualifier_mismatch"
+when = { any_signal = "qualifier" }
 decision = "HUMAN_REVIEW"
+description = "A claim refers to a different population, period or scope than the evidence; a person should check it."
 
 [[rule]]
-id = "grounding.unsupported_fraction"
-when = { nei_fraction_above = 0.0 }
+id = "grounding.not_enough_info"
+when = { any_claim = "NOT_ENOUGH_INFO" }
 decision = "FLAG"
-
-[[rule]]
-id = "relevance"
-when = { check_failed = "relevance" }
-decision = "REJECT"
+description = "Some claims cannot be verified from the evidence."
 
 [default]
+id = "default.accept"
 decision = "ACCEPT"
+description = "Every claim is supported and no check failed."
 ```
 
-`policy/builtin/v1_compat.toml` encodes the v0.1.0 decision order (unsafe →
-contradictory → unsupported → irrelevant → partial → score < threshold → accept)
-using `legacy_*` conditions over v1 component outputs. An equivalence test runs
-it over all 250 legacy records and asserts identical `system_decision` and
-`reason`.
+Condition vocabulary (`groundguard/policy/model.py`): `check_failed`,
+`any_claim`, `no_claim`, `claim_fraction_above = {label, value}`,
+`any_signal`, `min_confidence_below` (ignores uncalibrated claims, so it
+cannot fire before M4), and `v1.*` conditions over v0.1.0 component outputs.
+Conditions inside one `when` table are ANDed. Every rule is checked, and the
+decision reports every matched rule, not only the deciding one. The policy
+hash is sha256 over the parsed canonical content.
+
+Builtins: `default`, `provisional-m2` (the M2 rules, proven identical to the
+original code), `strict`, and `v1-compat`. `v1-compat` reproduces the v0.1.0
+`system_decision` on all 250 legacy records and 31 probes; its reason texts
+come from rule descriptions, not v1's templated reasons. Source-level
+injection conditions (`location = "source"`) arrive with M5.
 
 ## 7. Storage
 

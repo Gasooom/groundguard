@@ -195,6 +195,13 @@ On the 31 hand-written probes in `tests/probes/probes.json`, written before the 
 groundguard bench run --dataset gg-legacy-v1 --input-mode context --engine v2 --granularity conjunct
 ```
 
+Decisions come from versioned TOML policies (`groundguard/policy/builtin/`): `default` (sends scope or population mismatches such as "approved for adults" vs a claim about children to HUMAN_REVIEW), `strict` (rejects any unverifiable claim), `provisional-m2`, and `v1-compat` (reproduces v0.1.0 decisions). Each decision reports the deciding rule, every matched rule, and the policy id, version and content hash.
+
+```bash
+groundguard policy list
+groundguard policy check default
+```
+
 **Safety Benchmark Results**
 
 PII benchmark:
