@@ -306,3 +306,18 @@ security, storage, API, SDK, Docker, plus the deterministic source-injection
 and citation checks. No new quality claims are made for them.
 **Consequences.** The M4 held-out evaluation remains the gate for any claim
 about generalization, including for the M5 checks.
+
+## ADR-027 — Agent traces: deterministic checks, one grounding path, trace policies
+**Status.** Accepted (M6; built under ADR-026 while M4b is blocked).
+**Decision.** Evaluate complete traces, not only final answers, with
+deterministic checks over the trajectory. Verify the final answer and
+intermediate steps with the same claim pipeline used for RAG, with tool
+outputs as sources. Decisions come from trace policies using a
+`trace_check_failed` condition. Trace policies are kept separate from
+answer policies.
+**Rejected.** An LLM judge for "goal completion" or "planning quality". There
+is no deterministic definition of either, and a judge would be unmeasured.
+Goal completion is only checked against declared `expected_tools`.
+**Consequences.** Error handling uses a lexical heuristic for "the answer
+acknowledges the failure". The trace probes are synthetic by construction
+and are a behavior specification, not an evaluation of real agents.

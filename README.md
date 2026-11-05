@@ -230,7 +230,7 @@ The response lists each claim with its verdict, evidence span (source id and off
 | `GROUNDGUARD_MAX_BODY_BYTES` | `1000000` | larger requests get 413 |
 | `GROUNDGUARD_MAX_BATCH_ITEMS` | `50` | `POST /v2/evaluate/batch` limit |
 
-v2 routes: `POST /v2/evaluate`, `POST /v2/evaluate/batch`, `GET /v2/evaluations`, `GET /v2/evaluations/{id}`, `GET /v2/stats`, `GET /v2/policies`. Errors use `{"error": {"code", "message", "details"?}}`. The v0.1.0 routes are unchanged and unauthenticated (legacy).
+v2 routes: `POST /v2/evaluate`, `POST /v2/evaluate/batch`, `GET /v2/evaluations`, `GET /v2/evaluations/{id}`, `GET /v2/stats`, `GET /v2/policies`. Agent execution traces: `POST /v2/traces/evaluate` runs nine deterministic checks: tool allowlist, argument schemas, redundant calls, call budget, error handling, injection in tool outputs, consistency with earlier tool results, final-answer grounding against tool outputs, and expected tools. A trace policy (`agent-default`) then decides. Errors use `{"error": {"code", "message", "details"?}}`. The v0.1.0 routes are unchanged and unauthenticated (legacy).
 
 Limits stated plainly: the rate limiter is per process; redaction is regex-based and can miss names and addresses; injection detection is pattern-based and is a signal, not a defence. The benchmark commands (`groundguard bench ...`) need a repository checkout.
 

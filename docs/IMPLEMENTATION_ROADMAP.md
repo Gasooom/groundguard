@@ -104,7 +104,7 @@ footnote styles, configurable regex). `citations.py`. `rag_metrics.py`
 (faithfulness, utilization, reference-based precision/recall). Injection check
 on every source. `gg-rag-v2` dataset. Report.
 
-## M6 — Agent trace evaluation
+## M6 — Agent trace evaluation ✅ (deterministic checks; report at the end of this document)
 
 `agents/` trace model, JSON-Schema-subset validator, six deterministic checks
 plus reference-based tool-selection. Trace-scoped policy conditions.
@@ -444,3 +444,27 @@ probes.
 **Still blocked:** M4b (needs source access and owner review). The M5
 citation and source-injection checks have no quality numbers until a
 dataset with citation and injection labels exists.
+
+---
+
+## M6 report (agent traces; built under ADR-026)
+
+**Delivered.** `groundguard/agents/`: trace format and strict parser,
+JSON-Schema-subset argument validator, nine deterministic checks, trace
+evaluation with the builtin `agent-default` policy, and
+`POST /v2/traces/evaluate`. `pipeline.verify_claims` is shared by answer and
+trace evaluation. All committed v2 run files still reproduce exactly after
+the refactor.
+
+**Trace probes** (`tests/agent_probes/traces.json`, 17, written before the
+checks): 16 match their exact expected set of failing checks. No faulty trace
+is accepted. Known limitation: `final_contradiction_01`, because guards
+compare years, not full dates, so a different day in the same month is FLAG,
+not CONTRADICTED.
+
+**Not done (by design).** Planning quality and LLM-judged goal completion,
+because they have no deterministic definition (ADR-027). Persistence of trace
+evaluations. A benchmark of real agent traces, which needs collected and
+reviewed traces.
+
+**Tests.** 1139 → 1179 passing. mypy `--strict` is clean on 54 source files.
