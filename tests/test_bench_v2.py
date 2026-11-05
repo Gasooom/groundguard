@@ -52,10 +52,25 @@ def test_v2_engine_reproduces_committed_m2_results(granularity):
         pipeline_config=PipelineConfig(granularity=granularity),
         policy=load_builtin("provisional-m2"),
     )
-    # The M2 decisions now come from the provisional-m2 policy. Until the run
-    # files are regenerated with the policy recorded in their config, compare
-    # the pipeline config, predictions and metrics exactly.
-    assert run["manifest"]["config"]["pipeline"] == committed["manifest"]["config"]["pipeline"]
+    # M2 decisions come from the provisional-m2 policy (see test_policy_equivalence).
+    assert run["manifest"]["config"] == committed["manifest"]["config"]
     assert run["manifest"]["config"]["policy"]["id"] == "provisional-m2"
+    assert run["predictions_hash"] == committed["predictions_hash"]
+    assert run["metrics"] == committed["metrics"]
+
+
+@pytest.mark.parametrize("policy_name", ["default", "strict"])
+def test_v2_engine_reproduces_committed_m3_policy_results(policy_name):
+    from groundguard.bench import read_run
+    from groundguard.policy import load_builtin
+
+    committed = read_run(RESULTS / f"v2-m3.conjunct.{policy_name}.context.json")
+    run = run_benchmark(
+        "gg-legacy-v1",
+        input_mode="context",
+        engine="v2",
+        policy=load_builtin(policy_name),
+    )
+    assert run["manifest"]["config"] == committed["manifest"]["config"]
     assert run["predictions_hash"] == committed["predictions_hash"]
     assert run["metrics"] == committed["metrics"]

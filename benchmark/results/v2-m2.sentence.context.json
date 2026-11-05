@@ -2,7 +2,7 @@
   "manifest": {
     "config": {
       "engine": "v2",
-      "engine_version": "2.0.0-m2",
+      "engine_version": "2.0.0-m3",
       "input_mode": "context",
       "pipeline": {
         "granularity": "sentence",
@@ -12,10 +12,15 @@
         "min_topic_dice": 0.5,
         "structured_facts": true,
         "top_k": 5
+      },
+      "policy": {
+        "hash": "a09e7b5d8f7a842c94e920b08425464d2c5a59d6463e006ff23da847aa7f2bfe",
+        "id": "provisional-m2",
+        "version": "1.0.0"
       }
     },
-    "config_hash": "717462ed6e3cae11fb8ce4176ec480e65769d43352ef9c0c0c7d9612fb168fad",
-    "created_at": "2026-11-05T09:46:46+00:00",
+    "config_hash": "45d5a40f6afdbfd9189f632820d9ac1e9de86b2f28af28d99800af4730446979",
+    "created_at": "2026-11-05T10:16:54+00:00",
     "dataset": {
       "files": [
         "benchmark/examples/human_labeled_001_020.json",
@@ -50,8 +55,8 @@
     },
     "engine": "v2",
     "git": {
-      "commit": "b0bec8e58be5575d8b86f7919197aa85c5a2501c",
-      "dirty": false
+      "commit": "72f1cbb8a2719f672216eaa709230cf5443f8912",
+      "dirty": true
     },
     "groundguard_version": "0.1.0",
     "python": "3.13.18"
@@ -120,9 +125,23 @@
         "distribution": {
           "ACCEPT": 68,
           "FLAG": 0,
+          "HUMAN_REVIEW": 0,
           "REJECT": 182
         },
         "false_accept": {
+          "denominator": 168,
+          "group_bootstrap_95": [
+            0.0,
+            0.22449
+          ],
+          "numerator": 13,
+          "value": 0.077381,
+          "wilson_95": [
+            0.045777,
+            0.12788
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 168,
           "group_bootstrap_95": [
             0.0,
@@ -150,6 +169,19 @@
           ]
         },
         "false_rejects": 27,
+        "review_rate": {
+          "denominator": 250,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.015133
+          ]
+        },
         "true_accepts": 55,
         "true_rejects": 155
       },
@@ -416,9 +448,23 @@
         "distribution": {
           "ACCEPT": 29,
           "FLAG": 0,
+          "HUMAN_REVIEW": 0,
           "REJECT": 70
         },
         "false_accept": {
+          "denominator": 61,
+          "group_bootstrap_95": [
+            0.0,
+            0.089286
+          ],
+          "numerator": 2,
+          "value": 0.032787,
+          "wilson_95": [
+            0.009038,
+            0.111895
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 61,
           "group_bootstrap_95": [
             0.0,
@@ -446,6 +492,19 @@
           ]
         },
         "false_rejects": 11,
+        "review_rate": {
+          "denominator": 99,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.037353
+          ]
+        },
         "true_accepts": 27,
         "true_rejects": 59
       },
@@ -712,9 +771,23 @@
         "distribution": {
           "ACCEPT": 6,
           "FLAG": 0,
+          "HUMAN_REVIEW": 0,
           "REJECT": 14
         },
         "false_accept": {
+          "denominator": 11,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.258833
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 11,
           "group_bootstrap_95": [
             0.0,
@@ -742,6 +815,19 @@
           ]
         },
         "false_rejects": 3,
+        "review_rate": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.161125
+          ]
+        },
         "true_accepts": 6,
         "true_rejects": 11
       },
@@ -1008,9 +1094,23 @@
         "distribution": {
           "ACCEPT": 5,
           "FLAG": 0,
+          "HUMAN_REVIEW": 0,
           "REJECT": 15
         },
         "false_accept": {
+          "denominator": 11,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.258833
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 11,
           "group_bootstrap_95": [
             0.0,
@@ -1038,6 +1138,19 @@
           ]
         },
         "false_rejects": 4,
+        "review_rate": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.161125
+          ]
+        },
         "true_accepts": 5,
         "true_rejects": 11
       },
@@ -1304,9 +1417,23 @@
         "distribution": {
           "ACCEPT": 57,
           "FLAG": 0,
+          "HUMAN_REVIEW": 0,
           "REJECT": 153
         },
         "false_accept": {
+          "denominator": 146,
+          "group_bootstrap_95": [
+            0.0,
+            0.263158
+          ],
+          "numerator": 13,
+          "value": 0.089041,
+          "wilson_95": [
+            0.052774,
+            0.146379
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 146,
           "group_bootstrap_95": [
             0.0,
@@ -1334,6 +1461,19 @@
           ]
         },
         "false_rejects": 20,
+        "review_rate": {
+          "denominator": 210,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.017964
+          ]
+        },
         "true_accepts": 44,
         "true_rejects": 133
       },
@@ -4291,5 +4431,5 @@
     }
   ],
   "predictions_hash": "8452f71ecbf1f23f9b482f20db45025dc6d03880a234130b1b37de1705a11771",
-  "schema_version": 1
+  "schema_version": 2
 }

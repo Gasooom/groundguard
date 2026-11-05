@@ -33,11 +33,24 @@ jobs:
             groundguard bench compare "benchmark/results/v0.1.0-baseline.$mode.json" "run.$mode.json" --fail-on-regression
           done
 
-      - name: Benchmark regression gate (engine v2, all granularities)
+      - name: Benchmark regression gate (engine v2, M2 rules, all granularities)
         run: |
           for granularity in sentence clause conjunct; do
-            groundguard bench run --dataset gg-legacy-v1 --input-mode context --engine v2 --granularity "$granularity" --out "run.v2.$granularity.json"
+            groundguard bench run --dataset gg-legacy-v1 --input-mode context --engine v2 --granularity "$granularity" --policy provisional-m2 --out "run.v2.$granularity.json"
             groundguard bench compare "benchmark/results/v2-m2.$granularity.context.json" "run.v2.$granularity.json" --fail-on-regression
+          done
+
+      - name: Benchmark regression gate (engine v2, builtin policies)
+        run: |
+          for policy in default strict; do
+            groundguard bench run --dataset gg-legacy-v1 --input-mode context --engine v2 --policy "$policy" --out "run.v2.$policy.json"
+            groundguard bench compare "benchmark/results/v2-m3.conjunct.$policy.context.json" "run.v2.$policy.json" --fail-on-regression
+          done
+
+      - name: Validate builtin policies
+        run: |
+          for policy in default provisional-m2 strict v1-compat; do
+            groundguard policy check "$policy"
           done
 
       - name: Docker build

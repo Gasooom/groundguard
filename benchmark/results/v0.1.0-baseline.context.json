@@ -6,7 +6,7 @@
       "threshold": null
     },
     "config_hash": "2c86221bafe2e9a720b38967f019ca639785c55445c8a5b1c6f2c9983b153cb5",
-    "created_at": "2026-11-05T08:26:48+00:00",
+    "created_at": "2026-11-05T10:16:48+00:00",
     "dataset": {
       "files": [
         "benchmark/examples/human_labeled_001_020.json",
@@ -41,8 +41,8 @@
     },
     "engine": "v1",
     "git": {
-      "commit": "bf5899419620b1b3df784f017211f8d1bddc33f1",
-      "dirty": false
+      "commit": "72f1cbb8a2719f672216eaa709230cf5443f8912",
+      "dirty": true
     },
     "groundguard_version": "0.1.0",
     "python": "3.13.18"
@@ -111,9 +111,23 @@
         "distribution": {
           "ACCEPT": 40,
           "FLAG": 83,
+          "HUMAN_REVIEW": 0,
           "REJECT": 127
         },
         "false_accept": {
+          "denominator": 168,
+          "group_bootstrap_95": [
+            0.0,
+            0.15
+          ],
+          "numerator": 8,
+          "value": 0.047619,
+          "wilson_95": [
+            0.024324,
+            0.09114
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 168,
           "group_bootstrap_95": [
             0.0,
@@ -141,6 +155,19 @@
           ]
         },
         "false_rejects": 50,
+        "review_rate": {
+          "denominator": 250,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.015133
+          ]
+        },
         "true_accepts": 32,
         "true_rejects": 160
       },
@@ -407,9 +434,23 @@
         "distribution": {
           "ACCEPT": 19,
           "FLAG": 39,
+          "HUMAN_REVIEW": 0,
           "REJECT": 41
         },
         "false_accept": {
+          "denominator": 61,
+          "group_bootstrap_95": [
+            0.0,
+            0.116667
+          ],
+          "numerator": 3,
+          "value": 0.04918,
+          "wilson_95": [
+            0.016866,
+            0.134911
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 61,
           "group_bootstrap_95": [
             0.0,
@@ -437,6 +478,19 @@
           ]
         },
         "false_rejects": 22,
+        "review_rate": {
+          "denominator": 99,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.037353
+          ]
+        },
         "true_accepts": 16,
         "true_rejects": 58
       },
@@ -703,9 +757,23 @@
         "distribution": {
           "ACCEPT": 5,
           "FLAG": 4,
+          "HUMAN_REVIEW": 0,
           "REJECT": 11
         },
         "false_accept": {
+          "denominator": 11,
+          "group_bootstrap_95": [
+            0.0,
+            0.3
+          ],
+          "numerator": 1,
+          "value": 0.090909,
+          "wilson_95": [
+            0.016232,
+            0.377358
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 11,
           "group_bootstrap_95": [
             0.0,
@@ -733,6 +801,19 @@
           ]
         },
         "false_rejects": 5,
+        "review_rate": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.161125
+          ]
+        },
         "true_accepts": 4,
         "true_rejects": 10
       },
@@ -999,9 +1080,23 @@
         "distribution": {
           "ACCEPT": 3,
           "FLAG": 11,
+          "HUMAN_REVIEW": 0,
           "REJECT": 6
         },
         "false_accept": {
+          "denominator": 11,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.258833
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 11,
           "group_bootstrap_95": [
             0.0,
@@ -1029,6 +1124,19 @@
           ]
         },
         "false_rejects": 6,
+        "review_rate": {
+          "denominator": 20,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.161125
+          ]
+        },
         "true_accepts": 3,
         "true_rejects": 11
       },
@@ -1295,9 +1403,23 @@
         "distribution": {
           "ACCEPT": 32,
           "FLAG": 68,
+          "HUMAN_REVIEW": 0,
           "REJECT": 110
         },
         "false_accept": {
+          "denominator": 146,
+          "group_bootstrap_95": [
+            0.0,
+            0.165517
+          ],
+          "numerator": 7,
+          "value": 0.047945,
+          "wilson_95": [
+            0.023416,
+            0.095653
+          ]
+        },
+        "false_accept_among_auto_decided": {
           "denominator": 146,
           "group_bootstrap_95": [
             0.0,
@@ -1325,6 +1447,19 @@
           ]
         },
         "false_rejects": 39,
+        "review_rate": {
+          "denominator": 210,
+          "group_bootstrap_95": [
+            0.0,
+            0.0
+          ],
+          "numerator": 0,
+          "value": 0.0,
+          "wilson_95": [
+            0.0,
+            0.017964
+          ]
+        },
         "true_accepts": 25,
         "true_rejects": 139
       },
@@ -4282,5 +4417,5 @@
     }
   ],
   "predictions_hash": "5822322628d07bff2f21bd25585b6e9752ac886587a280677215b7140f90fc1c",
-  "schema_version": 1
+  "schema_version": 2
 }

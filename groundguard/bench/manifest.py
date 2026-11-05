@@ -12,7 +12,9 @@ from groundguard.bench.datasets import REPO_ROOT, Dataset
 from groundguard.core.serialization import sha256_json
 
 
-RUN_FILE_SCHEMA_VERSION = 1
+# 2: decision metrics include HUMAN_REVIEW, review_rate and
+#    false_accept_among_auto_decided (M3). Predictions are unchanged.
+RUN_FILE_SCHEMA_VERSION = 2
 
 
 def _git(*args: str) -> str | None:

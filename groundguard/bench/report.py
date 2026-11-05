@@ -40,6 +40,8 @@ ACCEPTABILITY_DEFINITION = (
     "relevance_label == RELEVANT and contradiction_label == NOT_CONTRADICTORY"
 )
 
+DECISION_LABELS = ("ACCEPT", "FLAG", "REJECT", "HUMAN_REVIEW")
+
 THRESHOLDS = (0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90)
 
 BOOTSTRAP_RESAMPLES = 2000
@@ -128,14 +130,31 @@ def _view_metrics(
             return None
         return sum(decisions[i] != "ACCEPT" for i in good) / len(good)
 
-    decision_counts = {
-        label: decisions.count(label) for label in ("ACCEPT", "FLAG", "REJECT")
-    }
+    def review_on(indices: Sequence[int]) -> float | None:
+        if not indices:
+            return None
+        return sum(decisions[i] == "HUMAN_REVIEW" for i in indices) / len(indices)
+
+    def far_auto_on(indices: Sequence[int]) -> float | None:
+        bad = [i for i in indices if not gold_good[i] and decisions[i] != "HUMAN_REVIEW"]
+        if not bad:
+            return None
+        return sum(decisions[i] == "ACCEPT" for i in bad) / len(bad)
+
+    decision_counts = {label: decisions.count(label) for label in DECISION_LABELS}
+    reviewed = decision_counts["HUMAN_REVIEW"]
+    bad_auto = [i for i in range(len(records)) if not gold_good[i] and decisions[i] != "HUMAN_REVIEW"]
     view["decision"] = {
         "acceptability": ACCEPTABILITY_DEFINITION,
         "distribution": decision_counts,
         "false_accept": _rate_with_intervals(rates.false_accept, groups, far_on),
         "false_reject": _rate_with_intervals(rates.false_reject, groups, frr_on),
+        # Share of all answers routed to a person.
+        "review_rate": _rate_with_intervals(Rate(reviewed, len(records)), groups, review_on),
+        # FAR over bad answers the system decided itself (excludes HUMAN_REVIEW).
+        "false_accept_among_auto_decided": _rate_with_intervals(
+            Rate(sum(decisions[i] == "ACCEPT" for i in bad_auto), len(bad_auto)), groups, far_auto_on
+        ),
         "true_accepts": rates.true_accepts,
         "true_rejects": rates.true_rejects,
         "false_accepts": rates.false_accepts,

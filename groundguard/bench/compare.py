@@ -18,7 +18,10 @@ TRACKED_METRICS: dict[str, Direction] = {
     "contradiction.macro_f1": "higher_is_better",
     "decision.false_accept": "lower_is_better",
     "decision.false_reject": "lower_is_better",
+    "decision.false_accept_among_auto_decided": "lower_is_better",
 }
+# review_rate is a cost/coverage trade-off, not an error rate, so it is
+# reported in run files but not gated.
 
 TRACKED_VIEWS = ("all", "dedup")
 
