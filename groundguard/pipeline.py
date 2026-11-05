@@ -18,6 +18,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any, Sequence
 
+from groundguard.calibration import CalibrationSet, apply_to_verdicts
 from groundguard.claims.segmenter import segment
 from groundguard.core.errors import InvalidInput
 from groundguard.core.serialization import sha256_json
@@ -147,10 +148,13 @@ def evaluate_v2(
     contexts: Sequence[SourceDocument] | None = None,
     config: PipelineConfig | None = None,
     policy: Policy | None = None,
+    calibration: CalibrationSet | None = None,
 ) -> EvaluationReportV2:
     """Evaluate an answer claim by claim against the supplied sources.
 
-    ``policy`` defaults to the builtin ``default`` policy.
+    ``policy`` defaults to the builtin ``default`` policy. ``calibration``
+    fills ``ClaimVerdict.confidence`` for verifier/label pairs it covers;
+    without it every confidence is ``None`` (uncalibrated).
     """
 
     if not question.strip():
@@ -166,10 +170,13 @@ def evaluate_v2(
 
     claims = segment(answer, config.granularity)
     chunks = chunk_sources(sources)
-    verdicts = tuple(
-        chain.verify(claim, select_evidence(claim.text, chunks, top_k=config.top_k))
-        for claim in claims
-        if claim.assertive
+    verdicts = apply_to_verdicts(
+        [
+            chain.verify(claim, select_evidence(claim.text, chunks, top_k=config.top_k))
+            for claim in claims
+            if claim.assertive
+        ],
+        calibration,
     )
 
     relevance = evaluate_relevance(question, answer)
@@ -194,8 +201,16 @@ def evaluate_v2(
         "verifier_chain": list(chain.ids),
         "config": config_dict,
         "policy": policy_ref,
+        "calibration": None if calibration is None else {
+            "hash": calibration.hash, "fitted_on": dict(calibration.fitted_on)
+        },
         "config_hash": sha256_json(
-            {"engine_version": ENGINE_VERSION, **config_dict, "policy_hash": policy.hash}
+            {
+                "engine_version": ENGINE_VERSION,
+                **config_dict,
+                "policy_hash": policy.hash,
+                "calibration_hash": None if calibration is None else calibration.hash,
+            }
         ),
         "relevance": "v1 domain.relevance (answer level)",
         "safety": "v1 domain.pii + domain.prompt_injection (answer only)",

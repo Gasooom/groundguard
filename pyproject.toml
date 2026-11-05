@@ -42,6 +42,7 @@ files = [
     "groundguard/evidence",
     "groundguard/verifiers",
     "groundguard/policy",
+    "groundguard/calibration",
     "groundguard/pipeline.py",
     "groundguard/bench",
     "groundguard/cli.py",

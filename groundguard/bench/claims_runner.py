@@ -29,6 +29,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, Sequence
 
+from groundguard.calibration import CalibrationSet
 from groundguard.bench.claims_dataset import ClaimRecord, load_split, log_test_access, read_records
 from groundguard.bench.errors import DatasetError
 from groundguard.bench.manifest import RUN_FILE_SCHEMA_VERSION, build_manifest
@@ -177,6 +178,7 @@ def run_claims_benchmark(
     policy: Policy | None = None,
     purpose: str | None = None,
     test_access_log: Path | None = None,
+    calibration: CalibrationSet | None = None,
 ) -> dict[str, Any]:
     if split == "test":
         if test_access_log is None or not (purpose or "").strip():
@@ -198,17 +200,21 @@ def run_claims_benchmark(
         for gold in record.claims:
             claim = Claim(id=gold.id, text=gold.text, answer_span=Span(*gold.answer_span), origin="sentence")
             verdict = chain.verify(claim, select_evidence(gold.text, chunks, top_k=config.top_k))
+            if calibration is not None:
+                verdict = calibration.apply(verdict)
             hit = _evidence_hit([item.text for item in verdict.evidence], [item.quote for item in gold.evidence])
             claim_rows.append(
                 {"gold": gold.label, "predicted": verdict.label, "group": record.context_group,
                  "phenomena": gold.phenomena, "evidence_hit": hit}
             )
             claim_predictions.append(
-                {"id": gold.id, "label": verdict.label, "verifier": verdict.verifier,
-                 "raw_score": round(verdict.raw_score, 6), "evidence_hit": hit}
+                {"id": gold.id, "gold": gold.label, "label": verdict.label, "verifier": verdict.verifier,
+                 "raw_score": round(verdict.raw_score, 6), "confidence": verdict.confidence,
+                 "evidence_hit": hit}
             )
         report = evaluate_v2(
-            question=record.question, answer=record.answer, contexts=sources, config=config, policy=policy
+            question=record.question, answer=record.answer, contexts=sources, config=config,
+            policy=policy, calibration=calibration,
         )
         answer_rows.append(
             {"good": record.is_good, "decision": report.decision.decision, "group": record.context_group}
@@ -230,6 +236,7 @@ def run_claims_benchmark(
         "pipeline": config.to_dict(),
         "verifier_chain": list(chain.ids),
         "policy": {"id": policy.id, "version": policy.version, "hash": policy.hash},
+        "calibration_hash": None if calibration is None else calibration.hash,
     }
     info = _DatasetInfo(
         id=dataset_id,

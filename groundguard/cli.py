@@ -17,6 +17,7 @@ from groundguard.annotate import status as annotation_status
 from groundguard.bench import read_run, run_benchmark, write_run
 from groundguard.bench.claims_dataset import freeze
 from groundguard.bench.claims_runner import run_claims_benchmark
+from groundguard.calibration import calibration_report, fit_calibration, load_calibration
 from groundguard.bench.compare import compare_runs, format_comparison, parse_tolerances
 from groundguard.bench.datasets import DATASETS
 from groundguard.bench.errors import BenchmarkError
@@ -118,6 +119,7 @@ def _bench_claims(args: argparse.Namespace) -> int:
         policy=None if args.policy is None else load_policy(args.policy),
         purpose=args.purpose,
         test_access_log=Path(args.test_access_log),
+        calibration=None if args.calibration is None else load_calibration(Path(args.calibration)),
     )
     if args.out:
         write_run(run, Path(args.out))
@@ -130,6 +132,24 @@ def _bench_claims(args: argparse.Namespace) -> int:
     print(f"claims: accuracy {acc['numerator']}/{acc['denominator']}, macro-F1 {claim['macro_f1']}")
     print(f"answers: FAR {far['numerator']}/{far['denominator']}, FRR {frr['numerator']}/{frr['denominator']}, "
           f"review {answer['review_rate']['numerator']}/{answer['review_rate']['denominator']}")
+    return 0
+
+
+def _calibrate_fit(args: argparse.Namespace) -> int:
+    calibration = fit_calibration(
+        read_run(Path(args.run)),
+        method=args.method,
+        min_samples=args.min_samples,
+        allow_unreviewed=args.allow_unreviewed,
+    )
+    calibration.save(Path(args.out))
+    print(f"wrote {args.out}: {len(calibration.calibrators)} calibrator(s), skipped {calibration.fitted_on['skipped']}")
+    return 0
+
+
+def _calibrate_report(args: argparse.Namespace) -> int:
+    report = calibration_report(read_run(Path(args.run)), load_calibration(Path(args.calibration)))
+    print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 
 
@@ -177,6 +197,7 @@ def build_parser() -> argparse.ArgumentParser:
     claims.add_argument("--policy", help="builtin policy name or path to a .toml policy")
     claims.add_argument("--purpose", help="required for --split test; recorded in the test access log")
     claims.add_argument("--test-access-log", default="benchmark/results/TEST_ACCESS_LOG.jsonl")
+    claims.add_argument("--calibration", help="calibration file from 'groundguard calibrate fit'")
     claims.add_argument("--out", help="write the run file to this path")
     claims.set_defaults(handler=_bench_claims)
 
@@ -203,6 +224,20 @@ def build_parser() -> argparse.ArgumentParser:
     check.set_defaults(handler=_policy_check)
     listing = policy_commands.add_parser("list", help="list builtin policies")
     listing.set_defaults(handler=_policy_list)
+
+    calibrate = commands.add_parser("calibrate", help="fit and evaluate confidence calibration")
+    calibrate_commands = calibrate.add_subparsers(dest="calibrate_command", required=True)
+    fit = calibrate_commands.add_parser("fit", help="fit calibrators on a dev-split claims run")
+    fit.add_argument("--run", required=True, help="run file from 'groundguard bench claims' (not test)")
+    fit.add_argument("--method", choices=("isotonic", "platt"), default="isotonic")
+    fit.add_argument("--min-samples", type=int, default=30)
+    fit.add_argument("--allow-unreviewed", action="store_true", help="development only")
+    fit.add_argument("--out", required=True)
+    fit.set_defaults(handler=_calibrate_fit)
+    calibration_report_parser = calibrate_commands.add_parser("report", help="ECE and Brier score on a claims run")
+    calibration_report_parser.add_argument("--run", required=True)
+    calibration_report_parser.add_argument("--calibration", required=True)
+    calibration_report_parser.set_defaults(handler=_calibrate_report)
 
     annotate = commands.add_parser("annotate", help="review claim-level dataset records")
     annotate_commands = annotate.add_subparsers(dest="annotate_command", required=True)
