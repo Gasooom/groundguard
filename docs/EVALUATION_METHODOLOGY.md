@@ -200,17 +200,39 @@ the CONTRADICTED vs NOT_ENOUGH_INFO distinction.
 
 ## 7. Calibration
 
-- Calibrators are fit per `verifier@version` on the dev split only. Isotonic
-  regression is used by default and Platt scaling when dev has fewer than 200
-  claims.
-- The output is P(label = SUPPORTED) and P(label = CONTRADICTED) per claim
-  (one-vs-rest).
+- Calibrators are fit per `(verifier@version, predicted label)` on the dev
+  split only, and only for pairs with at least 30 dev claims (configurable).
+  Other pairs stay uncalibrated. Isotonic regression is used by default and
+  Platt scaling when dev has fewer than 200 claims.
+- The output is **P(the verdict is correct | raw score)**. *Revised in M4a.*
+  The earlier plan was one-vs-rest label probabilities, but raw scores mean
+  different things per verifier and label (coverage is evidence for
+  SUPPORTED and against NOT_ENOUGH_INFO), and correctness is what the
+  `min_confidence_below` policy condition needs (ADR-020).
+- Fitting refuses test-split runs (`groundguard calibrate fit`).
 - ECE, Brier score, and a reliability diagram are reported on test.
 - A changed verifier invalidates its calibrator. `confidence = None` until
   refit. The UI displays "uncalibrated".
 - The HUMAN_REVIEW band (e.g. calibrated confidence in [0.4, 0.6]) is chosen on
   dev to hit a target review rate, and its FAR-among-auto-decided is reported
   on test.
+
+## 7a. Claim-level and answer-level measurement (gg-claims-v2)
+
+`groundguard bench claims` reports two levels separately (ADR-021):
+
+- **Claim level, oracle segmentation.** Each gold claim is verified directly,
+  which isolates verifier quality from segmentation. It reports accuracy,
+  per-label P/R/F1, the 3×3 confusion matrix, per-phenomenon accuracy and
+  CONTRADICTED recall, and **evidence localization**: on correctly labelled
+  SUPPORTED/CONTRADICTED claims, whether the cited evidence overlaps the
+  annotator's quote.
+- **Answer level, end to end.** The full pipeline (segmentation,
+  verification, policy) is scored with acceptability@1. Safety is not
+  included, because gg-claims-v2 has no safety labels.
+
+Segmentation quality itself is not yet measured. A span-agreement metric
+between system and gold claims is future work.
 
 ## 8. Error analysis procedure
 

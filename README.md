@@ -202,6 +202,8 @@ groundguard policy list
 groundguard policy check default
 ```
 
+Tooling for the held-out claim-level dataset (`gg-claims-v2`) is in place, but the dataset itself does not exist yet. It covers the record format and validator, a person-only review workflow (`groundguard annotate`), frozen splits with a test-access log, claim-level and end-to-end metrics (`groundguard bench claims`), confidence calibration (`groundguard calibrate`), and an optional NLI backend (`pip install -e ".[nli]"`). No held-out or NLI results are reported until the dataset is reviewed and frozen. Status: `benchmark/datasets/gg-claims-v2/DATASHEET.md`.
+
 **Safety Benchmark Results**
 
 PII benchmark:

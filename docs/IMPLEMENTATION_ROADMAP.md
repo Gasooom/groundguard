@@ -79,7 +79,7 @@ any v2 losses are explained.
 **Exit criteria:** equivalence holds, and `default_v2` FAR/FRR on legacy-dedup
 is reported.
 
-## M4 — Held-out dataset, calibration, optional NLI
+## M4 — Held-out dataset, calibration, optional NLI (M4a ✅ infrastructure; M4b pending review and data)
 
 | Area | Work |
 |---|---|
@@ -363,3 +363,54 @@ part of `gg-claims-v2` (M4). Run files:
 (which activates confidence-based review), the optional NLI backend, and
 the two contradiction gaps from M2 (superlatives, long-sentence years),
 developed on the dev split only.
+
+---
+
+## M4a report (infrastructure; the held-out evaluation is M4b)
+
+**Owner decisions (M4):**
+- labels: AI drafts, the owner reviews every record
+- annotators: single annotator, agreement not measured
+- NLI: build it here, the owner runs it
+- domains: health information, and finance & science
+
+**Blocker found.** The environment's network policy denies the public-domain
+source hosts (cdc.gov, nih.gov, medlineplus.gov, fda.gov, nasa.gov, usgs.gov,
+noaa.gov, bls.gov, sec.gov), and Hugging Face. **No gg-claims-v2 records and
+no NLI results exist yet.** Source text is not reconstructed from memory,
+because it must be verbatim and traceable.
+
+**Delivered.**
+
+| Area | What | Tests |
+|---|---|---|
+| Dataset format | `bench/claims_dataset.py`: claim-level records with exact-quote evidence, phenomenon tags, completeness, and an annotation block. The review gate rejects `ai-assistant` as reviewer. `freeze` writes `splits.json` (by context group) only when every record is reviewed. `load_split` detects edits after freezing. The test-access log needs a purpose | 26 |
+| Review CLI | `groundguard annotate review/status/freeze`: per-claim keep/change label, exact-quote evidence editing, relevance/completeness, accept / exclude-with-reason / uncertain. Atomic saves, resumable | 8 |
+| Claims runner | `groundguard bench claims`: claim-level metrics at oracle segmentation (incl. evidence localization, per phenomenon, per domain) and end-to-end answer metrics. Test runs are logged | 5 |
+| Calibration | `calibration/`: isotonic (PAV), Platt, ECE, Brier, reliability bins. Per verifier/label calibration of P(correct). Applied in the pipeline and recorded in the manifest. `groundguard calibrate fit/report`. Refuses test runs | 14 |
+| NLI | `verifiers/nli.py`, `[nli]` extra, pinned revisions, model protocol with a deterministic fake for tests, `scripts/run_nli_benchmark.sh` | 8 |
+
+**Found and fixed while building the runner:** guards@1 reported a false
+contradiction between sentences that share only their subject (ADR-023).
+guards@2 requires shared predicate words. There was no prediction change on
+any committed run, and v2 run configs now record the verifier chain.
+
+**Found and recorded, not fixed:** pronoun subjects (`It is not approved
+for…`) defeat the single-sentence guards and the two-sentence evidence
+window. They are added to the probes (1.1.0) as `coref_01` (goes to
+HUMAN_REVIEW, not accepted) and `coref_02` (false reject).
+
+**Tests.** 1022 → 1090 passing. mypy `--strict` is clean on all new
+packages. All five v2 run files and the three v0.1.0 run files keep
+identical predictions.
+
+### M4b (needs the blocker resolved, then owner review)
+
+1. Draft gg-claims-v2 records from public-domain sources (health, finance
+   & science), as `NEEDS_REVIEW`.
+2. The owner reviews them (`groundguard annotate review`), then freezes v1.0.
+3. On **dev only**: error analysis, the two M2 contradiction gaps
+   (superlatives, long-sentence years), the pronoun limitation, and
+   calibration fitting.
+4. One logged test run per configuration (lexical, and NLI if the owner
+   ran it), reported with intervals.

@@ -226,3 +226,47 @@ dataset. Measuring the review rate needs data with scope mismatches (M4).
 **Consequences.** Deployments must be able to act on HUMAN_REVIEW. FAR is
 reported both overall and among auto-decided answers. A good answer sent to
 review counts as a false reject.
+
+## ADR-020 — Calibrate P(verdict correct) per verifier and predicted label
+**Status.** Accepted (M4a). Supersedes the one-vs-rest wording in the M0
+methodology.
+**Decision.** One calibrator per `(verifier@version, predicted label)`,
+mapping the raw score to the probability that the verdict is correct.
+Pairs with fewer than 30 dev claims stay uncalibrated. Fitting is refused on
+test runs, and on unreviewed runs unless explicitly allowed for development.
+**Rejected.** One-vs-rest label probabilities: they need comparable scores
+across verifiers, which the chain does not produce.
+**Consequences.** Confidence answers "how often is a verdict like this
+right?", which is what review routing needs. A changed verifier version is
+uncalibrated until refitted.
+
+## ADR-021 — Claim-level evaluation at oracle segmentation, plus end-to-end decisions
+**Decision.** On claim-level datasets, verify each gold claim directly
+(verifier quality), and separately run the full pipeline on the answer
+(deployment behaviour). Report evidence localization against gold quotes.
+**Rejected.** Aligning system claims to gold claims and scoring only the
+aligned pairs. It mixes segmentation and verification errors and needs an
+alignment heuristic that could hide failures.
+**Consequences.** Segmentation is evaluated only indirectly, through the
+end-to-end numbers.
+
+## ADR-022 — AI may draft benchmark records; only a person can label them
+**Status.** Accepted (M4, owner decision).
+**Decision.** AI-drafted records carry `drafted_by = "ai-assistant"` and stay
+`NEEDS_REVIEW`. The validator rejects `ai-assistant` as reviewer, and freezing
+refuses while any record is unreviewed. Labels by construction (e.g. a
+negated source sentence) are still reviewed.
+**Consequences.** Dataset size is bounded by review time, which is
+intentional. The test set is never labelled by a model.
+
+## ADR-023 — Guards compare only sentences that share predicate words
+**Status.** Accepted (M4a, guards@2).
+**Context.** guards@1 compared sentences that shared only their subject and
+reported a false contradiction ("Drug Q is sold in 40 countries" vs "Drug Q
+is not approved for children").
+**Decision.** A candidate must share at least one content word outside the
+claim's subject (subject found by the segmenter's verb heuristic).
+**Evidence.** No prediction changes on gg-legacy-v1 in any committed
+configuration, and no change on the 31 original probes.
+**Consequences.** Pronoun subjects remain a known limitation (probes
+`coref_01`, `coref_02`).
