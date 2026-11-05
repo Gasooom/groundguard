@@ -87,6 +87,8 @@ def content_tokens(text: str) -> list[str]:
 
     result = []
     for token in words(text):
+        if token.endswith("'s"):
+            token = token[:-2]  # possessive: "kenya's" -> "kenya"
         if token in STOP_WORDS or token in NEGATION_WORDS or token.endswith("n't"):
             continue
         result.append(_canonical_number(stem(token)))

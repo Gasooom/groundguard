@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import platform
 import subprocess
 from datetime import datetime, timezone
@@ -10,6 +9,7 @@ from importlib import metadata
 from typing import Any
 
 from groundguard.bench.datasets import REPO_ROOT, Dataset
+from groundguard.core.serialization import sha256_json
 
 
 RUN_FILE_SCHEMA_VERSION = 1
@@ -38,9 +38,7 @@ def groundguard_version() -> str:
 
 
 def config_hash(config: dict[str, Any]) -> str:
-    from groundguard.bench.report import canonical_json
-
-    return hashlib.sha256(canonical_json(config).encode("utf-8")).hexdigest()
+    return sha256_json(config)
 
 
 def build_manifest(dataset: Dataset, config: dict[str, Any]) -> dict[str, Any]:

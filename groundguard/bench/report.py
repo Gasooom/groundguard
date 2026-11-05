@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
 from typing import Any, Callable, Sequence
 
 from groundguard.bench.datasets import (
@@ -22,6 +20,7 @@ from groundguard.bench.metrics import (
     wilson_interval,
 )
 from groundguard.bench.runner import Prediction
+from groundguard.core.serialization import sha256_json
 from groundguard.evaluation.decision_metrics import evaluate_threshold
 
 
@@ -55,13 +54,8 @@ def is_good(record: BenchmarkRecord) -> bool:
     )
 
 
-def canonical_json(data: Any) -> str:
-    return json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-
-
-def predictions_hash(predictions: Sequence[Prediction]) -> str:
-    payload = canonical_json([prediction.to_dict() for prediction in predictions])
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+def predictions_hash(predictions: Sequence[Any]) -> str:
+    return sha256_json([prediction.to_dict() for prediction in predictions])
 
 
 def _rounded(interval: tuple[float, float] | None) -> list[float] | None:

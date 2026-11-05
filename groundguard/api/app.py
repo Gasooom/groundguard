@@ -6,6 +6,7 @@ from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 
 from groundguard.api.dashboard import dashboard
+from groundguard.api.v2 import router as v2_router
 from groundguard.api.schemas import (
     EvaluateRequest,
     EvaluateResponse,
@@ -34,6 +35,8 @@ app = FastAPI(
 
 
 _store = EvaluationStore(DATABASE_PATH)
+
+app.include_router(v2_router)
 
 
 @app.get("/health")
