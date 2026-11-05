@@ -204,6 +204,36 @@ groundguard policy check default
 
 Tooling for the held-out claim-level dataset (`gg-claims-v2`) is in place, but the dataset itself does not exist yet. It covers the record format and validator, a person-only review workflow (`groundguard annotate`), frozen splits with a test-access log, claim-level and end-to-end metrics (`groundguard bench claims`), confidence calibration (`groundguard calibrate`), and an optional NLI backend (`pip install -e ".[nli]"`). No held-out or NLI results are reported until the dataset is reviewed and frozen. Status: `benchmark/datasets/gg-claims-v2/DATASHEET.md`.
 
+**Running the v2 service**
+
+```bash
+pip install -e ".[api]"
+groundguard keys create --tenant my-team          # prints gg_<id>_<secret> once
+uvicorn groundguard.api.app:app --port 8000
+```
+
+```bash
+curl -s localhost:8000/v2/evaluate \
+  -H "Authorization: Bearer $GROUNDGUARD_KEY" -H "Content-Type: application/json" \
+  -d '{"question": "Where is Acme headquartered?",
+       "contexts": [{"id": "doc-1", "text": "Acme Corp is headquartered in Berlin, Germany."}],
+       "answer": "Acme is not headquartered in Berlin [doc-1]."}'
+```
+
+The response lists each claim with its verdict, evidence span (source id and offsets), verifier and signal, the citation check, safety findings (including injection found in sources), and the policy decision with every matched rule. Python callers can use `groundguard.sdk.Client`, or call `groundguard.pipeline.evaluate_v2` in-process without a server.
+
+| Setting (environment) | Default | Meaning |
+|---|---|---|
+| `GROUNDGUARD_AUTH` | `required` | `/v2` needs an API key; `disabled` is for local development only |
+| `GROUNDGUARD_PAYLOAD_MODE` | `redacted` | what is stored: `full`, `redacted` (regex PII redaction) or `none` (no text) |
+| `GROUNDGUARD_RATE_LIMIT_PER_MINUTE` | `120` | per key, per process |
+| `GROUNDGUARD_MAX_BODY_BYTES` | `1000000` | larger requests get 413 |
+| `GROUNDGUARD_MAX_BATCH_ITEMS` | `50` | `POST /v2/evaluate/batch` limit |
+
+v2 routes: `POST /v2/evaluate`, `POST /v2/evaluate/batch`, `GET /v2/evaluations`, `GET /v2/evaluations/{id}`, `GET /v2/stats`, `GET /v2/policies`. Errors use `{"error": {"code", "message", "details"?}}`. The v0.1.0 routes are unchanged and unauthenticated (legacy).
+
+Limits stated plainly: the rate limiter is per process; redaction is regex-based and can miss names and addresses; injection detection is pattern-based and is a signal, not a defence. The benchmark commands (`groundguard bench ...`) need a repository checkout.
+
 **Safety Benchmark Results**
 
 PII benchmark:

@@ -414,3 +414,33 @@ identical predictions.
    calibration fitting.
 4. One logged test run per configuration (lexical, and NLI if the owner
    ran it), reported with intervals.
+
+---
+
+## M7a + M5a report (built while M4b is blocked; ADR-026)
+
+**Delivered.**
+
+| Area | What | Tests |
+|---|---|---|
+| Storage | `storage/v2_store.py`: numbered migrations, hashed API keys, tenant-scoped evaluations with indexed columns, payload modes full/redacted/none, SQL stats, cursor pagination | 8 |
+| Service | `create_app(Settings)`. v1 routes moved unchanged into `api/v1.py` (all v1 tests pass unmodified). v2: API-key auth by default, per-key token bucket (429 + Retry-After), body cap (413/411), uniform error envelope | 14 |
+| API | persistence of v2 evaluations, `GET /v2/evaluations` (+ `/{id}`), `GET /v2/stats`, `POST /v2/evaluate/batch` (per-item errors, per-item rate cost, auth before body validation) | 8 |
+| SDK | `groundguard.sdk.Client`: stdlib, typed errors, retries on 429/5xx/connection errors, tested against the real app in-process and live against uvicorn | 6 |
+| CLI | `groundguard keys create/list/revoke` | 1 |
+| M5a checks | injection detection on every source; citation markers (masked to keep offsets) verified against cited sources only; default policy 2.1.0 | 8 |
+| Docker | installs the package (policies as package data), non-root user, healthcheck, secure env defaults | install simulated in a fresh venv; no Docker daemon available |
+
+**Probes (1.2.0).** `src_inj_01` (poisoned source, supported answer) is no
+longer accepted: it goes to HUMAN_REVIEW. `src_inj_02` (text that describes
+prompt injection) is a false reject from the answer-level pattern detector,
+recorded as a known limitation. False accepts: 0 of 20 must-not-accept
+probes.
+
+**Unchanged:** v0.1.0 modules, and every committed run file's predictions.
+
+**Tests.** 1090 → 1139 passing. mypy `--strict` is clean on 49 source files.
+
+**Still blocked:** M4b (needs source access and owner review). The M5
+citation and source-injection checks have no quality numbers until a
+dataset with citation and injection labels exists.

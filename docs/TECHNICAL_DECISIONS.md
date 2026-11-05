@@ -270,3 +270,39 @@ claim's subject (subject found by the segmenter's verb heuristic).
 configuration, and no change on the 31 original probes.
 **Consequences.** Pronoun subjects remain a known limitation (probes
 `coref_01`, `coref_02`).
+
+## ADR-024 — Source injection goes to review; unsupported citations are flagged
+**Status.** Accepted (M5a, default policy 2.1.0).
+**Decision.** Instruction-like text in a retrieved source sends the answer to
+HUMAN_REVIEW (the generator read a compromised source, but the answer may
+still be correct). A citation whose cited source does not support its claim
+gives FLAG, even when another source supports the claim. Both rules come
+after every REJECT rule.
+**Rejected.** REJECT for source injection: the answer itself can be
+grounded and harmless. Dropping poisoned sources from the evidence silently
+would hide the finding.
+**Consequences.** A pattern detector misfires on documents about prompt
+injection (probe `src_inj_02`, which fails at the answer-level check).
+Citation markers are recognized only when every reference resolves to a
+source, so arbitrary bracketed text is never treated as a citation.
+
+## ADR-025 — Service security defaults
+**Decision.** `/v2` requires API keys by default. Keys are stored as SHA-256
+hashes, compared in constant time, and revocable. Requests are rate limited
+per key, bodies are capped, and evaluations are stored redacted by default.
+The v0.1.0 routes stay unauthenticated, for backward compatibility, and
+are documented as legacy.
+**Rejected.** Authenticating v1 routes, which would break existing users.
+OAuth/SSO, which is out of scope for a single-node service.
+**Consequences.** Multi-replica deployments need a shared rate limiter.
+Redaction quality is bounded by regex PII detection.
+
+## ADR-026 — Order exception: M7 infrastructure and deterministic M5 checks before M4b
+**Context.** M4b (held-out evaluation) is blocked by network access to the
+source hosts. The roadmap rule says M5+ waits for the M4 report.
+**Decision.** With the owner's instruction to continue, build only the parts
+whose correctness does not depend on measured engine quality: service
+security, storage, API, SDK, Docker, plus the deterministic source-injection
+and citation checks. No new quality claims are made for them.
+**Consequences.** The M4 held-out evaluation remains the gate for any claim
+about generalization, including for the M5 checks.
